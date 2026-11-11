@@ -8,3 +8,4 @@
 | [04-gap-table-review.md](04-gap-table-review.md) | 로컬 갭 표 비판적 검토 + 수정된 Phase 계획(47/100) |
 | [send-to-claude-code.md](send-to-claude-code.md) | Claude Code에 그대로 보낼 메시지(지시 + 프롬프트 v2 + 검토본 v2 합본) |
 | [send-to-claude-code-graphics.md](send-to-claude-code-graphics.md) | 그래픽 패스용 메시지(현재 화면 진단 + 조명 수치 + 레이어·밀도 기준 + 에셋 규칙 + 검증 표) |
+| [05-engine-limit-workarounds.md](05-engine-limit-workarounds.md) | 엔진 한계 돌파 기법(거울 지오메트리 반사, 도시 큐브맵, 베이크 GI, CC0 PBR·발광 마스크, 렌즈 플레어 등) |
