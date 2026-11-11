@@ -6,3 +6,4 @@
 | [02-progress-score.md](02-progress-score.md) | 현재 진행 상황 채점(38/100)과 점수를 올리는 순서 |
 | [03-claude-code-prompt.md](03-claude-code-prompt.md) | Claude Code에 그대로 붙여 넣을 구현 프롬프트(v2: 갭 표 검토 반영) |
 | [04-gap-table-review.md](04-gap-table-review.md) | 로컬 갭 표 비판적 검토 + 수정된 Phase 계획(47/100) |
+| [send-to-claude-code.md](send-to-claude-code.md) | Claude Code에 그대로 보낼 메시지(지시 + 프롬프트 v2 + 검토본 v2 합본) |
