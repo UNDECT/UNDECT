@@ -1,0 +1,326 @@
+{
+ "name": "npc_raincoat",
+ "units": "m",
+ "forward": "-Y",
+ "up": "+Z",
+ "triangles": 34832,
+ "triangles_by_part": {
+  "pelvis": 1256,
+  "torso": 2812,
+  "skirt": 1344,
+  "head": 3896,
+  "thigh_L": 2496,
+  "shin_L": 5040,
+  "upperarm_L": 2124,
+  "forearm_L": 2992,
+  "thigh_R": 2496,
+  "shin_R": 5040,
+  "upperarm_R": 2124,
+  "forearm_R": 2992,
+  "prop": 220
+ },
+ "parts": {
+  "pelvis": [
+   "pelvis",
+   "belt",
+   "buckle"
+  ],
+  "torso": [
+   "jacket",
+   "zip",
+   "collar",
+   "chest_pocket",
+   "pocket_flap",
+   "chest_pocket.001",
+   "pocket_flap.001"
+  ],
+  "skirt": [
+   "skirt"
+  ],
+  "head": [
+   "neck",
+   "head_base",
+   "hood",
+   "hood_open",
+   "respirator",
+   "filter",
+   "goggle_frame",
+   "goggle_lens",
+   "filter.001",
+   "goggle_frame.001",
+   "goggle_lens.001"
+  ],
+  "thigh_L": [
+   "thigh"
+  ],
+  "shin_L": [
+   "shin",
+   "knee_pad",
+   "boot_shaft",
+   "boot_strap",
+   "boot_strap.001",
+   "boot_strap.002",
+   "boot",
+   "boot_sole",
+   "boot_toe"
+  ],
+  "upperarm_L": [
+   "sleeve_upper",
+   "shoulder_patch"
+  ],
+  "forearm_L": [
+   "sleeve_lower",
+   "cuff",
+   "glove",
+   "glove_fingers",
+   "glove_thumb",
+   "glove_plate"
+  ],
+  "thigh_R": [
+   "thigh.001"
+  ],
+  "shin_R": [
+   "shin.001",
+   "knee_pad.001",
+   "boot_shaft.001",
+   "boot_strap.003",
+   "boot_strap.004",
+   "boot_strap.005",
+   "boot.001",
+   "boot_sole.001",
+   "boot_toe.001"
+  ],
+  "upperarm_R": [
+   "sleeve_upper.001",
+   "shoulder_patch.001"
+  ],
+  "forearm_R": [
+   "sleeve_lower.001",
+   "cuff.001",
+   "glove.001",
+   "glove_fingers.001",
+   "glove_thumb.001",
+   "glove_plate.001"
+  ],
+  "prop": [
+   "umbrella_pole",
+   "umbrella_canopy",
+   "umbrella_rim",
+   "umbrella_handle"
+  ]
+ },
+ "pivots": {
+  "skirt": {
+   "pos": [
+    0,
+    0,
+    0.97
+   ],
+   "axis": [
+    1,
+    0,
+    0
+   ],
+   "parent": "torso",
+   "child": "skirt",
+   "range": [
+    -25,
+    25
+   ]
+  },
+  "waist": {
+   "pos": [
+    0,
+    0,
+    1.02
+   ],
+   "axis": [
+    0,
+    0,
+    1
+   ],
+   "parent": "pelvis",
+   "child": "torso",
+   "range": [
+    -40,
+    40
+   ]
+  },
+  "neck": {
+   "pos": [
+    0,
+    0.01,
+    1.52
+   ],
+   "axis": [
+    0,
+    0,
+    1
+   ],
+   "parent": "torso",
+   "child": "head",
+   "range": [
+    -80,
+    80
+   ]
+  },
+  "hip_L": {
+   "pos": [
+    0.092,
+    0.0,
+    0.925
+   ],
+   "axis": [
+    1,
+    0,
+    0
+   ],
+   "parent": "pelvis",
+   "child": "thigh_L",
+   "range": [
+    -80,
+    40
+   ]
+  },
+  "knee_L": {
+   "pos": [
+    0.092,
+    -0.1749,
+    0.5322
+   ],
+   "axis": [
+    1,
+    0,
+    0
+   ],
+   "parent": "thigh_L",
+   "child": "shin_L",
+   "range": [
+    0,
+    140
+   ]
+  },
+  "shoulder_L": {
+   "pos": [
+    0.205,
+    0.0,
+    1.425
+   ],
+   "axis": [
+    1,
+    0,
+    0
+   ],
+   "parent": "torso",
+   "child": "upperarm_L",
+   "range": [
+    -170,
+    60
+   ]
+  },
+  "elbow_L": {
+   "pos": [
+    0.2283,
+    0.0975,
+    1.1582
+   ],
+   "axis": [
+    0.9962,
+    0.0,
+    0.0872
+   ],
+   "parent": "upperarm_L",
+   "child": "forearm_L",
+   "range": [
+    0,
+    145
+   ]
+  },
+  "hip_R": {
+   "pos": [
+    -0.092,
+    0.0,
+    0.925
+   ],
+   "axis": [
+    1,
+    0,
+    0
+   ],
+   "parent": "pelvis",
+   "child": "thigh_R",
+   "range": [
+    -80,
+    40
+   ]
+  },
+  "knee_R": {
+   "pos": [
+    -0.092,
+    0.1185,
+    0.5117
+   ],
+   "axis": [
+    1,
+    0,
+    0
+   ],
+   "parent": "thigh_R",
+   "child": "shin_R",
+   "range": [
+    0,
+    140
+   ]
+  },
+  "shoulder_R": {
+   "pos": [
+    -0.205,
+    0.0,
+    1.425
+   ],
+   "axis": [
+    1,
+    0,
+    0
+   ],
+   "parent": "torso",
+   "child": "upperarm_R",
+   "range": [
+    -170,
+    60
+   ]
+  },
+  "elbow_R": {
+   "pos": [
+    -0.2322,
+    -0.1159,
+    1.1661
+   ],
+   "axis": [
+    -0.9945,
+    0.0,
+    0.1045
+   ],
+   "parent": "upperarm_R",
+   "child": "forearm_R",
+   "range": [
+    0,
+    145
+   ]
+  }
+ },
+ "materials": [
+  "black",
+  "boot",
+  "coat",
+  "gear",
+  "glove",
+  "glow_cyan",
+  "gunmetal",
+  "pants",
+  "sole",
+  "titan",
+  "umbrella",
+  "under"
+ ]
+}

@@ -1,0 +1,297 @@
+{
+ "name": "npc_techwear",
+ "units": "m",
+ "forward": "-Y",
+ "up": "+Z",
+ "triangles": 36684,
+ "triangles_by_part": {
+  "pelvis": 1256,
+  "torso": 3120,
+  "head": 7004,
+  "thigh_L": 2496,
+  "shin_L": 5040,
+  "upperarm_L": 2124,
+  "forearm_L": 2992,
+  "thigh_R": 2496,
+  "shin_R": 5040,
+  "upperarm_R": 2124,
+  "forearm_R": 2992
+ },
+ "parts": {
+  "pelvis": [
+   "pelvis",
+   "belt",
+   "buckle"
+  ],
+  "torso": [
+   "jacket",
+   "zip",
+   "collar",
+   "chest_pocket",
+   "pocket_flap",
+   "chest_pocket.001",
+   "pocket_flap.001",
+   "sling_bag",
+   "sling_strap",
+   "sling_light"
+  ],
+  "head": [
+   "neck",
+   "head_base",
+   "helmet",
+   "visor",
+   "visor_line",
+   "chin",
+   "ear_cup",
+   "ear_cup.001",
+   "helmet_ridge"
+  ],
+  "thigh_L": [
+   "thigh"
+  ],
+  "shin_L": [
+   "shin",
+   "knee_pad",
+   "boot_shaft",
+   "boot_strap",
+   "boot_strap.001",
+   "boot_strap.002",
+   "boot",
+   "boot_sole",
+   "boot_toe"
+  ],
+  "upperarm_L": [
+   "sleeve_upper",
+   "shoulder_patch"
+  ],
+  "forearm_L": [
+   "sleeve_lower",
+   "cuff",
+   "glove",
+   "glove_fingers",
+   "glove_thumb",
+   "glove_plate"
+  ],
+  "thigh_R": [
+   "thigh.001"
+  ],
+  "shin_R": [
+   "shin.001",
+   "knee_pad.001",
+   "boot_shaft.001",
+   "boot_strap.003",
+   "boot_strap.004",
+   "boot_strap.005",
+   "boot.001",
+   "boot_sole.001",
+   "boot_toe.001"
+  ],
+  "upperarm_R": [
+   "sleeve_upper.001",
+   "shoulder_patch.001"
+  ],
+  "forearm_R": [
+   "sleeve_lower.001",
+   "cuff.001",
+   "glove.001",
+   "glove_fingers.001",
+   "glove_thumb.001",
+   "glove_plate.001"
+  ]
+ },
+ "pivots": {
+  "waist": {
+   "pos": [
+    0,
+    0,
+    1.02
+   ],
+   "axis": [
+    0,
+    0,
+    1
+   ],
+   "parent": "pelvis",
+   "child": "torso",
+   "range": [
+    -40,
+    40
+   ]
+  },
+  "neck": {
+   "pos": [
+    0,
+    0.01,
+    1.52
+   ],
+   "axis": [
+    0,
+    0,
+    1
+   ],
+   "parent": "torso",
+   "child": "head",
+   "range": [
+    -80,
+    80
+   ]
+  },
+  "hip_L": {
+   "pos": [
+    0.092,
+    0.0,
+    0.925
+   ],
+   "axis": [
+    1,
+    0,
+    0
+   ],
+   "parent": "pelvis",
+   "child": "thigh_L",
+   "range": [
+    -80,
+    40
+   ]
+  },
+  "knee_L": {
+   "pos": [
+    0.092,
+    -0.015,
+    0.4953
+   ],
+   "axis": [
+    1,
+    0,
+    0
+   ],
+   "parent": "thigh_L",
+   "child": "shin_L",
+   "range": [
+    0,
+    140
+   ]
+  },
+  "shoulder_L": {
+   "pos": [
+    0.205,
+    0.0,
+    1.425
+   ],
+   "axis": [
+    1,
+    0,
+    0
+   ],
+   "parent": "torso",
+   "child": "upperarm_L",
+   "range": [
+    -170,
+    60
+   ]
+  },
+  "elbow_L": {
+   "pos": [
+    0.2347,
+    -0.0199,
+    1.1423
+   ],
+   "axis": [
+    0.9945,
+    0.0,
+    0.1045
+   ],
+   "parent": "upperarm_L",
+   "child": "forearm_L",
+   "range": [
+    0,
+    145
+   ]
+  },
+  "hip_R": {
+   "pos": [
+    -0.092,
+    0.0,
+    0.925
+   ],
+   "axis": [
+    1,
+    0,
+    0
+   ],
+   "parent": "pelvis",
+   "child": "thigh_R",
+   "range": [
+    -80,
+    40
+   ]
+  },
+  "knee_R": {
+   "pos": [
+    -0.092,
+    0.03,
+    0.496
+   ],
+   "axis": [
+    1,
+    0,
+    0
+   ],
+   "parent": "thigh_R",
+   "child": "shin_R",
+   "range": [
+    0,
+    140
+   ]
+  },
+  "shoulder_R": {
+   "pos": [
+    -0.205,
+    0.0,
+    1.425
+   ],
+   "axis": [
+    1,
+    0,
+    0
+   ],
+   "parent": "torso",
+   "child": "upperarm_R",
+   "range": [
+    -170,
+    60
+   ]
+  },
+  "elbow_R": {
+   "pos": [
+    -0.2397,
+    0.0149,
+    1.1425
+   ],
+   "axis": [
+    -0.9925,
+    0.0,
+    0.1219
+   ],
+   "parent": "upperarm_R",
+   "child": "forearm_R",
+   "range": [
+    0,
+    145
+   ]
+  }
+ },
+ "materials": [
+  "boot",
+  "coat",
+  "gear",
+  "glass",
+  "glove",
+  "glow_magenta",
+  "helmet",
+  "pants",
+  "sole",
+  "titan",
+  "under"
+ ]
+}

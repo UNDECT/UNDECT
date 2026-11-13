@@ -1,0 +1,318 @@
+{
+ "name": "flying_car",
+ "units": "m",
+ "forward": "-Y",
+ "up": "+Z",
+ "triangles": 18644,
+ "triangles_by_part": {
+  "body": 5692,
+  "skid": 648,
+  "pod_FL": 2680,
+  "fan_FL": 396,
+  "pod_FR": 2680,
+  "fan_FR": 396,
+  "pod_RL": 2680,
+  "fan_RL": 396,
+  "pod_RR": 2680,
+  "fan_RR": 396
+ },
+ "parts": {
+  "body": [
+   "hull",
+   "nose_light",
+   "headlamp",
+   "door_line",
+   "door_line2",
+   "side_stripe",
+   "side_glow",
+   "nav_light",
+   "pod_arm",
+   "pod_arm_under",
+   "pod_arm.001",
+   "pod_arm_under.001",
+   "tail_fin",
+   "tail_fin_tip",
+   "nozzle",
+   "nozzle_glow",
+   "headlamp.001",
+   "door_line.001",
+   "door_line2.001",
+   "side_stripe.001",
+   "side_glow.001",
+   "nav_light.001",
+   "pod_arm.002",
+   "pod_arm_under.002",
+   "pod_arm.003",
+   "pod_arm_under.003",
+   "tail_fin.001",
+   "tail_fin_tip.001",
+   "nozzle.001",
+   "nozzle_glow.001",
+   "belly_plate",
+   "belly_glow",
+   "roof_scoop",
+   "roof_scoop_in",
+   "searchlight",
+   "searchlight_lens",
+   "hull_text",
+   "hull_text.001"
+  ],
+  "skid": [
+   "skid_leg",
+   "skid_leg.001",
+   "skid",
+   "skid_leg.002",
+   "skid_leg.003",
+   "skid.001"
+  ],
+  "pod_FL": [
+   "duct",
+   "duct_band",
+   "hub",
+   "hub_cap",
+   "stator",
+   "stator.001",
+   "stator.002",
+   "thrust_glow",
+   "pod_light"
+  ],
+  "fan_FL": [
+   "fan_blade",
+   "fan_blade.001",
+   "fan_blade.002",
+   "fan_blade.003",
+   "fan_blade.004",
+   "fan_blade.005",
+   "fan_blade.006",
+   "fan_blade.007",
+   "fan_blade.008"
+  ],
+  "pod_FR": [
+   "duct.001",
+   "duct_band.001",
+   "hub.001",
+   "hub_cap.001",
+   "stator.003",
+   "stator.004",
+   "stator.005",
+   "thrust_glow.001",
+   "pod_light.001"
+  ],
+  "fan_FR": [
+   "fan_blade.009",
+   "fan_blade.010",
+   "fan_blade.011",
+   "fan_blade.012",
+   "fan_blade.013",
+   "fan_blade.014",
+   "fan_blade.015",
+   "fan_blade.016",
+   "fan_blade.017"
+  ],
+  "pod_RL": [
+   "duct.002",
+   "duct_band.002",
+   "hub.002",
+   "hub_cap.002",
+   "stator.006",
+   "stator.007",
+   "stator.008",
+   "thrust_glow.002",
+   "pod_light.002"
+  ],
+  "fan_RL": [
+   "fan_blade.018",
+   "fan_blade.019",
+   "fan_blade.020",
+   "fan_blade.021",
+   "fan_blade.022",
+   "fan_blade.023",
+   "fan_blade.024",
+   "fan_blade.025",
+   "fan_blade.026"
+  ],
+  "pod_RR": [
+   "duct.003",
+   "duct_band.003",
+   "hub.003",
+   "hub_cap.003",
+   "stator.009",
+   "stator.010",
+   "stator.011",
+   "thrust_glow.003",
+   "pod_light.003"
+  ],
+  "fan_RR": [
+   "fan_blade.027",
+   "fan_blade.028",
+   "fan_blade.029",
+   "fan_blade.030",
+   "fan_blade.031",
+   "fan_blade.032",
+   "fan_blade.033",
+   "fan_blade.034",
+   "fan_blade.035"
+  ]
+ },
+ "pivots": {
+  "pod_FL": {
+   "pos": [
+    1.92,
+    -1.75,
+    1.14
+   ],
+   "axis": [
+    1,
+    0,
+    0
+   ],
+   "parent": "body",
+   "child": "pod_FL",
+   "range": [
+    -20,
+    90
+   ]
+  },
+  "fan_FL": {
+   "pos": [
+    1.92,
+    -1.75,
+    1.08
+   ],
+   "axis": [
+    0,
+    0,
+    1
+   ],
+   "parent": "pod_FL",
+   "child": "fan_FL",
+   "range": [
+    -360,
+    360
+   ]
+  },
+  "pod_FR": {
+   "pos": [
+    -1.92,
+    -1.75,
+    1.14
+   ],
+   "axis": [
+    1,
+    0,
+    0
+   ],
+   "parent": "body",
+   "child": "pod_FR",
+   "range": [
+    -20,
+    90
+   ]
+  },
+  "fan_FR": {
+   "pos": [
+    -1.92,
+    -1.75,
+    1.08
+   ],
+   "axis": [
+    0,
+    0,
+    1
+   ],
+   "parent": "pod_FR",
+   "child": "fan_FR",
+   "range": [
+    -360,
+    360
+   ]
+  },
+  "pod_RL": {
+   "pos": [
+    1.92,
+    1.95,
+    1.14
+   ],
+   "axis": [
+    1,
+    0,
+    0
+   ],
+   "parent": "body",
+   "child": "pod_RL",
+   "range": [
+    -20,
+    90
+   ]
+  },
+  "fan_RL": {
+   "pos": [
+    1.92,
+    1.95,
+    1.08
+   ],
+   "axis": [
+    0,
+    0,
+    1
+   ],
+   "parent": "pod_RL",
+   "child": "fan_RL",
+   "range": [
+    -360,
+    360
+   ]
+  },
+  "pod_RR": {
+   "pos": [
+    -1.92,
+    1.95,
+    1.14
+   ],
+   "axis": [
+    1,
+    0,
+    0
+   ],
+   "parent": "body",
+   "child": "pod_RR",
+   "range": [
+    -20,
+    90
+   ]
+  },
+  "fan_RR": {
+   "pos": [
+    -1.92,
+    1.95,
+    1.08
+   ],
+   "axis": [
+    0,
+    0,
+    1
+   ],
+   "parent": "pod_RR",
+   "child": "fan_RR",
+   "range": [
+    -360,
+    360
+   ]
+  }
+ },
+ "materials": [
+  "accent",
+  "black",
+  "body",
+  "glass",
+  "glow_amber",
+  "glow_cyan",
+  "glow_red",
+  "glow_white",
+  "gunmetal",
+  "steel",
+  "under"
+ ],
+ "variant": "civil",
+ "landed_floor_z": 0.0
+}
