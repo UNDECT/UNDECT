@@ -14,3 +14,7 @@
 | [send-to-claude-code-ui-maps.md](send-to-claude-code-ui-maps.md) | UI 전면 제작(디자인 시스템, HUD, 메뉴 전체, Blender 아이콘·3D 미리보기·홀로그램 지도) + 모험 맵 기획·제작, 최종 순서표 |
 | [spec/](spec/00-index.md) | **마스터 스펙**: 레퍼런스 전 요소 명세 659개(전투 이펙트, 시술소·시술의, 사이버웨어, 넷러닝, 이동, 적·AI, NPC, 세계, UI, 성장, 차량, 사운드, 보안 NPC, 제외 목록) |
 | [send-to-claude-code-master-spec.md](send-to-claude-code-master-spec.md) | 마스터 스펙 합본(지시 + spec 8개 파일). Claude Code에 보내는 파일 |
+| [send-to-claude-code-blender-assets.md](send-to-claude-code-blender-assets.md) | **지금 보낼 파일**: 여기서 만든 에셋·애니메이션·이동 코드를 개발 세션이 변환·연결하는 절차(에셋 표, 에셋별 연결 방법, 단계 영향, 남은 목록) |
+| [blender/](blender/README.md) | Blender 스크립트와 결과물(`out/`): 보안 로봇, 드론, 포탑, 감시 카메라, 차, 비행 차량, 무기 17종, 사람 10명, 가면 NPC 5종, 1인칭 팔, 사이버웨어 팔 3종, 시술소, 거리 소품, 구역 4종 그림, 클립 94개 |
+| [runtime/](runtime/README.md) | Luau 모듈: 애니메이션 재생, 뼈대 계산, 군중·순찰·교통 이동, 테스트 47개 |
+| [samples/cyber-arm/](samples/cyber-arm/README.md) | 블레이드 사이버웨어 팔 |

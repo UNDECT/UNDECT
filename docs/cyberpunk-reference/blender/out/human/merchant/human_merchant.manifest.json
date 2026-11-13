@@ -1125,16 +1125,16 @@
   "badge_glow": 12
  },
  "cyberware": [
-  "neck_led",
-  "ear_bar",
-  "ear_tip",
-  "badge",
-  "ear_led",
   "badge_glow",
   "neck_pin.001",
-  "neck_port",
+  "ear_tip",
+  "ear_bar",
+  "ear_disc",
+  "badge",
+  "neck_led",
   "neck_pin",
-  "ear_disc"
+  "neck_port",
+  "ear_led"
  ],
  "glow": "glow_amber",
  "attach": {

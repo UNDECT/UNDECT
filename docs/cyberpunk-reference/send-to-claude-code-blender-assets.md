@@ -33,10 +33,10 @@ git clone --depth 1 -b ccr-9e6cc8c3-bftdlm https://github.com/UNDECT/UNDECT.git 
 | 거리 NPC 5종 | `npc.py` | `npc/<이름>/npc_<이름>.{glb,blend,manifest.json}`, 사진 각 1장 | 약 3만 5천 | 우비, 테크웨어, 작업자, 배달부, 회사원. 부품 11~13 / 관절 10~11 |
 | 맨얼굴 사람 10명 | `human.py` | `human/<이름>/human_<이름>.{glb,manifest.json}`, 사진 각 2장, `human_sheet.png`, `human_faces.png`, `human_walk_check.png` | 약 3만 7천~4만 9천 | 거리 사람 5(`man_a`, `woman_a`, `woman_c`, `man_d`, `woman_d`), 노동자(`man_b`), 상인(`merchant`), 회사원(`woman_b`), 임원(`man_c`), 시술의(`doctor`). 뼈 53개(스킨 메시), 손가락 관절 포함 |
 | 1인칭 팔 2종 | `human.py ... fp_sleeve fp_bare` | `human/fp_sleeve/`, `human/fp_bare/` (GLB, manifest), 사진 각 2장(`*_view.png`가 1인칭 시점) | 6천~9천 | 재킷 소매+장갑, 맨팔. 사람과 같은 뼈대. `manifest.eye`가 카메라 자리 |
-| 드론, 포탑, 감시 카메라 | `machines.py` | `machines/<이름>/<이름>.{glb,blend,manifest.json}`, 사진 각 2장 | 드론 1만 3천, 포탑 8천, 카메라 3천 | 드론: 팬 4, 총좌(좌우·상하). 포탑: 받침→몸(좌우)→머리(상하)→총열(반동). 카메라: 좌우·상하 |
+| 드론, 포탑, 감시 카메라 | `machines.py` | `machines/<이름>/<이름>.{glb,blend,manifest.json}`, 사진 각 2장, `machines_sheet.png` | 드론 1만 4천, 포탑 8천, 카메라 3천 | 드론: 팬 4, 총좌(좌우·상하). 포탑: 받침→몸(좌우)→머리(상하)→총열(반동). 카메라: 좌우·상하 |
 | 시술소 | `clinic.py` | `clinic/{chair,surgery_rig,cart}/…`, 사진 각 2장, **`clinic_scene.png`, `clinic_scene_close.png`(시술소 분위기 목표)** | 의자 1만 1천, 로봇 팔 1만 4천, 수레 4천 | 의자: 높이, 등받이, 다리 받침, 머리 받침, 팔걸이 2. 천장 로봇 팔 3개(어깨·팔꿈치·손목)와 수술등. 수레: 도구, 약병, 화면 |
-| 사이버웨어 팔 3종 | `cyber_arms.py` | `cyber_arms/{power,nanowire,launcher}/arm_<이름>.{glb,blend,manifest.json}`, 사진 각 2장(접힘, 펼침) | 1만 4천~1만 8천 | 파워암, 나노와이어, 런처. 손가락 14마디가 따로 움직인다. 펼침 동작은 `manifest.deploy`와 클립 |
-| 낮 거리, 구역 3종 | `street.py ... scene_day`, `districts.py` | `street/street_day.png`, `street/district_{slum,corp,rich}.png` | — | **낮 분위기 목표**와 **구역별 분위기 목표**. 건물 생성 규칙의 기준 |
+| 사이버웨어 팔 3종 | `cyber_arms.py` | `cyber_arms/{power,nanowire,launcher}/arm_<이름>.{glb,blend,manifest.json}`, 사진 각 2장(접힘, 펼침), `cyber_arms_sheet.png` | 1만 4천~1만 8천 | 파워암, 나노와이어, 런처. 손가락 14마디가 따로 움직인다. 펼침 동작은 `manifest.deploy`와 클립 |
+| 낮 거리, 구역 3종 | `street.py ... scene_day`, `districts.py` | `street/street_day.png`, `street/district_{slum,corp,rich}.png`, `street/districts_sheet.png`(4구역 비교) | — | **낮 분위기 목표**와 **구역별 분위기 목표**. 건물 생성 규칙의 기준 |
 | 사이버웨어 팔 | `cyber-arm/make_arm.py` | 사진 4장, `cyber_arm_closed.glb` | 약 5만 4천 | 부품 약 180개(문 4장, 칼날, 손가락 마디) |
 | 공용 도구 | `kit.py` | — | — | 재질, 형상, 관절 기록, 내보내기 |
 

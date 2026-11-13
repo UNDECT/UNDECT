@@ -1121,14 +1121,14 @@
   "ear_tip": 12
  },
  "cyberware": [
-  "ear_led",
-  "cheek_line.001",
   "cheek_line",
-  "ear_bar",
-  "ear_tip",
-  "ear_disc",
   "cheek_line.003",
-  "cheek_line.002"
+  "ear_disc",
+  "cheek_line.002",
+  "cheek_line.001",
+  "ear_tip",
+  "ear_bar",
+  "ear_led"
  ],
  "glow": "glow_cyan",
  "attach": {
