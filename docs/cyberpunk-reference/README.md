@@ -10,3 +10,4 @@
 | [send-to-claude-code-graphics.md](send-to-claude-code-graphics.md) | 그래픽 패스용 메시지(현재 화면 진단 + 조명 수치 + 레이어·밀도 기준 + 에셋 규칙 + 검증 표) |
 | [05-engine-limit-workarounds.md](05-engine-limit-workarounds.md) | 엔진 한계 돌파 기법(거울 지오메트리 반사, 도시 큐브맵, 베이크 GI, CC0 PBR·발광 마스크, 렌즈 플레어 등) |
 | [send-to-claude-code-characters.md](send-to-claude-code-characters.md) | 캐릭터·1인칭 팔·총·로봇·차량 Blender 사실화 패스(MPFB2 CC0 인간, 자동화 파이프라인, 규격 검사, LOD, 애니메이션) |
+| [send-to-claude-code-c3-onward.md](send-to-claude-code-c3-onward.md) | C3부터 바뀐 절차: 분위기·배경 우선, 간판 정리(계층·면적 규칙), 구역 스타일 4종, 이후 팔·총·캐릭터 |
