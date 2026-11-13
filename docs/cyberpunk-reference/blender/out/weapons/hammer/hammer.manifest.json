@@ -1,0 +1,123 @@
+{
+ "name": "hammer",
+ "units": "m",
+ "forward": "-Y",
+ "up": "+Z",
+ "triangles": 5060,
+ "triangles_by_part": {
+  "body": 4940,
+  "thruster_glow": 120
+ },
+ "parts": {
+  "body": [
+   "haft",
+   "haft_grip",
+   "grip_ring",
+   "grip_ring.001",
+   "grip_ring.002",
+   "grip_ring.003",
+   "grip_ring.004",
+   "grip_ring.005",
+   "grip_ring.006",
+   "haft_grip.001",
+   "grip_ring.007",
+   "grip_ring.008",
+   "grip_ring.009",
+   "grip_ring.010",
+   "grip_ring.011",
+   "grip_ring.012",
+   "pommel",
+   "head_core",
+   "head_face",
+   "face_stud",
+   "face_stud.001",
+   "face_stud.002",
+   "face_stud.003",
+   "face_stud.004",
+   "face_stud.005",
+   "face_stud.006",
+   "face_stud.007",
+   "face_stud.008",
+   "head_back",
+   "thruster",
+   "head_plate",
+   "warn_strip",
+   "thruster.001",
+   "head_plate.001",
+   "warn_strip.001",
+   "collar",
+   "power_cell",
+   "cell_led"
+  ],
+  "thruster_glow": [
+   "thruster_glow",
+   "thruster_glow.001"
+  ]
+ },
+ "pivots": {
+  "grip": {
+   "pos": [
+    0,
+    0.17,
+    0
+   ],
+   "axis": [
+    0,
+    -1,
+    0
+   ],
+   "parent": "body",
+   "child": "hand_R",
+   "range": [
+    -90,
+    90
+   ]
+  },
+  "support": {
+   "pos": [
+    0,
+    -0.245,
+    0
+   ],
+   "axis": [
+    0,
+    -1,
+    0
+   ],
+   "parent": "body",
+   "child": "hand_L",
+   "range": [
+    -90,
+    90
+   ]
+  },
+  "tip": {
+   "pos": [
+    0,
+    -0.7,
+    0.15
+   ],
+   "axis": [
+    0,
+    0,
+    1
+   ],
+   "parent": "body",
+   "child": "fx",
+   "range": [
+    -90,
+    90
+   ]
+  }
+ },
+ "materials": [
+  "glow_amber",
+  "gunmetal",
+  "steel",
+  "titan",
+  "w_black",
+  "w_grip",
+  "w_orange",
+  "w_wrap"
+ ]
+}

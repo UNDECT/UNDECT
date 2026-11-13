@@ -203,7 +203,7 @@ def place(fn, Mx):
     for o in set(kit.COL.objects) - before: o.matrix_world = Mx @ o.matrix_world
 
 # ------------------------------------------------------------------ 장면
-def scene():
+def scene(day=False):
     sc = kit.reset(); materials(); R = random.Random(7)
     w = bpy.data.worlds.new("w"); sc.world = w; w.use_nodes = True
     w.node_tree.nodes["Background"].inputs["Color"].default_value = (0.010, 0.012, 0.030, 1)
@@ -246,17 +246,40 @@ def scene():
     import car, security_robot
     place(lambda: car.parts("crimson"), T(5.6, 1.5, 0) @ RZ(180)); place(lambda: car.parts("cab"), T(-2.2, 26.0, 0))
     place(lambda: car.parts("teal"), T(-5.6, -6.5, 0)); place(lambda: security_robot.parts(), T(-8.2, -1.2, 0.18) @ RZ(-150))
-    # 색 조명: 간판 빛이 벽과 바닥을 물들인다
-    kit.area("pool_magenta", (-9.5, 5.5, 6.0), (-6, 4, 0), 3.0, 700, (1.0, 0.1, 0.5)); kit.area("pool_cyan", (9.5, 0.5, 5.5), (5, -1, 0), 3.0, 600, (0.1, 0.8, 1.0))
-    kit.area("pool_amber", (-9.5, 22.0, 7.0), (-4, 20, 0), 3.0, 550, (1.0, 0.5, 0.1)); kit.area("moon", (30, -40, 90), (0, 30, 10), 40.0, 5000, (0.35, 0.45, 0.8))
-    # 안개
-    fog = bpy.data.materials.new("fog"); fog.use_nodes = True; nt = fog.node_tree; nt.nodes.clear()
-    vo = nt.nodes.new("ShaderNodeVolumeScatter"); vo.inputs["Density"].default_value = 0.0022; vo.inputs["Anisotropy"].default_value = 0.35
-    vo.inputs["Color"].default_value = (0.75, 0.82, 1.0, 1); out = nt.nodes.new("ShaderNodeOutputMaterial"); nt.links.new(vo.outputs[0], out.inputs["Volume"])
-    kit.M["fog"] = fog; finish("stage_fog", box(500, 700, 560, z0=True), "fog", 0, 1, T(0, 280, -1), smooth=False)
-    sc.cycles.volume_bounces = 0; sc.cycles.max_bounces = 5; sc.view_settings.exposure = 0.3
+    light_and_shoot(sc, "street_day.png" if day else "street_night.png", day,
+                    [("pool_magenta", (-9.5, 5.5, 6.0), (-6, 4, 0), 700, (1.0, 0.1, 0.5)), ("pool_cyan", (9.5, 0.5, 5.5), (5, -1, 0), 600, (0.1, 0.8, 1.0)), ("pool_amber", (-9.5, 22.0, 7.0), (-4, 20, 0), 550, (1.0, 0.5, 0.1))])
+
+def base_ground():
+    finish("road", box(14.0, 520.0, 0.2), "asphalt", 0, 1, T(0, 220, -0.1), smooth=False)
+    for s in (-1, 1):
+        finish("sidewalk", box(4.0, 520.0, 0.36), "sidewalk", 0, 1, T(9.0 * s, 220, 0.0), smooth=False)
+        finish("curb", box(0.3, 520.0, 0.40), "concrete", 0, 1, T(7.05 * s, 220, 0.0), smooth=False)
+        finish("ground", box(120.0, 520.0, 0.2), "concrete_dark", 0, 1, T(71.0 * s, 220, -0.1), smooth=False)
+    lines = Multi()
+    for k in range(40): lines.add(0.16, 3.0, 0.012, T(0, -12 + k * 7.0, 0.006))
+    for s in (-1, 1): lines.add(0.14, 300.0, 0.012, T(6.4 * s, 130, 0.006))
+    lines.done("road_lines", "paint_line")
+
+def light_and_shoot(sc, fname, day, pools, sky=(0.010, 0.012, 0.030), moon=(0.35, 0.45, 0.8), fog_col=(0.75, 0.82, 1.0), fog=0.0022, exposure=0.3, cam=((2.4, -17.0, 1.75), (-0.5, 40.0, 19.0), 24)):
+    """밤: 색 조명 웅덩이 + 달빛 + 안개. 낮: 흐린 하늘 + 해 + 옅은 안개(간판은 켜져 있지만 약하게 보인다)."""
+    if not sc.world: sc.world = bpy.data.worlds.new("w"); sc.world.use_nodes = True
+    bg = sc.world.node_tree.nodes["Background"]
+    if day:
+        bg.inputs["Color"].default_value = (0.62, 0.68, 0.76, 1); bg.inputs["Strength"].default_value = 3.0
+        sun = bpy.data.lights.new("sun", "SUN"); sun.energy = 8.0; sun.color = (1.0, 0.90, 0.76); sun.angle = radians(6)
+        so = bpy.data.objects.new("sun", sun); kit.COL.objects.link(so); so.rotation_euler = (radians(50), 0, radians(-50))
+        fog, fog_col, exposure = 0.0006, (1.0, 0.95, 0.88), 0.5
+    else:
+        bg.inputs["Color"].default_value = (*sky, 1)
+        for name, loc, tgt, power, col in pools: kit.area(name, loc, tgt, 3.0, power, col)
+        kit.area("moon", (30, -40, 90), (0, 30, 10), 40.0, 5000, moon)
+    fm = bpy.data.materials.new("fog"); fm.use_nodes = True; nt = fm.node_tree; nt.nodes.clear()
+    vo = nt.nodes.new("ShaderNodeVolumeScatter"); vo.inputs["Density"].default_value = fog; vo.inputs["Anisotropy"].default_value = 0.35
+    vo.inputs["Color"].default_value = (*fog_col, 1); out = nt.nodes.new("ShaderNodeOutputMaterial"); nt.links.new(vo.outputs[0], out.inputs["Volume"])
+    kit.M["fog"] = fm; finish("stage_fog", box(500, 700, 560, z0=True), "fog", 0, 1, T(0, 280, -1), smooth=False)
+    sc.cycles.volume_bounces = 0; sc.cycles.max_bounces = 5; sc.view_settings.exposure = exposure
     os.makedirs(OUT, exist_ok=True)
-    kit.shot(os.path.join(OUT, "street_night.png"), (2.4, -17.0, 1.75), (-0.5, 40.0, 19.0), 24, res=tuple(int(v) for v in os.environ.get("STREET_RES", "1400,900").split(",")))
+    kit.shot(os.path.join(OUT, fname), cam[0], cam[1], cam[2], res=tuple(int(v) for v in os.environ.get("STREET_RES", "1400,900").split(",")))
 
 def modules():
     """소품을 하나씩 내보내고 모음 사진을 찍는다."""
@@ -269,4 +292,4 @@ def modules():
     kit.shot(os.path.join(OUT, "street_modules.png"), (-3.0, -21.0, 6.0), (0.0, 1.0, 2.6), 50)
 
 if __name__ == "__main__":
-    scene() if MODE == "scene" else modules()
+    scene() if MODE == "scene" else scene(True) if MODE == "scene_day" else modules()

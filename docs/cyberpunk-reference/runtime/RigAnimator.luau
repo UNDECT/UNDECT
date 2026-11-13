@@ -52,14 +52,14 @@ function RigAnimator.new(model: Instance, joints: any?, frame: CFrame?)
 		if d:IsA("Bone") or d:IsA("Motor6D") then found[d.Name] = d end
 	end
 	local base = frame or (if model:IsA("Model") then (model :: Model):GetPivot() else CFrame.identity)
-	self.joints = {}; self.rest = {}; self.neutral = {}; self.parentNeutral = {}
+	self.joints = {}; self.rest = {}; self.neutral = {}; self.parentNeutral = {}; self.axis = {}; self.hands = {}
 	if joints then
 		local byBone = {}
 		for name, j in joints do byBone[j.bone] = j end
 		for name, j in joints do
 			local inst = found[j.bone]
 			if inst then
-				self.joints[name] = inst; self.neutral[name] = j.neutral
+				self.joints[name] = inst; self.neutral[name] = j.neutral; self.axis[name] = j.axis
 				self.parentNeutral[name] = if j.parent and byBone[j.parent] then byBone[j.parent].neutral else nil
 			else
 				warn("RigAnimator: 뼈를 찾지 못했다 " .. j.bone)
@@ -72,6 +72,11 @@ function RigAnimator.new(model: Instance, joints: any?, frame: CFrame?)
 	self.pose = {}; self.poseB = {}; self.mixed = {}
 	self.time = 0; self.clip = nil; self.prev = nil; self.prevTime = 0; self.fade = 0; self.fadeLen = 0.2
 	return self
+end
+
+-- 손 모양을 정한다(사람 뼈대만). side = "L" | "R", handPose = hand_poses.json의 한 항목(예: grip_pistol). nil이면 푼다.
+function RigAnimator:setHand(side: string, handPose, weight: number?)
+	self.hands[side] = if handPose then {pose = handPose, weight = weight or 1} else nil
 end
 
 -- 클립을 바꾼다. fade초 동안 이전 동작과 섞는다.
@@ -95,9 +100,10 @@ function RigAnimator:update(dt: number, moveSpeed: number?)
 		table.clear(self.mixed)
 		pose = AnimSampler.blend(old, pose, 1 - self.fade / self.fadeLen, self.mixed)
 	end
+	for side, h in self.hands do AnimSampler.hand(pose, side, h.pose, h.weight) end
 	for name, joint in self.joints do
 		local dofs = pose[name]
-		local m = RigSolver.localRotation(name, dofs, self.parentNeutral[name], self.neutral[name])
+		local m = RigSolver.localRotation(name, dofs, self.parentNeutral[name], self.neutral[name], self.axis[name])
 		if name == "root" and dofs then m[10], m[11], m[12] = dofs.x or 0, dofs.y or 0, dofs.z or 0 end
 		-- 모델 기준 회전을 뼈 자신의 축으로 옮긴다: restᵀ · M · rest
 		local rest = self.rest[name]

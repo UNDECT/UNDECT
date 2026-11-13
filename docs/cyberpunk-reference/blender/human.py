@@ -55,11 +55,43 @@ PEOPLE = {
     "man_d": dict(role="거리 사람", gender=1.0, age=0.5, weight=0.44, muscle=0.50, height=0.5, race=(0.9, 0.1, 0.0), skin="young_asian_male", hair="short02", brow="eyebrow004",
                   clothes=["elvs_crude_t-shirt_male", "cortu_cargo_pants", "toigo_gloves_short"], shoes="toigo_ankle_boots_male",
                   tint={"elvs_crude_t-shirt_male": INK, "cortu_cargo_pants": OLIVE}, hair_tint=(0.85, 0.75, 0.15), cyber=["cheek", "ear", "neck"], glow="glow_amber"),
+    "woman_d": dict(role="거리 사람", gender=0.0, age=0.58, weight=0.50, muscle=0.40, height=0.58, race=(0.3, 0.6, 0.1), skin="middleage_caucasian_female", hair="long01", brow="eyebrow002",
+                    clothes=["toigo_female_suit_2"], shoes="toigo_ankle_boots_female", tint={"toigo_female_suit_2": WINE}, hair_tint=(0.75, 0.78, 0.85), cyber=["cheek", "ear"], glow="glow_cyan"),
+    "merchant": dict(role="상인", gender=1.0, age=0.74, weight=0.72, muscle=0.40, height=0.42, race=(0.6, 0.3, 0.1), skin="old_asian_male", hair="short04", brow="eyebrow007",
+                     clothes=["namuhekam_male_polo_shirt", "toigo_wool_pants", "jujube_newsboy_cap"], shoes="shoes05", tint={"namuhekam_male_polo_shirt": OLIVE, "toigo_wool_pants": INK, "jujube_newsboy_cap": CHAR},
+                     hair_tint=(0.6, 0.6, 0.62), cyber=["ear", "neck", "badge"], glow="glow_amber"),
     # 시술소 의사: 수술복 느낌의 청록 작업복 + 장갑 + 확대경 + 귀 장치 + 가슴 표지
     "doctor": dict(role="시술의", gender=1.0, age=0.7, weight=0.58, muscle=0.45, height=0.5, race=(0.7, 0.3, 0.0), skin="middleage_asian_male", hair="short04", brow="eyebrow008",
                    clothes=["male_casualsuit01", "toigo_gloves_short"], shoes="toigo_ankle_boots_male",
                    tint={"male_casualsuit01": TEAL}, cyber=["monocle", "ear", "neck", "badge"], glow="glow_cyan"),
 }
+
+# 1인칭 팔: 사람을 만든 뒤 팔만 남긴다. 소매+장갑, 맨팔 두 가지
+PEOPLE["fp_sleeve"] = dict(role="1인칭 팔(재킷 소매 + 장갑)", fp=True, gender=1.0, age=0.52, weight=0.50, muscle=0.60, height=0.60, race=(0.5, 0.4, 0.1), skin="young_caucasian_male", hair="short01", brow="eyebrow003",
+                           clothes=["male_casualsuit05", "toigo_gloves_short"], shoes="shoes04", tint={"male_casualsuit05": CHAR}, cyber=[], glow="glow_cyan")
+PEOPLE["fp_bare"] = dict(role="1인칭 팔(맨팔)", fp=True, gender=1.0, age=0.52, weight=0.50, muscle=0.65, height=0.60, race=(0.5, 0.4, 0.1), skin="young_caucasian_male", hair="short01", brow="eyebrow003",
+                         clothes=["elvs_crude_t-shirt_male", "cortu_cargo_pants"], shoes="shoes04", tint={"elvs_crude_t-shirt_male": INK}, cyber=[], glow="glow_cyan")
+ARM_BONES = ("upperarm_", "lowerarm_", "hand_", "index_", "middle_", "ring_", "pinky_", "thumb_")
+
+def keep_arms(rig):
+    """팔 뼈에 붙은 부분만 남기고 나머지 형상을 지운다. 눈 위치(카메라 자리)를 돌려준다."""
+    import bmesh
+    eyes = find(".high-poly"); bb = [eyes.matrix_world @ Vector(c) for c in eyes.bound_box]; eye = [round(sum(v[i] for v in bb) / 8, 4) for i in range(3)]
+    for ob in [o for o in bpy.context.scene.objects if o.type == "MESH"]:
+        arm = {g.index for g in ob.vertex_groups if g.name.startswith(ARM_BONES)}; bone = {g.index for g in ob.vertex_groups if g.name in rig.data.bones}
+        keep = set()
+        for v in ob.data.vertices:
+            wa = sum(g.weight for g in v.groups if g.group in arm); wt = sum(g.weight for g in v.groups if g.group in bone)
+            if wt > 0 and wa / wt > 0.5: keep.add(v.index)
+        if not keep: bpy.data.objects.remove(ob); continue
+        for m in [m for m in ob.modifiers if m.type == "MASK"]:   # 가림 마스크를 먼저 굳힌다
+            vg = ob.vertex_groups.get(m.vertex_group)
+            if vg: keep -= {v.index for v in ob.data.vertices if any(g.group == vg.index and g.weight > 0.5 for g in v.groups)} if m.invert_vertex_group else {v.index for v in ob.data.vertices if not any(g.group == vg.index and g.weight > 0.5 for g in v.groups)}
+            ob.modifiers.remove(m)
+        bm = bmesh.new(); bm.from_mesh(ob.data); bm.verts.ensure_lookup_table()
+        bmesh.ops.delete(bm, geom=[v for v in bm.verts if v.index not in keep], context="VERTS"); bm.to_mesh(ob.data); bm.free()
+        if not ob.data.vertices: bpy.data.objects.remove(ob)
+    return eye
 
 def tint(ob, color, strength=1.0, lift=1.0):
     """바탕색 텍스처를 흑백으로 만든 뒤, 평균 밝기가 color가 되도록 색을 입혀 새 그림으로 바꾼다(옷·머리 염색).
@@ -168,32 +200,46 @@ def aim(rig, bone, d):
 
 # 의미 관절(anim.py) -> 이 뼈대의 뼈
 SEM = [("waist", "spine_01"), ("neck", "neck_01")] + [(f"{j}_{S}", f"{b}_{c}") for S, c in (("L", "l"), ("R", "r"))
-       for j, b in (("hip", "thigh"), ("knee", "calf"), ("ankle", "foot"), ("shoulder", "upperarm"), ("elbow", "lowerarm"))]
+       for j, b in (("hip", "thigh"), ("knee", "calf"), ("ankle", "foot"), ("shoulder", "upperarm"), ("elbow", "lowerarm"), ("wrist", "hand"))]
+FINGERS = ("thumb", "index", "middle", "ring", "pinky")
 
 def rig_joints(rig):
-    """의미 관절 대응표. 이 뼈대의 기본 자세는 팔을 벌린 자세라서, 팔을 내린 '중립 자세'까지의 회전(neutral)도 같이 적는다."""
+    """의미 관절 대응표. 이 뼈대의 기본 자세는 팔을 벌린 자세라서, 팔을 내린 '중립 자세'까지의 회전(neutral)도 같이 적는다.
+    손가락 관절(index_L_1 ...)은 curl 한 가지로만 움직인다. axis = 중립 자세에서 그 마디가 손바닥 쪽으로 굽는 축."""
     for pb in rig.pose.bones: pb.matrix_basis = Matrix.Identity(4)
     bpy.context.view_layer.update(); rest = {b.name: b.matrix_local.copy() for b in rig.data.bones}
     for side, sg in (("l", 1), ("r", -1)):
         aim(rig, "upperarm_" + side, (sg * 0.10, 0.0, -1)); aim(rig, "lowerarm_" + side, (sg * 0.07, -0.03, -1))
-    bpy.context.view_layer.update(); driven = {b for _, b in SEM}
+    bpy.context.view_layer.update(); driven = {b for _, b in SEM} | {f"{f}_0{k}_{c}" for f in FINGERS for k in (1, 2, 3) for c in "lr"}
     def anc(bone):
         p = rig.data.bones[bone].parent
         while p and p.name not in driven and p.name != "pelvis": p = p.parent
         return p.name if p else "pelvis"
     joints = {"root": {"bone": "pelvis", "pos": [round(v, 5) for v in rest["pelvis"].translation]}}
-    for j, b in SEM:
+    def add(j, b, axis=None):
         N = (rig.pose.bones[b].matrix @ rest[b].inverted()).to_3x3()
         joints[j] = {"bone": b, "parent": anc(b), "pos": [round(v, 5) for v in rest[b].translation], "neutral": [round(N[r][c], 6) for r in range(3) for c in range(3)]}
+        if axis is not None: joints[j]["axis"] = [round(v, 5) for v in (N @ axis).normalized()]
+    for j, b in SEM: add(j, b)
+    H = lambda n: rig.data.bones[n].head_local.copy(); D = lambda n: (rig.data.bones[n].tail_local - rig.data.bones[n].head_local).normalized()
+    for S, c in (("L", "l"), ("R", "r")):
+        n = (H("index_01_" + c) - H("hand_" + c)).cross(H("pinky_01_" + c) - H("hand_" + c)).normalized()
+        if n.dot(H("thumb_02_" + c) - H("hand_" + c)) < 0: n = -n          # n = 손바닥이 보는 쪽
+        for f in FINGERS:
+            for k in (1, 2, 3):
+                b = f"{f}_0{k}_{c}"; d = D(b)
+                v = (H("index_01_" + c) - H("thumb_01_" + c)).normalized() + n * 0.6 if f == "thumb" else n   # 엄지는 검지 뿌리 쪽으로 굽는다
+                add(f"{f}_{S}_{k}", b, d.cross(v).normalized())
     for pb in rig.pose.bones: pb.matrix_basis = Matrix.Identity(4)
     bpy.context.view_layer.update()
     return joints, rest
 
-def jrot(joint, d):
-    side = 1 if joint.endswith("_L") else -1
+def jrot(joint, d, axis=None):
+    side = 1 if "_L" in joint else -1
     rz = d.get("yaw", 0.0); rx = d.get("pitch", 0.0) - d.get("flex", 0.0) - d.get("dorsi", 0.0) + d.get("bend", 0.0) * (1 if joint.startswith("knee") else -1)
     ry = d.get("roll", 0.0) - d.get("abduct", 0.0) * side
-    return Matrix.Rotation(radians(rz), 4, "Z") @ Matrix.Rotation(radians(rx), 4, "X") @ Matrix.Rotation(radians(ry), 4, "Y")
+    R = Matrix.Rotation(radians(rz), 4, "Z") @ Matrix.Rotation(radians(rx), 4, "X") @ Matrix.Rotation(radians(ry), 4, "Y")
+    return Matrix.Rotation(radians(d.get("curl", 0.0)), 4, Vector(axis)) @ R if axis else R
 
 def solve(joints, pose):
     """자세 {"hip_L.flex": 20, ...} -> 뼈 이름별 변환(기본 자세 기준, 세계 좌표). runtime/RigSolver.luau와 같은 계산."""
@@ -206,8 +252,13 @@ def solve(joints, pose):
     while pend:
         for j in [j for j in pend if joints[j]["parent"] in D]:
             J = joints[j]; n = J["neutral"]; Nj = Matrix((n[0:3], n[3:6], n[6:9])).to_4x4(); q = Vector(J["pos"])
-            D[J["bone"]] = D[J["parent"]] @ TR(q) @ N[J["parent"]].inverted() @ jrot(j, by.get(j, {})) @ Nj @ TR(-q); N[J["bone"]] = Nj; pend.remove(j)
+            D[J["bone"]] = D[J["parent"]] @ TR(q) @ N[J["parent"]].inverted() @ jrot(j, by.get(j, {}), J.get("axis")) @ Nj @ TR(-q); N[J["bone"]] = Nj; pend.remove(j)
     return D
+
+def hand_pose(name, sides="LR"):
+    """out/anim/hand_poses.json의 손 모양을 자세 표로 바꾼다."""
+    hp = json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "out", "anim", "hand_poses.json")))[name]
+    return {f"{f}_{S}_{k + 1}.curl": a for S in sides for f, v in hp.items() for k, a in enumerate(v)}
 
 def apply_pose(rig, joints, rest, pose):
     D = solve(joints, pose)
@@ -255,7 +306,7 @@ def build(name):
     made = cyberware(sp, base, rig)
     return base, rig, made
 
-def export(name, base, rig, made, sp, joints):
+def export(name, base, rig, made, sp, joints, extra=None):
     for pb in rig.pose.bones: pb.matrix_basis = Matrix.Identity(4)
     bpy.context.view_layer.update()
     for im in bpy.data.images:   # 게임용: 텍스처는 1024까지
@@ -273,6 +324,7 @@ def export(name, base, rig, made, sp, joints):
            "attach": {"cyber_head": "head", "cyber_neck": "neck_01", "cyber_chest": "spine_03", "hand_R": "hand_r", "hand_L": "hand_l"},
            "assets_cc0": [sp["skin"], sp["hair"], sp["brow"], sp["shoes"]] + sp["clothes"] + ["high-poly", "eyelashes01", "teeth_base"],
            "tint": {k: list(v) for k, v in sp.get("tint", {}).items()}, "hair_tint": list(sp["hair_tint"]) if sp.get("hair_tint") else None}
+    man.update(extra or {})
     json.dump(man, open(os.path.join(d, f"human_{name}.manifest.json"), "w"), indent=1, ensure_ascii=False)
     print(f"EXPORT human_{name} tris={man['triangles']} meshes={len(tris)} cyber={len(made)} h={man['height']}", flush=True)
 
@@ -284,25 +336,39 @@ def golden(joints, clips_dir):
         for t in (0.0, 0.21, cl["duration"] * 0.6):
             D = solve(joints, sample(cl, t))
             cases.append({"clip": cn, "t": round(t, 5), "parts": {b: [round(m[r][c], 6) for r in range(3) for c in range(3)] + [round(m[r][3], 6) for r in range(3)] for b, m in D.items()}})
-    json.dump({"manifest": {"joints": joints}, "cases": cases}, open(os.path.join(clips_dir, "_golden_human.json"), "w"), separators=(",", ":"))
+    hp = dict(sample(json.load(open(os.path.join(clips_dir, "walk.json"))), 0.3)); hp.update(hand_pose("grip_pistol", "R")); hp.update(hand_pose("fist", "L")); hp["wrist_R.flex"] = 20
+    D = solve(joints, hp); hand_case = {"pose": hp, "parts": {b: [round(m[r][c], 6) for r in range(3) for c in range(3)] + [round(m[r][3], 6) for r in range(3)] for b, m in D.items()}}
+    json.dump({"manifest": {"joints": joints}, "cases": cases, "hand_case": hand_case}, open(os.path.join(clips_dir, "_golden_human.json"), "w"), separators=(",", ":"))
     print("GOLDEN human", len(cases))
 
 if __name__ == "__main__":
     os.makedirs(OUT, exist_ok=True); clips = os.path.join(os.path.dirname(os.path.abspath(__file__)), "out", "anim")
     for name in PEOPLE:
-        if ONLY and name not in ONLY: continue
-        base, rig, made = build(name); joints, rest = rig_joints(rig)
-        if RENDER:
+        if (ONLY and name not in ONLY) or (not ONLY and PEOPLE[name].get("fp") and os.environ.get("HUMAN_SKIP_FP")): continue
+        base, rig, made = build(name); joints, rest = rig_joints(rig); sp = PEOPLE[name]; extra = {}
+        res = tuple(int(c) for c in os.environ.get("HUMAN_RES", "800,1200").split(","))
+        if sp.get("fp"):
+            extra["eye"] = keep_arms(rig); base = next(o for o in bpy.context.scene.objects if o.type == "MESH")
+            if RENDER:
+                pose = {"shoulder_L.flex": 62, "shoulder_R.flex": 62, "shoulder_L.abduct": -4, "shoulder_R.abduct": -4, "elbow_L.bend": 46, "elbow_R.bend": 46}
+                pose.update(hand_pose("grip_pistol", "R")); pose.update(hand_pose("relaxed", "L")); apply_pose(rig, joints, rest, pose)
+                e = extra["eye"]; kit.studio((0, -0.35, 1.25), 0.7, floor_z=0.6)
+                kit.shot(os.path.join(OUT, f"{name}_view.png"), (e[0], e[1] + 0.06, e[2] + 0.02), (0, -0.60, 1.20), 20, res=(res[1], res[0]))
+                kit.shot(os.path.join(OUT, f"{name}.png"), (-1.55, -1.95, 1.95), (0, -0.32, 1.22), 60, res=(res[1], res[0]))
+        elif RENDER:
             apply_pose(rig, joints, rest, STAND); kit.studio((0, 0, 0.9), 1.0)
-            res = tuple(int(c) for c in os.environ.get("HUMAN_RES", "800,1200").split(","))
             kit.shot(os.path.join(OUT, f"human_{name}.png"), (-1.5, -4.3, 1.45), (0, 0, 0.90), 70, res=res)
             hz = (rig.matrix_world @ rig.pose.bones["head"].head).z + 0.09
             fill = kit.area("face_fill", (-0.5, -1.6, hz + 0.25), (0, 0, hz), 0.8, 26, (1.0, 0.95, 0.9))
             kit.shot(os.path.join(OUT, f"human_{name}_face.png"), (-0.42, -1.05, hz + 0.03), (0, -0.02, hz), 85, res=(res[0], res[0]))
-            if os.environ.get("HUMAN_WALK"):   # 걷기 클립이 이 뼈대에서 제대로 도는지 확인하는 연속 사진
-                cl = json.load(open(os.path.join(clips, "walk.json"))); bpy.data.objects.remove(fill)
-                for i in range(6):
-                    apply_pose(rig, joints, rest, sample(cl, cl["duration"] * i / 6)); kit.shot(os.path.join(OUT, f"_walk_{name}_{i}.png"), (-2.6, -4.6, 1.3), (0, 0, 0.95), 60, res=(330, 560))
-            for o in [o for o in kit.COL.objects if o.type == "LIGHT" or o.name == "stage_floor"]: bpy.data.objects.remove(o)
-        export(name, base, rig, made, PEOPLE[name], joints)
+            strips = os.environ.get("HUMAN_STRIPS", "walk" if os.environ.get("HUMAN_WALK") else "")   # 클립이 이 뼈대에서 제대로 도는지 확인하는 연속 사진
+            if strips:
+                bpy.data.objects.remove(fill)
+                for cn in strips.split(","):
+                    cl = json.load(open(os.path.join(clips, cn + ".json")))
+                    for i in range(6):
+                        apply_pose(rig, joints, rest, sample(cl, cl["duration"] * i / (6 if cl["loop"] else 5)))
+                        kit.shot(os.path.join(OUT, f"_{cn}_{name}_{i}.png"), (-2.9, -4.4, 1.3), (0, 0.1, 0.80), 60, res=(330, 560))
+        for o in [o for o in kit.COL.objects if o.type == "LIGHT" or o.name == "stage_floor"]: bpy.data.objects.remove(o)
+        export(name, base, rig, made, sp, joints, extra)
         if name == "man_a": golden(joints, clips)

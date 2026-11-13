@@ -25,7 +25,7 @@ local function rotZ(deg) local c, s = math.cos(rad(deg)), math.sin(rad(deg)); re
 -- 한 관절의 회전(이동 없음). 규칙은 anim.py와 같다: Rz(yaw) · Rx(pitch - flex - dorsi ± bend) · Ry(roll - abduct·side)
 function RigSolver.jointRotation(joint: string, dofs)
 	if not dofs then return {1,0,0, 0,1,0, 0,0,1, 0,0,0} end
-	local side = if string.sub(joint, -2) == "_L" then 1 else -1
+	local side = if string.find(joint, "_L", 1, true) then 1 else -1
 	local rz = dofs.yaw or 0
 	local rx = (dofs.pitch or 0) - (dofs.flex or 0) - (dofs.dorsi or 0)
 	rx += (dofs.bend or 0) * (if string.sub(joint, 1, 4) == "knee" then 1 else -1)
@@ -40,14 +40,22 @@ local function about(R, p)
 		x - (R[1]*x + R[2]*y + R[3]*z), y - (R[4]*x + R[5]*y + R[6]*z), z - (R[7]*x + R[8]*y + R[9]*z)}
 end
 
+local function axisAngle(a, deg)
+	local x, y, z = a[1], a[2], a[3]
+	local c, s = math.cos(rad(deg)), math.sin(rad(deg)); local t = 1 - c
+	return {t*x*x + c, t*x*y - s*z, t*x*z + s*y,  t*x*y + s*z, t*y*y + c, t*y*z - s*x,  t*x*z - s*y, t*y*z + s*x, t*z*z + c,  0, 0, 0}
+end
+
 local function transpose(m) return {m[1],m[4],m[7], m[2],m[5],m[8], m[3],m[6],m[9], 0,0,0} end
 local IDENT = {1,0,0, 0,1,0, 0,0,1, 0,0,0}
 
 -- 뼈대가 있는 모델(사람)용. 기본 자세가 중립 자세(팔을 내린 자세)와 다를 때 쓴다.
 -- neutral = 그 뼈가 기본 자세에서 중립 자세까지 돈 회전(누적), parentNeutral = 부모 관절의 같은 값.
 -- 돌려주는 값은 부모 기준 회전이다: Nₚᵀ · R · N
-function RigSolver.localRotation(joint: string, dofs, parentNeutral, neutral)
+-- axis가 있으면(손가락 마디) 그 축으로 dofs.curl만큼 더 돈다.
+function RigSolver.localRotation(joint: string, dofs, parentNeutral, neutral, axis)
 	local R = RigSolver.jointRotation(joint, dofs)
+	if axis and dofs and dofs.curl then R = mul(axisAngle(axis, dofs.curl), R) end
 	if not neutral then return R end
 	local n = {neutral[1],neutral[2],neutral[3], neutral[4],neutral[5],neutral[6], neutral[7],neutral[8],neutral[9], 0,0,0}
 	return mul(mul(transpose(parentNeutral or IDENT), R), n)
@@ -63,7 +71,7 @@ function RigSolver.fromManifest(manifest, rootPart: string?, rootHeight: number?
 		rig.root = manifest.joints.root.bone; rig.rootPivot = manifest.joints.root.pos
 		for name, j in manifest.joints do
 			if name ~= "root" then
-				table.insert(pending, {name = name, parent = j.parent, child = j.bone, pos = j.pos, neutral = j.neutral}); rig.neutral[j.bone] = j.neutral
+				table.insert(pending, {name = name, parent = j.parent, child = j.bone, pos = j.pos, neutral = j.neutral, axis = j.axis}); rig.neutral[j.bone] = j.neutral
 			end
 		end
 	else
@@ -94,7 +102,7 @@ function RigSolver.solve(rig, pose)
 	R[10] += r.x or 0; R[11] += r.y or 0; R[12] += r.z or 0
 	local D = {[rig.root] = R}
 	for _, j in rig.joints do
-		D[j.child] = mul(D[j.parent], about(RigSolver.localRotation(j.name, pose[j.name], rig.neutral[j.parent], j.neutral), j.pos))
+		D[j.child] = mul(D[j.parent], about(RigSolver.localRotation(j.name, pose[j.name], rig.neutral[j.parent], j.neutral, j.axis), j.pos))
 	end
 	return D
 end

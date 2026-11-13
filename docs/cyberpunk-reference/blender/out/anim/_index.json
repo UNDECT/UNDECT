@@ -287,6 +287,974 @@
      "charged"
     ]
    ]
+  },
+  {
+   "name": "lmg_fire",
+   "rig": "weapon",
+   "duration": 0.075,
+   "loop": true,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "muzzle"
+    ],
+    [
+     0.02,
+     "eject"
+    ]
+   ]
+  },
+  {
+   "name": "lmg_reload",
+   "rig": "weapon",
+   "duration": 3.4,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.25,
+     "cover_open"
+    ],
+    [
+     0.75,
+     "mag_out"
+    ],
+    [
+     2.1,
+     "mag_in"
+    ],
+    [
+     2.75,
+     "cover_close"
+    ],
+    [
+     3.15,
+     "chamber"
+    ]
+   ]
+  },
+  {
+   "name": "break_reload",
+   "rig": "weapon",
+   "duration": 2.0,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.2,
+     "open"
+    ],
+    [
+     0.45,
+     "eject"
+    ],
+    [
+     1.0,
+     "shell_in"
+    ],
+    [
+     1.25,
+     "shell_in"
+    ],
+    [
+     1.7,
+     "close"
+    ]
+   ]
+  },
+  {
+   "name": "double_fire",
+   "rig": "weapon",
+   "duration": 0.14,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "muzzle"
+    ]
+   ]
+  },
+  {
+   "name": "grenade_prime",
+   "rig": "weapon",
+   "duration": 0.5,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.2,
+     "pin"
+    ],
+    [
+     0.4,
+     "lever"
+    ]
+   ]
+  },
+  {
+   "name": "baton_arc",
+   "rig": "weapon",
+   "duration": 0.6,
+   "loop": true,
+   "speed": 0.0,
+   "events": []
+  },
+  {
+   "name": "hammer_thrust",
+   "rig": "weapon",
+   "duration": 0.35,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "thrust"
+    ]
+   ]
+  },
+  {
+   "name": "knuckle_impact",
+   "rig": "weapon",
+   "duration": 0.3,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "impact"
+    ]
+   ]
+  },
+  {
+   "name": "sit_down",
+   "rig": "humanoid",
+   "duration": 1.1,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.9,
+     "seat"
+    ]
+   ]
+  },
+  {
+   "name": "sit_loop",
+   "rig": "humanoid",
+   "duration": 5.0,
+   "loop": true,
+   "speed": 0.0,
+   "events": []
+  },
+  {
+   "name": "stand_up",
+   "rig": "humanoid",
+   "duration": 1.0,
+   "loop": false,
+   "speed": 0.0,
+   "events": []
+  },
+  {
+   "name": "knockdown",
+   "rig": "humanoid",
+   "duration": 0.9,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.62,
+     "body_fall"
+    ]
+   ]
+  },
+  {
+   "name": "lie_loop",
+   "rig": "humanoid",
+   "duration": 3.0,
+   "loop": true,
+   "speed": 0.0,
+   "events": []
+  },
+  {
+   "name": "get_up",
+   "rig": "humanoid",
+   "duration": 1.6,
+   "loop": false,
+   "speed": 0.0,
+   "events": []
+  },
+  {
+   "name": "collapse",
+   "rig": "humanoid",
+   "duration": 0.8,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.6,
+     "body_fall"
+    ]
+   ]
+  },
+  {
+   "name": "aim_pistol",
+   "rig": "humanoid",
+   "duration": 2.4,
+   "loop": true,
+   "speed": 0.0,
+   "events": []
+  },
+  {
+   "name": "aim_rifle",
+   "rig": "humanoid",
+   "duration": 2.4,
+   "loop": true,
+   "speed": 0.0,
+   "events": []
+  },
+  {
+   "name": "low_ready",
+   "rig": "humanoid",
+   "duration": 3.0,
+   "loop": true,
+   "speed": 0.0,
+   "events": []
+  },
+  {
+   "name": "fire_pistol_3p",
+   "rig": "humanoid",
+   "duration": 0.18,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "shot"
+    ]
+   ]
+  },
+  {
+   "name": "fire_rifle_3p",
+   "rig": "humanoid",
+   "duration": 0.11,
+   "loop": true,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "shot"
+    ]
+   ]
+  },
+  {
+   "name": "melee_slash",
+   "rig": "humanoid",
+   "duration": 0.62,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.14,
+     "swing"
+    ],
+    [
+     0.27,
+     "hit"
+    ]
+   ]
+  },
+  {
+   "name": "melee_stab",
+   "rig": "humanoid",
+   "duration": 0.52,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.12,
+     "swing"
+    ],
+    [
+     0.24,
+     "hit"
+    ]
+   ]
+  },
+  {
+   "name": "melee_heavy",
+   "rig": "humanoid",
+   "duration": 1.05,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.4,
+     "swing"
+    ],
+    [
+     0.6,
+     "hit"
+    ]
+   ]
+  },
+  {
+   "name": "punch",
+   "rig": "humanoid",
+   "duration": 0.42,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.1,
+     "swing"
+    ],
+    [
+     0.2,
+     "hit"
+    ]
+   ]
+  },
+  {
+   "name": "throw",
+   "rig": "humanoid",
+   "duration": 0.9,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.5,
+     "release"
+    ]
+   ]
+  },
+  {
+   "name": "fp_idle",
+   "rig": "fp",
+   "duration": 4.0,
+   "loop": true,
+   "speed": 0.0,
+   "events": []
+  },
+  {
+   "name": "fp_raise_light",
+   "rig": "fp",
+   "duration": 0.3,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "draw"
+    ]
+   ]
+  },
+  {
+   "name": "fp_raise_heavy",
+   "rig": "fp",
+   "duration": 0.6,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "draw"
+    ]
+   ]
+  },
+  {
+   "name": "fp_lower",
+   "rig": "fp",
+   "duration": 0.25,
+   "loop": false,
+   "speed": 0.0,
+   "events": []
+  },
+  {
+   "name": "fp_recoil_pistol",
+   "rig": "fp",
+   "duration": 0.22,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "shot"
+    ]
+   ]
+  },
+  {
+   "name": "fp_recoil_revolver",
+   "rig": "fp",
+   "duration": 0.34,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "shot"
+    ]
+   ]
+  },
+  {
+   "name": "fp_recoil_auto",
+   "rig": "fp",
+   "duration": 0.12,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "shot"
+    ]
+   ]
+  },
+  {
+   "name": "fp_recoil_lmg",
+   "rig": "fp",
+   "duration": 0.11,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "shot"
+    ]
+   ]
+  },
+  {
+   "name": "fp_recoil_shotgun",
+   "rig": "fp",
+   "duration": 0.42,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "shot"
+    ]
+   ]
+  },
+  {
+   "name": "fp_recoil_sniper",
+   "rig": "fp",
+   "duration": 0.6,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "shot"
+    ]
+   ]
+  },
+  {
+   "name": "fp_reload",
+   "rig": "fp",
+   "duration": 1.6,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.05,
+     "mag_out"
+    ],
+    [
+     1.0,
+     "mag_in"
+    ],
+    [
+     1.35,
+     "chamber"
+    ]
+   ]
+  },
+  {
+   "name": "fp_ads_in",
+   "rig": "fp",
+   "duration": 0.18,
+   "loop": false,
+   "speed": 0.0,
+   "events": []
+  },
+  {
+   "name": "fp_ads_out",
+   "rig": "fp",
+   "duration": 0.16,
+   "loop": false,
+   "speed": 0.0,
+   "events": []
+  },
+  {
+   "name": "fp_slash",
+   "rig": "fp",
+   "duration": 0.62,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.14,
+     "swing"
+    ],
+    [
+     0.27,
+     "hit"
+    ]
+   ]
+  },
+  {
+   "name": "fp_stab",
+   "rig": "fp",
+   "duration": 0.52,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.12,
+     "swing"
+    ],
+    [
+     0.22,
+     "hit"
+    ]
+   ]
+  },
+  {
+   "name": "fp_punch",
+   "rig": "fp",
+   "duration": 0.42,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.08,
+     "swing"
+    ],
+    [
+     0.17,
+     "hit"
+    ]
+   ]
+  },
+  {
+   "name": "fp_heavy",
+   "rig": "fp",
+   "duration": 1.05,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.4,
+     "swing"
+    ],
+    [
+     0.6,
+     "hit"
+    ]
+   ]
+  },
+  {
+   "name": "fp_throw",
+   "rig": "fp",
+   "duration": 0.9,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.48,
+     "release"
+    ]
+   ]
+  },
+  {
+   "name": "fp_inspect",
+   "rig": "fp",
+   "duration": 3.0,
+   "loop": false,
+   "speed": 0.0,
+   "events": []
+  },
+  {
+   "name": "fp_sprint",
+   "rig": "fp",
+   "duration": 1.0,
+   "loop": true,
+   "speed": 0.0,
+   "events": []
+  },
+  {
+   "name": "fp_land",
+   "rig": "fp",
+   "duration": 0.35,
+   "loop": false,
+   "speed": 0.0,
+   "events": []
+  },
+  {
+   "name": "blade_deploy",
+   "rig": "cyberarm",
+   "duration": 0.38,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "open"
+    ],
+    [
+     0.14,
+     "blade_out"
+    ],
+    [
+     0.34,
+     "lock"
+    ]
+   ]
+  },
+  {
+   "name": "blade_retract",
+   "rig": "cyberarm",
+   "duration": 0.32,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "blade_in"
+    ],
+    [
+     0.2,
+     "close"
+    ]
+   ]
+  },
+  {
+   "name": "power_charge",
+   "rig": "cyberarm",
+   "duration": 0.45,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "charge"
+    ],
+    [
+     0.45,
+     "ready"
+    ]
+   ]
+  },
+  {
+   "name": "power_release",
+   "rig": "cyberarm",
+   "duration": 0.3,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "impact"
+    ]
+   ]
+  },
+  {
+   "name": "wire_deploy",
+   "rig": "cyberarm",
+   "duration": 0.35,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "open"
+    ],
+    [
+     0.1,
+     "wire_out"
+    ]
+   ]
+  },
+  {
+   "name": "wire_retract",
+   "rig": "cyberarm",
+   "duration": 0.3,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "wire_in"
+    ],
+    [
+     0.2,
+     "close"
+    ]
+   ]
+  },
+  {
+   "name": "launcher_deploy",
+   "rig": "cyberarm",
+   "duration": 0.4,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "open"
+    ],
+    [
+     0.16,
+     "tube_up"
+    ],
+    [
+     0.38,
+     "lock"
+    ]
+   ]
+  },
+  {
+   "name": "launcher_fire",
+   "rig": "cyberarm",
+   "duration": 0.5,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "muzzle"
+    ],
+    [
+     0.0,
+     "backblast"
+    ]
+   ]
+  },
+  {
+   "name": "launcher_retract",
+   "rig": "cyberarm",
+   "duration": 0.36,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "tube_down"
+    ],
+    [
+     0.18,
+     "close"
+    ]
+   ]
+  },
+  {
+   "name": "drone_hover",
+   "rig": "machine",
+   "duration": 3.0,
+   "loop": true,
+   "speed": 0.0,
+   "events": []
+  },
+  {
+   "name": "drone_alert",
+   "rig": "machine",
+   "duration": 0.4,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "alert"
+    ]
+   ]
+  },
+  {
+   "name": "drone_fire",
+   "rig": "machine",
+   "duration": 0.1,
+   "loop": true,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "muzzle"
+    ]
+   ]
+  },
+  {
+   "name": "drone_crash",
+   "rig": "machine",
+   "duration": 1.2,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "disabled"
+    ],
+    [
+     1.2,
+     "impact"
+    ]
+   ]
+  },
+  {
+   "name": "turret_scan",
+   "rig": "machine",
+   "duration": 6.0,
+   "loop": true,
+   "speed": 0.0,
+   "events": []
+  },
+  {
+   "name": "turret_alert",
+   "rig": "machine",
+   "duration": 0.35,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "alert"
+    ]
+   ]
+  },
+  {
+   "name": "turret_fire",
+   "rig": "machine",
+   "duration": 0.09,
+   "loop": true,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "muzzle"
+    ],
+    [
+     0.02,
+     "eject"
+    ]
+   ]
+  },
+  {
+   "name": "turret_shutdown",
+   "rig": "machine",
+   "duration": 1.0,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "disabled"
+    ]
+   ]
+  },
+  {
+   "name": "camera_sweep",
+   "rig": "machine",
+   "duration": 8.0,
+   "loop": true,
+   "speed": 0.0,
+   "events": []
+  },
+  {
+   "name": "camera_alert",
+   "rig": "machine",
+   "duration": 0.3,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "alert"
+    ]
+   ]
+  },
+  {
+   "name": "camera_disabled",
+   "rig": "machine",
+   "duration": 0.8,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "disabled"
+    ]
+   ]
+  },
+  {
+   "name": "chair_recline",
+   "rig": "clinic",
+   "duration": 1.6,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "motor"
+    ],
+    [
+     1.5,
+     "lock"
+    ]
+   ]
+  },
+  {
+   "name": "chair_release",
+   "rig": "clinic",
+   "duration": 1.4,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "motor"
+    ]
+   ]
+  },
+  {
+   "name": "surgery_loop",
+   "rig": "clinic",
+   "duration": 6.0,
+   "loop": true,
+   "speed": 0.0,
+   "events": [
+    [
+     0.5,
+     "laser"
+    ],
+    [
+     1.6,
+     "servo"
+    ],
+    [
+     2.9,
+     "laser"
+    ],
+    [
+     4.2,
+     "servo"
+    ]
+   ]
+  },
+  {
+   "name": "surgery_start",
+   "rig": "clinic",
+   "duration": 1.2,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "servo"
+    ],
+    [
+     0.3,
+     "light_on"
+    ]
+   ]
   }
  ]
 }

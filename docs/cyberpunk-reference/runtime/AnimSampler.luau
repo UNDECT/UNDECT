@@ -68,4 +68,19 @@ function AnimSampler.advanceBySpeed(clip, t: number, dt: number, moveSpeed: numb
 	return t + dt
 end
 
+-- 손 모양(hand_poses.json의 한 항목)을 자세에 더한다. side = "L" 또는 "R". 손가락 관절 이름은 index_R_1 같은 꼴이다.
+-- weight로 두 손 모양 사이를 섞을 수 있다(0 = 편 손, 1 = 그 모양).
+function AnimSampler.hand(pose, side: string, handPose, weight: number?)
+	local w = weight or 1
+	for finger, curls in handPose do
+		for k, deg in curls do
+			local name = finger .. "_" .. side .. "_" .. k
+			local d = pose[name]
+			if not d then d = {}; pose[name] = d end
+			d.curl = deg * w
+		end
+	end
+	return pose
+end
+
 return AnimSampler

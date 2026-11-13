@@ -27,6 +27,7 @@ for _, g in load("_golden_samples") do
 	end
 end
 check("sampler matches golden values", worst < 1e-4, worst)
+for _, n in {"get_up", "melee_slash", "fp_recoil_shotgun", "knockdown"} do clips[n] = clips[n] or load(n) end
 
 -- 2. 이벤트: 걷기 2.2초 동안 발 디딤 4번, 순서는 R L R L
 local ev = AnimSampler.events(clips.walk, 0, 2.2)
@@ -55,7 +56,7 @@ check("rig solver matches Blender matrices", worst < 1e-4, worst)
 -- 3-1. 사람 뼈대(기본 자세가 팔을 벌린 자세)에서도 Blender 값과 같은가
 local gh = load("_golden_human")
 local hrig = RigSolver.fromManifest(gh.manifest)
-check("human rig maps every joint", #hrig.joints == 12 and hrig.root == "pelvis", #hrig.joints)
+check("human rig maps every joint", #hrig.joints == 44 and hrig.root == "pelvis", #hrig.joints)
 worst = 0
 local n = 0
 for _, c in gh.cases do
@@ -66,6 +67,37 @@ for _, c in gh.cases do
 	end
 end
 check("human rig solver matches Blender matrices", n > 100 and worst < 1e-4, worst)
+do  -- 손 모양(손가락 굽힘)과 손목까지 Blender 값과 같은가
+	local pose = {}
+	for k, v in gh.hand_case.pose do
+		local j, d = string.match(k, "^(.-)%.(.+)$")
+		if not pose[j] then pose[j] = {} end
+		pose[j][d] = v
+	end
+	local D = RigSolver.solve(hrig, pose)
+	local w, cnt = 0, 0
+	for part, want in gh.hand_case.parts do
+		cnt += 1
+		for i = 1, 12 do w = math.max(w, math.abs((D[part] or {})[i] - want[i])) end
+	end
+	check("human fingers and wrist match Blender matrices", cnt > 40 and w < 1e-4, w)
+	local hp = serde.decode("json", fs.readFile(CLIPS .. "hand_poses.json"))
+	local p2 = AnimSampler.hand({}, "R", hp.grip_pistol, 0.5)
+	check("hand pose fills finger joints", p2.index_R_1.curl == hp.grip_pistol.index[1] * 0.5 and p2.pinky_R_3.curl == hp.grip_pistol.pinky[3] * 0.5 and p2.index_L_1 == nil)
+end
+do  -- 새 클립: 넘어지면 골반이 바닥 가까이 내려가고, 일어나면 처음 자세로 돌아온다
+	local kd = AnimSampler.sample(clips.knockdown, clips.knockdown.duration)
+	check("knockdown ends lying on the ground", kd.root.z < -0.7 and kd.root.pitch < -80, kd.root.z)
+	local gu0, gu1 = AnimSampler.sample(clips.get_up, 0), AnimSampler.sample(clips.get_up, clips.get_up.duration)
+	check("get_up starts lying and ends standing", gu0.root.z < -0.7 and math.abs(gu1.root.z) < 1e-6 and math.abs(gu1.hip_L.flex) < 1e-6)
+	local ev = AnimSampler.events(clips.melee_slash, 0.2, 0.3)
+	check("melee slash emits hit event", #ev == 1 and ev[1] == "hit", #ev)
+	local n = 0
+	for _, c in load("_index").clips do n += 1 end
+	check("clip index lists every clip", n == 94, n)
+	local r = AnimSampler.sample(clips.fp_recoil_shotgun, 1 / 30)
+	check("first-person recoil kicks back and up", r.view.y > 0.03 and r.view.pitch > 4, r.view.y)
+end
 do  -- 중립 자세에서는 팔이 아래를 향해야 한다(어깨 -> 팔꿈치가 거의 수직)
 	local D = RigSolver.solve(hrig, {})
 	local J = gh.manifest.joints
