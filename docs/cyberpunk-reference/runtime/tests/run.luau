@@ -52,6 +52,30 @@ for _, c in gr.cases do
 end
 check("rig solver matches Blender matrices", worst < 1e-4, worst)
 
+-- 3-1. 사람 뼈대(기본 자세가 팔을 벌린 자세)에서도 Blender 값과 같은가
+local gh = load("_golden_human")
+local hrig = RigSolver.fromManifest(gh.manifest)
+check("human rig maps every joint", #hrig.joints == 12 and hrig.root == "pelvis", #hrig.joints)
+worst = 0
+local n = 0
+for _, c in gh.cases do
+	local D = RigSolver.solve(hrig, AnimSampler.sample(clips[c.clip], c.t))
+	for part, want in c.parts do
+		n += 1
+		for i = 1, 12 do worst = math.max(worst, math.abs((D[part] or {})[i] - want[i])) end
+	end
+end
+check("human rig solver matches Blender matrices", n > 100 and worst < 1e-4, worst)
+do  -- 중립 자세에서는 팔이 아래를 향해야 한다(어깨 -> 팔꿈치가 거의 수직)
+	local D = RigSolver.solve(hrig, {})
+	local J = gh.manifest.joints
+	local function at(m, p) return {m[1]*p[1]+m[2]*p[2]+m[3]*p[3]+m[10], m[4]*p[1]+m[5]*p[2]+m[6]*p[3]+m[11], m[7]*p[1]+m[8]*p[2]+m[9]*p[3]+m[12]} end
+	local sh, el = at(D[J.shoulder_L.parent], J.shoulder_L.pos), at(D[J.shoulder_L.bone], J.elbow_L.pos)
+	local dx, dy, dz = el[1] - sh[1], el[2] - sh[2], el[3] - sh[3]
+	local len = math.sqrt(dx*dx + dy*dy + dz*dz)
+	check("human neutral pose hangs the arms down", -dz / len > 0.98, -dz / len)
+end
+
 -- 4. 군중
 local function world()
 	return {

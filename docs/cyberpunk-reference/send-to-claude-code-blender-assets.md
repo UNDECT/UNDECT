@@ -31,6 +31,7 @@ git clone --depth 1 -b ccr-9e6cc8c3-bftdlm https://github.com/UNDECT/UNDECT.git 
 | 비행 차량 | `flying_car.py` | `flying_car/flying_car.{glb,blend,manifest.json}`, 사진 3장. 변형 `patrol`(보안 순찰), `cargo` | 약 1만 8천 | 부품 10(동체, 착륙 다리, 추진기 4, 팬 4) / 관절 8 |
 | 무기 8종 | `weapons.py` | `weapons/<이름>/<이름>.{glb,blend,manifest.json}`, 사진 각 1장 | 1천~1만 2천 | 권총, 리볼버, 기관단총, 돌격소총, 산탄총, 저격총, 장검, 단검. 움직이는 부품과 붙임점 기록 |
 | 거리 NPC 5종 | `npc.py` | `npc/<이름>/npc_<이름>.{glb,blend,manifest.json}`, 사진 각 1장 | 약 3만 5천 | 우비, 테크웨어, 작업자, 배달부, 회사원. 부품 11~13 / 관절 10~11 |
+| 맨얼굴 사람 8명 | `human.py` | `human/<이름>/human_<이름>.{glb,manifest.json}`, 사진 각 2장, `human_sheet.png`, `human_faces.png`, `human_walk_check.png` | 약 4만~4만 7천 | 거리 사람 4(`man_a`, `woman_a`, `woman_c`, `man_d`), 노동자(`man_b`), 회사원(`woman_b`), 임원(`man_c`), 시술의(`doctor`). 뼈 53개(스킨 메시) |
 | 사이버웨어 팔 | `cyber-arm/make_arm.py` | 사진 4장, `cyber_arm_closed.glb` | 약 5만 4천 | 부품 약 180개(문 4장, 칼날, 손가락 마디) |
 | 공용 도구 | `kit.py` | — | — | 재질, 형상, 관절 기록, 내보내기 |
 
@@ -38,6 +39,7 @@ git clone --depth 1 -b ccr-9e6cc8c3-bftdlm https://github.com/UNDECT/UNDECT.git 
 - `parts`: 게임에서 따로 움직이는 단위. 이름이 같은 부품끼리 한 메시로 합친다.
 - `pivots`: 관절. `pos`(m), `axis`, `parent`, `child`, `range`(도). 뼈를 여기에 단다.
 - `triangles_by_part`: 부품별 삼각형 수.
+- `joints`(사람만): 애니메이션 관절 이름 → 뼈 이름 대응표. `RigAnimator.new(model, manifest.joints)`에 그대로 넘긴다.
 - 좌표: 단위 m, 앞 = -Y, 위 = +Z. 로블록스로 옮길 때 1 m ≈ 3스터드 기준으로 맞추고, 로봇 키가 약 6.2~6.6스터드가 되게 한다.
 
 ## 3. 에셋마다 할 일 (기계적인 변환만)
@@ -103,11 +105,23 @@ git clone --depth 1 -b ccr-9e6cc8c3-bftdlm https://github.com/UNDECT/UNDECT.git 
 - 착륙 다리(`skid`)는 비행 중에 숨기거나 접는다.
 
 ### 거리 NPC → 스펙 `WLD-60~63` (C2 군중과 합침)
-- 얼굴을 가린 5종(우비+발광 우산, 테크웨어+헬멧, 작업자+안전모, 배달부+배달 상자, 회사원+모자·목도리)을 군중에 섞는다. C2에서 만든 맨얼굴 행인과 비율을 정해 같이 쓴다.
+- 얼굴을 가린 5종(우비+발광 우산, 테크웨어+헬멧, 작업자+안전모, 배달부+배달 상자, 회사원+모자·목도리)을 군중에 섞는다. 맨얼굴 사람(`human` 8명)과 비율을 정해 같이 쓴다.
 - 뼈 동작은 C2의 "코드가 뼈를 직접 움직이는 방식"을 그대로 쓴다. 부품과 관절 이름이 로봇과 같다(`thigh_L`, `shin_L`, `upperarm_L`, `forearm_L`, `head`, `torso`, `pelvis`).
 - 긴 옷자락(`skirt`)은 걸을 때 앞뒤로 조금 흔든다. 소품(`prop`: 우산, 공구함, 서류 가방)은 손에 붙어 있다.
 - 색과 발광색을 바꿔 변형을 늘린다(겉옷 색, 바지 색, 발광색은 `npc.py`의 `SPEC` 표를 본다).
-- 가까이서 보면 인형 같은 단순한 형태다. 가까운 거리에는 C2 행인을 우선 세우고, 이 5종은 중간·먼 거리 군중과 비 오는 밤 분위기용으로 쓴다.
+- 가까이서 보면 인형 같은 단순한 형태다. 가까운 거리에는 맨얼굴 사람(`human`)을 우선 세우고, 이 5종은 중간·먼 거리 군중과 비 오는 밤 분위기용으로 쓴다.
+
+### 맨얼굴 사람 → 스펙 `WLD-60~63`, `DOC`, `CLN` (C2 군중, C11 시술소)
+사람은 다른 에셋과 다르다. **뼈대가 든 스킨 메시**이고 텍스처가 이미 그림 파일로 들어 있다(1024, GLB 안에 포함). 3번의 "재질 굽기"와 "합치기와 뼈"는 하지 않는다.
+1. **가져오기**: GLB를 Blender에서 열어 FBX로 내보내거나 GLB를 바로 올린다. 뼈 53개와 뼈 이름은 그대로 둔다. 뼈 영향은 정점당 4개 이하로 줄인다(Limit Total).
+2. **메시 합치기**: 몸·눈·눈썹·속눈썹·치아·머리·옷·신발·장식이 따로 들어 있다(21~24개). 재질 기준으로 합쳐 메시 수를 줄인다: 불투명(피부+옷+신발+장식 금속), 반투명(머리+눈썹+속눈썹), 발광(장식의 `glow_*`). 합치면서 아틀라스로 다시 굽는 것은 해도 된다(모양과 색은 바꾸지 않는다).
+3. **재질**: 내보낸 파일은 전부 반투명(BLEND)으로 표시돼 있다. 피부·옷·신발은 불투명으로 바꾼다. 머리·눈썹·속눈썹만 알파를 쓴다.
+4. **삼각형**: 한 사람이 4만~4만 7천이다. 가까운 거리용 LOD0은 2만 이하 메시 2~3개로 나누고, LOD1 35%, LOD2 12%를 만든다. 옷 아래 몸은 이미 지워져 있다. **옷을 벗긴 몸을 내보내지 않는다.**
+5. **애니메이션**: `RigAnimator.new(model, manifest.joints)`로 만들면 기존 클립(`walk`, `idle`, `talk`, `phone`, `cower_*` …)이 그대로 돈다. 확인 기준은 `human/human_walk_check.png`(걷기 6장)이다. 손가락 뼈는 지금 클립이 쓰지 않는다.
+6. **장식(사이버웨어)**: 바이저, 확대경, 귀 장치, 뺨 선, 목 단자, 가슴 표지는 `manifest.cyberware`에 이름이 있고 머리·목·가슴 뼈에 붙어 있다. 발광색은 `manifest.glow`다. 발광 세기는 밤에 얼굴이 묻히지 않을 만큼만 준다.
+7. **쓰는 곳**: 진행 중인 C2 작업은 끊지 않는다. C2가 끝난 뒤 행인의 겉모습만 이 8명으로 바꾼다(가까운 거리). 가면 NPC 5종은 중간·먼 거리와 비 오는 밤 군중에 섞는다. `doctor`는 시술소 의사(`DOC`) 자리에 세운다. 상인은 당분간 `man_b`·`woman_a`를 쓴다.
+8. **사람 늘리기**: 옷 색·머리 색·발광색만 바꾼 변형은 게임에서 텍스처 색조로 만들지 말고 요청한다(`human.py`의 `PEOPLE` 표에 한 줄 더하면 된다). 얼굴·체형이 다른 사람도 같은 방식으로 요청한다.
+9. **출처**: 몸·옷·머리는 MakeHuman CC0 에셋이고 장식은 자체 제작이다. `manifest.assets_cc0`에 쓴 에셋 이름이 있다. 프로젝트의 출처 목록에 옮겨 적는다.
 
 ### 사이버웨어 팔 → 스펙 `CW-14` (C11)
 - 등쪽 장갑 문이 바깥 모서리를 축으로 56° 열리고, 칼집에서 칼날이 앞으로 나온다. 꺼내기 애니메이션은 이 순서로 만든다: 문 열림(0.15초) → 칼날 전진(0.2초) → 잠금.
@@ -116,9 +130,9 @@ git clone --depth 1 -b ccr-9e6cc8c3-bftdlm https://github.com/UNDECT/UNDECT.git 
 ## 4-1. 애니메이션과 이동도 받아서 쓴다 (새로 만들지 않는다)
 `docs/cyberpunk-reference/runtime/`에 Luau 모듈과 테스트가, `blender/out/anim/`에 클립 24개가 있다. `runtime/README.md`를 먼저 읽는다.
 
-1. **넣기**: `runtime/*.luau`를 `src/shared/Fable/`(이름은 프로젝트 규칙에 맞게)로 복사한다. 클립 JSON은 ModuleScript 표로 변환하는 빌드 단계를 만든다. `tests/run.luau`의 검사 37개를 프로젝트의 Lune 테스트에 편입한다(경로만 고친다).
+1. **넣기**: `runtime/*.luau`를 `src/shared/Fable/`(이름은 프로젝트 규칙에 맞게)로 복사한다. 클립 JSON은 ModuleScript 표로 변환하는 빌드 단계를 만든다. `tests/run.luau`의 검사 40개를 프로젝트의 Lune 테스트에 편입한다(경로만 고친다).
 2. **고치지 않는다**: 걸음 곡선, 군중 규칙, 순찰·교통 로직을 다시 짜지 않는다. 버그를 찾으면 재현 테스트와 함께 사용자에게 알린다. Roblox 연결부(`RigAnimator`)만 Studio에서 확인하며 고친다.
-3. **`RigAnimator` 확인 (가장 먼저)**: 이 파일만 여기서 테스트하지 못했다. 보안 로봇에 `walk_heavy`를 틀고 Blender 미리보기(`preview_robot_walk_heavy.png`)와 같은 자세가 나오는지 본다. 팔다리가 엉뚱한 축으로 돌면 `RigAnimator.AXIS` 표를 고친다. 뼈는 관절 위치에, 회전 없이(월드 축과 나란히) 만들어야 한다.
+3. **`RigAnimator` 확인 (가장 먼저)**: 이 파일만 여기서 테스트하지 못했다. 보안 로봇에 `walk_heavy`를 틀고 Blender 미리보기(`preview_robot_walk_heavy.png`)와 같은 자세가 나오는지 본다. 팔다리가 엉뚱한 축으로 돌면 `RigAnimator.AXIS` 표를 고친다. 뼈는 관절 위치에 만든다. 뼈의 기준 방향은 `RigAnimator`가 모델에서 읽어 보정하므로 맞추지 않아도 된다. 그다음 사람(`human_man_a`)에 `walk`를 틀어 `human_walk_check.png`와 비교한다.
 4. **군중**: C2에서 만든 군중 이동을 `Crowd`로 바꾼다. 허브의 인도 그래프(`nodes`, `edges`), 소품 위치(`obstacles`), 활동 지점(`activities`)은 맵 정보(`WLD-150~153`)에서 만든다. 횡단보도는 `signal`로 신호등과 묶는다. 총성 이벤트는 `crowd:panic(x, z, 반경)`으로 넘긴다. 에이전트의 `anim`, `speed`, `heading`을 그대로 `RigAnimator`에 넘긴다.
 5. **보안 로봇**: 이동은 `Patrol`, 동작은 `walk_heavy` / `robot_scan` / `robot_alert` → `robot_aim` / `robot_fire` / `robot_shutdown` / `robot_boot`. 기존 AI의 판단(발각, 경고 단계)은 유지하고 **몸을 움직이는 부분만** 이걸로 바꾼다.
 6. **차량**: 지상 교통과 `SkyTraffic`의 이동을 `Traffic`으로 바꾼다. `wheel`(라디안)을 바퀴 4개에, `bank`와 `tilt`를 비행 차량 몸체와 추진기에 적용한다. `braking`이면 뒤 발광을 세게 한다.
@@ -133,11 +147,12 @@ git clone --depth 1 -b ccr-9e6cc8c3-bftdlm https://github.com/UNDECT/UNDECT.git 
 | C3~C7 허브 | 소품과 건물 규칙은 위 에셋을 쓴다. 분위기 비교 기준은 `street_night.png`(밤)이다. 낮 기준 그림은 아직 없다 |
 | C7b 보안 NPC | 외형 시안 단계를 건너뛴다. `security_robot`을 쓴다 |
 | C10 팔·총 | `weapons`의 총 6종과 칼 2종을 쓴다. 모델이 없는 무기군은 요청 목록에 적고 그동안 `GunShapes`를 쓴다 |
-| C11 사이버웨어 | 블레이드 팔은 `cyber-arm`을 쓴다. 나머지 팔 3종과 시술소 의자·의사는 에셋을 기다린다 |
+| C2 군중 | 진행 중인 작업을 먼저 끝낸다. 그 뒤 맨얼굴 행인의 겉모습을 `human` 8명으로 바꾸고, 이동은 `Crowd`, 동작은 `RigAnimator`로 옮긴다 |
+| C11 사이버웨어 | 블레이드 팔은 `cyber-arm`을, 시술소 의사는 `human/doctor`를 쓴다. 나머지 팔 3종과 시술소 의자는 에셋을 기다린다 |
 | C13 차량 | `car`를 쓴다 |
 
 ## 6. 아직 없는 에셋 (만들지 말고 기다릴 것)
-- 맨얼굴 사람(행인, 시술소 의사, 상인): 에셋 제작 세션의 네트워크가 사람 생성 도구에 닿지 않아 아직 못 만들었다. C2 행인은 그대로 쓴다.
+- 사람 추가분: 상인 전용 차림, 아이·노인 변형, 긴 머리 여성, 적(갱·기업 경비) 차림. 지금은 8명이다.
 - 경기관총과 나머지 무기군, 사이버웨어 팔 3종(파워암, 나노와이어, 런처), 1인칭 팔, 시술소 의자와 로봇 팔, 드론, 포탑, 낮 분위기 그림, 구역별 건물 양식(기업, 부유층, 빈민).
 
 ## 7. 에셋을 요청하는 방법

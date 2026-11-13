@@ -1,0 +1,388 @@
+{
+ "name": "human_woman_c",
+ "role": "거리 사람",
+ "units": "m",
+ "forward": "-Y",
+ "up": "+Z",
+ "rig": "mpfb game_engine",
+ "height": 1.78,
+ "bones": [
+  "Root",
+  "pelvis",
+  "spine_01",
+  "spine_02",
+  "spine_03",
+  "clavicle_l",
+  "upperarm_l",
+  "lowerarm_l",
+  "hand_l",
+  "index_01_l",
+  "index_02_l",
+  "index_03_l",
+  "middle_01_l",
+  "middle_02_l",
+  "middle_03_l",
+  "pinky_01_l",
+  "pinky_02_l",
+  "pinky_03_l",
+  "ring_01_l",
+  "ring_02_l",
+  "ring_03_l",
+  "thumb_01_l",
+  "thumb_02_l",
+  "thumb_03_l",
+  "clavicle_r",
+  "upperarm_r",
+  "lowerarm_r",
+  "hand_r",
+  "index_01_r",
+  "index_02_r",
+  "index_03_r",
+  "middle_01_r",
+  "middle_02_r",
+  "middle_03_r",
+  "pinky_01_r",
+  "pinky_02_r",
+  "pinky_03_r",
+  "ring_01_r",
+  "ring_02_r",
+  "ring_03_r",
+  "thumb_01_r",
+  "thumb_02_r",
+  "thumb_03_r",
+  "neck_01",
+  "head",
+  "thigh_l",
+  "calf_l",
+  "foot_l",
+  "ball_l",
+  "thigh_r",
+  "calf_r",
+  "foot_r",
+  "ball_r"
+ ],
+ "joints": {
+  "root": {
+   "bone": "pelvis",
+   "pos": [
+    0.0,
+    -0.02342,
+    0.94248
+   ]
+  },
+  "waist": {
+   "bone": "spine_01",
+   "parent": "pelvis",
+   "pos": [
+    0.0,
+    0.02432,
+    1.01838
+   ],
+   "neutral": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    -0.0,
+    1.0
+   ]
+  },
+  "neck": {
+   "bone": "neck_01",
+   "parent": "spine_01",
+   "pos": [
+    0.0,
+    0.00057,
+    1.51188
+   ],
+   "neutral": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  "hip_L": {
+   "bone": "thigh_l",
+   "parent": "pelvis",
+   "pos": [
+    0.10292,
+    -0.01822,
+    0.9288
+   ],
+   "neutral": [
+    1.0,
+    -0.0,
+    -0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    -0.0,
+    1.0
+   ]
+  },
+  "knee_L": {
+   "bone": "calf_l",
+   "parent": "thigh_l",
+   "pos": [
+    0.14645,
+    -0.05101,
+    0.49812
+   ],
+   "neutral": [
+    1.0,
+    0.0,
+    -0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  "ankle_L": {
+   "bone": "foot_l",
+   "parent": "calf_l",
+   "pos": [
+    0.1798,
+    -0.02658,
+    0.0756
+   ],
+   "neutral": [
+    1.0,
+    -0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    -0.0,
+    0.0,
+    1.0
+   ]
+  },
+  "shoulder_L": {
+   "bone": "upperarm_l",
+   "parent": "spine_01",
+   "pos": [
+    0.16924,
+    -0.02231,
+    1.42091
+   ],
+   "neutral": [
+    0.802471,
+    0.00516,
+    0.596669,
+    0.009626,
+    0.99972,
+    -0.021591,
+    -0.596613,
+    0.02307,
+    0.802197
+   ]
+  },
+  "elbow_L": {
+   "bone": "lowerarm_l",
+   "parent": "upperarm_l",
+   "pos": [
+    0.34799,
+    -0.02826,
+    1.22482
+   ],
+   "neutral": [
+    0.780248,
+    -0.028768,
+    0.624808,
+    0.40827,
+    0.780204,
+    -0.473917,
+    -0.473844,
+    0.624863,
+    0.620497
+   ]
+  },
+  "hip_R": {
+   "bone": "thigh_r",
+   "parent": "pelvis",
+   "pos": [
+    -0.10292,
+    -0.01822,
+    0.9288
+   ],
+   "neutral": [
+    1.0,
+    0.0,
+    0.0,
+    -0.0,
+    1.0,
+    0.0,
+    0.0,
+    -0.0,
+    1.0
+   ]
+  },
+  "knee_R": {
+   "bone": "calf_r",
+   "parent": "thigh_r",
+   "pos": [
+    -0.14645,
+    -0.05101,
+    0.49812
+   ],
+   "neutral": [
+    1.0,
+    0.0,
+    0.0,
+    -0.0,
+    1.0,
+    0.0,
+    -0.0,
+    0.0,
+    1.0
+   ]
+  },
+  "ankle_R": {
+   "bone": "foot_r",
+   "parent": "calf_r",
+   "pos": [
+    -0.1798,
+    -0.02658,
+    0.0756
+   ],
+   "neutral": [
+    1.0,
+    0.0,
+    -0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  "shoulder_R": {
+   "bone": "upperarm_r",
+   "parent": "spine_01",
+   "pos": [
+    -0.16924,
+    -0.02231,
+    1.42091
+   ],
+   "neutral": [
+    0.802471,
+    -0.00516,
+    -0.596669,
+    -0.009626,
+    0.99972,
+    -0.021591,
+    0.596613,
+    0.02307,
+    0.802197
+   ]
+  },
+  "elbow_R": {
+   "bone": "lowerarm_r",
+   "parent": "upperarm_r",
+   "pos": [
+    -0.34799,
+    -0.02826,
+    1.22482
+   ],
+   "neutral": [
+    0.780248,
+    0.028768,
+    -0.624808,
+    -0.40827,
+    0.780204,
+    -0.473917,
+    0.473844,
+    0.624863,
+    0.620497
+   ]
+  }
+ },
+ "triangles": 40716,
+ "triangles_by_mesh": {
+  "Human": 16156,
+  "Human.high-poly": 2040,
+  "Human.eyebrow005": 192,
+  "Human.eyelashes01": 368,
+  "Human.teeth_base": 7120,
+  "Human.afro01": 2192,
+  "Human.toigo_basic_tucked_t-shirt": 2700,
+  "Human.cortu_cargo_pants": 392,
+  "Human.toigo_gloves_short": 4544,
+  "Human.toigo_ankle_boots_female": 4120,
+  "visor_lens": 228,
+  "visor_frame": 228,
+  "visor_line": 228,
+  "visor_arm": 44,
+  "visor_hinge": 36,
+  "visor_arm.001": 44,
+  "visor_hinge.001": 36,
+  "cheek_line": 12,
+  "cheek_line.001": 12,
+  "cheek_line.002": 12,
+  "cheek_line.003": 12
+ },
+ "cyberware": [
+  "visor_line",
+  "visor_frame",
+  "visor_lens",
+  "cheek_line.002",
+  "visor_hinge.001",
+  "visor_arm",
+  "visor_arm.001",
+  "visor_hinge",
+  "cheek_line.001",
+  "cheek_line.003",
+  "cheek_line"
+ ],
+ "glow": "glow_magenta",
+ "attach": {
+  "cyber_head": "head",
+  "cyber_neck": "neck_01",
+  "cyber_chest": "spine_03",
+  "hand_R": "hand_r",
+  "hand_L": "hand_l"
+ },
+ "assets_cc0": [
+  "young_african_female",
+  "afro01",
+  "eyebrow005",
+  "toigo_ankle_boots_female",
+  "toigo_basic_tucked_t-shirt",
+  "cortu_cargo_pants",
+  "toigo_gloves_short",
+  "high-poly",
+  "eyelashes01",
+  "teeth_base"
+ ],
+ "tint": {
+  "toigo_basic_tucked_t-shirt": [
+   0.17,
+   0.02,
+   0.035
+  ],
+  "cortu_cargo_pants": [
+   0.012,
+   0.012,
+   0.015
+  ]
+ },
+ "hair_tint": [
+  0.9,
+  0.15,
+  0.55
+ ]
+}

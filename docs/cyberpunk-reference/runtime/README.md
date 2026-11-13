@@ -5,12 +5,12 @@
 | 파일 | 하는 일 | 테스트 |
 |---|---|---|
 | `AnimSampler.luau` | 클립 JSON에서 시각별 자세 뽑기, 두 자세 섞기, 이벤트(발 디딤·총구·탄피) 뽑기, 이동 속도에 걷기 주기 맞추기 | ✅ Blender 쪽 기준값과 비교 |
-| `RigSolver.luau` | 자세(관절 각도) → 부품별 변환 행렬. `manifest.json`의 관절로 뼈대를 만든다 | ✅ Blender가 계산한 행렬과 비교 |
+| `RigSolver.luau` | 자세(관절 각도) → 부품(뼈)별 변환 행렬. `manifest.json`의 `pivots`(부품 모델)나 `joints`(사람 뼈대)로 뼈대를 만든다 | ✅ Blender가 계산한 행렬과 비교(로봇, 사람) |
 | `Crowd.luau` | 거리 군중: 인도 그래프 따라 걷기, 서로 비켜 가기, 소품 피하기, 신호 대기, 활동(대화·전화), 총성에 도망·웅크림, 거리별 갱신 줄이기 | ✅ |
 | `Patrol.luau` | 보안 로봇 순찰: 점 돌기, 모퉁이에서 멈춰 훑기, 제자리 회전 후 출발, 경계 시 목표 조준 | ✅ |
 | `Traffic.luau` | 지상·하늘 교통: 차선 따라 주행, 앞차 간격, 빨간 신호 정지, 바퀴 회전, 비행 차량 기울기와 추진기 각도 | ✅ |
-| `RigAnimator.luau` | Roblox 연결: 자세를 Bone/Motor6D의 `Transform`에 적용, 동작 전환 섞기 | ⚠️ Studio에서 확인 필요 |
-| `tests/run.luau` | 테스트 37개 | `lune run tests/run.luau` (이 폴더에서 실행) |
+| `RigAnimator.luau` | Roblox 연결: 자세를 Bone/Motor6D의 `Transform`에 적용, 동작 전환 섞기. 사람은 `RigAnimator.new(model, manifest.joints)` | ⚠️ Studio에서 확인 필요 |
+| `tests/run.luau` | 테스트 40개 | `lune run tests/run.luau` (이 폴더에서 실행) |
 
 ## 클립
 - 위치: `../blender/out/anim/*.json` (24개). 목록은 `_index.json`.
@@ -34,6 +34,16 @@ local crowd = Crowd.new(world, {seed = 1}); crowd:spawn(40)
 crowd:step(dt, signals, {x = camX, z = camZ})      -- agent.x, z, heading, anim, speed, state
 crowd:panic(x, z, 25)                               -- 총성
 ```
+
+## 사람 뼈대에 쓰기
+```lua
+local man = HttpService:JSONDecode(manifestJson)         -- human_<이름>.manifest.json
+local anim = RigAnimator.new(humanModel, man.joints)     -- 모델이 기본 자세일 때 만든다
+anim:play(walkClip, 0.2)
+```
+- 사람(`human_*`)은 뼈 이름을 바꾸지 않는다. `joints` 표가 `hip_L → thigh_l`처럼 이어 준다.
+- 사람 뼈대의 기본 자세는 팔을 벌린 자세다. `joints`의 `neutral`이 팔을 내린 자세로 돌려 준다. 클립이 없는 상태로 `update`만 돌려도 팔이 내려와야 한다.
+- 뼈의 기준 방향은 모델에서 직접 읽어 보정한다. 그래서 가져오기 도구가 뼈 축을 바꿔도 된다.
 
 ## 좌표
 - 클립과 `RigSolver`는 에셋 원본 좌표를 쓴다: 단위 m, 앞 = -Y, 위 = +Z.

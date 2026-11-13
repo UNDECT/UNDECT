@@ -3,10 +3,11 @@
 -- 주의: 이 파일만 Roblox API를 쓴다. Lune에서 테스트하지 못했으니 Studio에서 반드시 확인한다.
 --
 -- 전제 (에셋을 변환할 때 맞출 것)
---   1. 뼈는 manifest.json의 pivots 위치에 둔다. 뼈의 기준 방향은 회전 없이 월드 축과 나란히 둔다.
---   2. 뼈 이름은 관절 이름과 같다(hip_L, knee_L, waist, neck ...). 뿌리 뼈 이름은 "root".
---   3. 에셋 좌표(Blender: 앞 -Y, 위 +Z)를 Roblox(앞 -Z, 위 +Y)로 가져올 때 축이 어떻게 바뀌었는지 AXIS로 알려 준다.
---      기본값은 rbx = (-bx, bz, by). 가져온 결과가 다르면 이 표만 바꾼다.
+--   부품 모델(로봇, 가면 NPC): 뼈를 manifest.json의 pivots 위치에 두고, 뼈 이름을 관절 이름과 같게 한다(hip_L, knee_L, waist ...). 뿌리 뼈는 "root".
+--   뼈대 모델(사람, human_*):   뼈대를 그대로 가져오고 RigAnimator.new(model, manifest.joints)로 대응표를 넘긴다. 뼈 이름은 바꾸지 않는다.
+--   뼈의 기준 방향은 아무래도 된다. 만들 때(=기본 자세일 때) 뼈가 모델 기준으로 어느 쪽을 보는지 읽어 두고 그만큼 보정한다.
+--   에셋 좌표(Blender: 앞 -Y, 위 +Z)를 Roblox(앞 -Z, 위 +Y)로 가져올 때 축이 어떻게 바뀌었는지는 AXIS로 알려 준다.
+--   기본값은 rbx = (-bx, bz, by). 가져온 결과가 다르면 이 표만 바꾼다.
 local AnimSampler = require("./AnimSampler")
 local RigSolver = require("./RigSolver")
 
@@ -35,13 +36,39 @@ local function convert(m, scale: number)
 	return CFrame.new(t[1], t[2], t[3], R[1][1], R[1][2], R[1][3], R[2][1], R[2][2], R[2][3], R[3][1], R[3][2], R[3][3])
 end
 
--- model 안에서 이름이 관절 이름과 같은 Bone 또는 Motor6D를 찾는다.
-function RigAnimator.new(model: Instance)
+-- 기본 자세에서 관절이 모델 기준으로 보는 방향(회전만).
+local function restRotation(joint: Instance, frame: CFrame): CFrame
+	local world = if joint:IsA("Bone") then (joint :: Bone).WorldCFrame else (joint :: Motor6D).Part0.CFrame * (joint :: Motor6D).C0
+	return frame:ToObjectSpace(world).Rotation
+end
+
+-- joints를 생략하면 이름이 관절 이름과 같은 Bone/Motor6D를 찾는다(부품 모델).
+-- joints = manifest.json의 joints(사람)면 그 표에 적힌 뼈를 찾고 중립 자세 보정까지 한다.
+-- 반드시 모델이 기본 자세일 때(애니메이션을 틀기 전에) 만든다. frame = 모델의 기준 좌표(기본값: 모델 피벗).
+function RigAnimator.new(model: Instance, joints: any?, frame: CFrame?)
 	local self = setmetatable({}, RigAnimator)
-	self.joints = {}
+	local found = {}
 	for _, d in model:GetDescendants() do
-		if d:IsA("Bone") or d:IsA("Motor6D") then self.joints[d.Name] = d end
+		if d:IsA("Bone") or d:IsA("Motor6D") then found[d.Name] = d end
 	end
+	local base = frame or (if model:IsA("Model") then (model :: Model):GetPivot() else CFrame.identity)
+	self.joints = {}; self.rest = {}; self.neutral = {}; self.parentNeutral = {}
+	if joints then
+		local byBone = {}
+		for name, j in joints do byBone[j.bone] = j end
+		for name, j in joints do
+			local inst = found[j.bone]
+			if inst then
+				self.joints[name] = inst; self.neutral[name] = j.neutral
+				self.parentNeutral[name] = if j.parent and byBone[j.parent] then byBone[j.parent].neutral else nil
+			else
+				warn("RigAnimator: 뼈를 찾지 못했다 " .. j.bone)
+			end
+		end
+	else
+		self.joints = found
+	end
+	for name, inst in self.joints do self.rest[name] = restRotation(inst, base) end
 	self.pose = {}; self.poseB = {}; self.mixed = {}
 	self.time = 0; self.clip = nil; self.prev = nil; self.prevTime = 0; self.fade = 0; self.fadeLen = 0.2
 	return self
@@ -70,9 +97,11 @@ function RigAnimator:update(dt: number, moveSpeed: number?)
 	end
 	for name, joint in self.joints do
 		local dofs = pose[name]
-		local m = RigSolver.jointRotation(name, dofs)
+		local m = RigSolver.localRotation(name, dofs, self.parentNeutral[name], self.neutral[name])
 		if name == "root" and dofs then m[10], m[11], m[12] = dofs.x or 0, dofs.y or 0, dofs.z or 0 end
-		joint.Transform = convert(m, RigAnimator.STUDS_PER_METER)
+		-- 모델 기준 회전을 뼈 자신의 축으로 옮긴다: restᵀ · M · rest
+		local rest = self.rest[name]
+		joint.Transform = rest:Inverse() * convert(m, RigAnimator.STUDS_PER_METER) * rest
 	end
 	return AnimSampler.events(clip, t0, self.time)
 end

@@ -40,12 +40,36 @@ local function about(R, p)
 		x - (R[1]*x + R[2]*y + R[3]*z), y - (R[4]*x + R[5]*y + R[6]*z), z - (R[7]*x + R[8]*y + R[9]*z)}
 end
 
--- manifest.json의 pivots로 뼈대를 만든다. 부모가 먼저 오도록 정렬한다.
+local function transpose(m) return {m[1],m[4],m[7], m[2],m[5],m[8], m[3],m[6],m[9], 0,0,0} end
+local IDENT = {1,0,0, 0,1,0, 0,0,1, 0,0,0}
+
+-- 뼈대가 있는 모델(사람)용. 기본 자세가 중립 자세(팔을 내린 자세)와 다를 때 쓴다.
+-- neutral = 그 뼈가 기본 자세에서 중립 자세까지 돈 회전(누적), parentNeutral = 부모 관절의 같은 값.
+-- 돌려주는 값은 부모 기준 회전이다: Nₚᵀ · R · N
+function RigSolver.localRotation(joint: string, dofs, parentNeutral, neutral)
+	local R = RigSolver.jointRotation(joint, dofs)
+	if not neutral then return R end
+	local n = {neutral[1],neutral[2],neutral[3], neutral[4],neutral[5],neutral[6], neutral[7],neutral[8],neutral[9], 0,0,0}
+	return mul(mul(transpose(parentNeutral or IDENT), R), n)
+end
+
+-- manifest.json으로 뼈대를 만든다. 부모가 먼저 오도록 정렬한다.
+--   pivots (부품 모델: 로봇, 가면 NPC, 차, 무기)  관절 이름 -> {parent, child, pos}
+--   joints (뼈대 모델: 사람)                      관절 이름 -> {bone, parent, pos, neutral}, root -> {bone, pos}
 function RigSolver.fromManifest(manifest, rootPart: string?, rootHeight: number?)
-	local rig = {root = rootPart or "pelvis", rootPivot = {0, 0, rootHeight or 0.95}, joints = {}}
+	local rig = {root = rootPart or "pelvis", rootPivot = {0, 0, rootHeight or 0.95}, joints = {}, neutral = {}}
 	local pending = {}
-	for name, pv in manifest.pivots do
-		table.insert(pending, {name = name, parent = pv.parent, child = pv.child, pos = pv.pos})
+	if manifest.joints then
+		rig.root = manifest.joints.root.bone; rig.rootPivot = manifest.joints.root.pos
+		for name, j in manifest.joints do
+			if name ~= "root" then
+				table.insert(pending, {name = name, parent = j.parent, child = j.bone, pos = j.pos, neutral = j.neutral}); rig.neutral[j.bone] = j.neutral
+			end
+		end
+	else
+		for name, pv in manifest.pivots do
+			table.insert(pending, {name = name, parent = pv.parent, child = pv.child, pos = pv.pos})
+		end
 	end
 	table.sort(pending, function(a, b) return a.name < b.name end)
 	local have = {[rig.root] = true}
@@ -63,14 +87,14 @@ function RigSolver.fromManifest(manifest, rootPart: string?, rootHeight: number?
 	return rig
 end
 
--- 부품 이름 -> 행렬. 관절에 속하지 않은 부품은 뿌리(root) 행렬을 쓴다.
+-- 부품(뼈) 이름 -> 행렬. 관절에 속하지 않은 부품은 뿌리(root) 행렬을 쓴다.
 function RigSolver.solve(rig, pose)
 	local r = pose.root or {}
 	local R = about(RigSolver.jointRotation("root", r), rig.rootPivot)
 	R[10] += r.x or 0; R[11] += r.y or 0; R[12] += r.z or 0
 	local D = {[rig.root] = R}
 	for _, j in rig.joints do
-		D[j.child] = mul(D[j.parent], about(RigSolver.jointRotation(j.name, pose[j.name]), j.pos))
+		D[j.child] = mul(D[j.parent], about(RigSolver.localRotation(j.name, pose[j.name], rig.neutral[j.parent], j.neutral), j.pos))
 	end
 	return D
 end
