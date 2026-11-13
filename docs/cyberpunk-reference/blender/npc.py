@@ -155,6 +155,8 @@ def head(sp):
 
 def prop(sp, MhL, MhR):
     k = sp["prop"]; p = "prop"
+    if k == "umbrella": pivot("prop", MhR.translation, (1, 0, 0), "forearm_R", "prop", (0, 0))
+    elif k in ("toolbox", "case"): pivot("prop", MhL.translation, (1, 0, 0), "forearm_L", "prop", (0, 0))
     if k == "umbrella":
         Mu = MhR @ T(0.05, 0, 0) @ MhR.to_3x3().to_4x4().inverted()
         finish("umbrella_pole", cyl(0.008, 0.008, 0.95, 8, "z"), "gunmetal", 0, 1, Mu @ T(0, 0, 0.42), p)

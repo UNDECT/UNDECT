@@ -113,6 +113,20 @@ git clone --depth 1 -b ccr-9e6cc8c3-bftdlm https://github.com/UNDECT/UNDECT.git 
 - 등쪽 장갑 문이 바깥 모서리를 축으로 56° 열리고, 칼집에서 칼날이 앞으로 나온다. 꺼내기 애니메이션은 이 순서로 만든다: 문 열림(0.15초) → 칼날 전진(0.2초) → 잠금.
 - 1인칭에서 보이는 각도(팔 안쪽, 손바닥) 보강이 필요하면 요청한다.
 
+## 4-1. 애니메이션과 이동도 받아서 쓴다 (새로 만들지 않는다)
+`docs/cyberpunk-reference/runtime/`에 Luau 모듈과 테스트가, `blender/out/anim/`에 클립 24개가 있다. `runtime/README.md`를 먼저 읽는다.
+
+1. **넣기**: `runtime/*.luau`를 `src/shared/Fable/`(이름은 프로젝트 규칙에 맞게)로 복사한다. 클립 JSON은 ModuleScript 표로 변환하는 빌드 단계를 만든다. `tests/run.luau`의 검사 37개를 프로젝트의 Lune 테스트에 편입한다(경로만 고친다).
+2. **고치지 않는다**: 걸음 곡선, 군중 규칙, 순찰·교통 로직을 다시 짜지 않는다. 버그를 찾으면 재현 테스트와 함께 사용자에게 알린다. Roblox 연결부(`RigAnimator`)만 Studio에서 확인하며 고친다.
+3. **`RigAnimator` 확인 (가장 먼저)**: 이 파일만 여기서 테스트하지 못했다. 보안 로봇에 `walk_heavy`를 틀고 Blender 미리보기(`preview_robot_walk_heavy.png`)와 같은 자세가 나오는지 본다. 팔다리가 엉뚱한 축으로 돌면 `RigAnimator.AXIS` 표를 고친다. 뼈는 관절 위치에, 회전 없이(월드 축과 나란히) 만들어야 한다.
+4. **군중**: C2에서 만든 군중 이동을 `Crowd`로 바꾼다. 허브의 인도 그래프(`nodes`, `edges`), 소품 위치(`obstacles`), 활동 지점(`activities`)은 맵 정보(`WLD-150~153`)에서 만든다. 횡단보도는 `signal`로 신호등과 묶는다. 총성 이벤트는 `crowd:panic(x, z, 반경)`으로 넘긴다. 에이전트의 `anim`, `speed`, `heading`을 그대로 `RigAnimator`에 넘긴다.
+5. **보안 로봇**: 이동은 `Patrol`, 동작은 `walk_heavy` / `robot_scan` / `robot_alert` → `robot_aim` / `robot_fire` / `robot_shutdown` / `robot_boot`. 기존 AI의 판단(발각, 경고 단계)은 유지하고 **몸을 움직이는 부분만** 이걸로 바꾼다.
+6. **차량**: 지상 교통과 `SkyTraffic`의 이동을 `Traffic`으로 바꾼다. `wheel`(라디안)을 바퀴 4개에, `bank`와 `tilt`를 비행 차량 몸체와 추진기에 적용한다. `braking`이면 뒤 발광을 세게 한다.
+7. **무기**: 발사·재장전 때 부품 클립(`pistol_fire`, `auto_fire`, `shotgun_pump`, `mag_reload` 등)을 틀고, 클립의 이벤트(`muzzle`, `eject`, `mag_out`, `mag_in`, `chamber`)에 총구 화염·탄피·소리를 붙인다.
+8. **발소리**: 걷기·달리기 클립의 `foot_L` / `foot_R` 이벤트에 바닥 재질별 발소리를 붙인다.
+9. **아직 없는 동작**: 앉기, 넘어졌다 일어나기, 사다리, 대화 제스처 추가분, 근접 공격, 1인칭 팔 동작, 사이버웨어 팔 전개. 필요하면 `docs/asset-requests.md`에 적는다.
+10. 웅크릴 때 손에 든 소품(공구함, 서류 가방, 우산)은 손에서 떼어 바닥에 떨어뜨린다.
+
 ## 5. 단계 순서에 미치는 영향
 | 단계 | 바뀐 점 |
 |---|---|
