@@ -9,6 +9,9 @@ python security_robot.py out/security_robot all
 python car.py out/car all            # 변형: python car.py out/car render cab
 python street.py out/street scene    # 밤거리 장면
 python street.py out/street modules  # 거리 소품 10종 내보내기
+python weapons.py out/weapons render  # 무기 8종
+python flying_car.py out/flying_car all   # 변형: ... render patrol
+python npc.py out/npc render           # 거리 NPC 5종
 ```
 - 품질: 환경 변수 `KIT_SAMPLES`(기본 80).
 - 결과: 폴더마다 `.glb`, `.blend`, `.manifest.json`, 렌더 사진.
@@ -20,6 +23,9 @@ python street.py out/street modules  # 거리 소품 10종 내보내기
 | `security_robot.py` | 보안 로봇. 키 약 1.95 m, 부품 15개, 관절 14개 |
 | `car.py` | 각진 쐐기형 세단. 색 변형 4종(택시 포함), 바퀴 4개가 따로 돈다 |
 | `street.py` | 거리 소품 10종, 건물 생성기, 초대형 건물, 고가 선로, 밤거리 장면 |
+| `weapons.py` | 권총, 리볼버, 기관단총, 돌격소총, 산탄총, 저격총, 장검, 단검 |
+| `flying_car.py` | 추진기 4개짜리 비행 차량. 변형 3종 |
+| `npc.py` | 얼굴을 가린 거리 NPC 5종 |
 | `out/` | 만들어진 결과물 |
 
 ## 규칙

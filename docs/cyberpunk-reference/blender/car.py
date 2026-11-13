@@ -136,7 +136,7 @@ def parts(variant="crimson"):
 if __name__ == "__main__":
     build(VARIANT); os.makedirs(OUT, exist_ok=True); tag = "" if VARIANT == "crimson" else "_" + VARIANT
     if MODE:
-        kit.studio((0, 0, 0.6), 2.3, top=0.35)
+        kit.studio((0, 0, 0.6), 2.3, top=0.35, key=0.55)
         kit.shot(os.path.join(OUT, f"car{tag}_front.png"), (-5.2, -7.4, 2.5), (0.0, -0.1, 0.55), 60)
         if MODE == "all":
             kit.shot(os.path.join(OUT, f"car{tag}_rear.png"), (5.0, 7.6, 2.3), (0.0, 0.1, 0.55), 60)

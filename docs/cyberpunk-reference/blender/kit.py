@@ -304,7 +304,7 @@ def area(name, loc, target, size, power, color, sy=None):
     if sy: ld.shape = "RECTANGLE"; ld.size_y = sy
     lo = bpy.data.objects.new(name, ld); COL.objects.link(lo); lo.location = loc; look_at(lo, target); return lo
 
-def studio(center, scale=1.0, floor_z=0.0, top=1.0):
+def studio(center, scale=1.0, floor_z=0.0, top=1.0, key=1.0):
     """에셋 촬영용 어두운 스튜디오. scale = 대상 크기(m) 기준 배율."""
     sc = bpy.context.scene
     w = bpy.data.worlds.new("w"); sc.world = w; w.use_nodes = True
@@ -313,7 +313,7 @@ def studio(center, scale=1.0, floor_z=0.0, top=1.0):
     fo = bpy.data.objects.new("stage_floor", me); COL.objects.link(fo); fo.location = (0, 0, floor_z)
     me.materials.append(mat_simple("stage_floor", (0.0035, 0.0038, 0.0045), 0.0, 0.6))
     c = Vector(center); k = scale; p = k * k
-    area("key", c + Vector((-2.2 * k, -3.0 * k, 2.6 * k)), c, 2.2 * k, 420 * p, (1.0, 0.94, 0.86))
+    area("key", c + Vector((-2.2 * k, -3.0 * k, 2.6 * k)), c, 2.2 * k, 420 * p * key, (1.0, 0.94, 0.86))
     area("top", c + Vector((0, 0.3 * k, 3.6 * k)), c, 5.0 * k, 160 * p * top, (0.85, 0.93, 1.0), 0.5 * k)
     area("rim_cyan", c + Vector((2.6 * k, 2.6 * k, 1.8 * k)), c, 1.8 * k, 380 * p, (0.15, 0.8, 1.0))
     area("fill_magenta", c + Vector((3.0 * k, -2.0 * k, 0.3 * k)), c, 1.6 * k, 60 * p, (1.0, 0.15, 0.55))
