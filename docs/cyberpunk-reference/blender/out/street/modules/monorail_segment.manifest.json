@@ -1,0 +1,29 @@
+{
+ "name": "monorail_segment",
+ "units": "m",
+ "forward": "-Y",
+ "up": "+Z",
+ "triangles": 320,
+ "triangles_by_part": {
+  "monorail": 320
+ },
+ "parts": {
+  "monorail": [
+   "rail_beam",
+   "rail_top",
+   "rail_rib",
+   "rail_rib.001",
+   "rail_rib.002",
+   "rail_cable",
+   "rail_strip",
+   "rail_strip.001"
+  ]
+ },
+ "pivots": {},
+ "materials": [
+  "concrete",
+  "concrete_dark",
+  "glow_cyan",
+  "gunmetal"
+ ]
+}

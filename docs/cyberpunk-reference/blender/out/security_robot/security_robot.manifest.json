@@ -1,0 +1,534 @@
+{
+ "name": "security_robot",
+ "units": "m",
+ "forward": "-Y",
+ "up": "+Z",
+ "triangles": 62452,
+ "triangles_by_part": {
+  "pelvis": 1756,
+  "torso": 9644,
+  "head": 3616,
+  "thigh_L": 5368,
+  "shin_L": 5204,
+  "foot_L": 988,
+  "upperarm_L": 4600,
+  "forearm_L": 4528,
+  "hand_L": 2752,
+  "thigh_R": 5368,
+  "shin_R": 5204,
+  "foot_R": 988,
+  "upperarm_R": 4600,
+  "forearm_R": 5084,
+  "hand_R": 2752
+ },
+ "parts": {
+  "pelvis": [
+   "pelvis_block",
+   "crotch_plate",
+   "tasset",
+   "tasset_stripe",
+   "tasset.001",
+   "tasset_stripe.001",
+   "belt"
+  ],
+  "torso": [
+   "waist_bellows",
+   "waist_bellows.001",
+   "waist_bellows.002",
+   "waist_bellows.003",
+   "spine_piston",
+   "spine_piston.001",
+   "chest",
+   "pec",
+   "rib",
+   "collar_plate",
+   "pec.001",
+   "rib.001",
+   "collar_plate.001",
+   "core_ring",
+   "core_glow",
+   "abdomen_slat",
+   "abdomen_slat.001",
+   "abdomen_slat.002",
+   "unit_text",
+   "collar",
+   "backpack",
+   "backpack_frame",
+   "back_vent",
+   "back_vent.001",
+   "back_vent.002",
+   "back_vent.003",
+   "back_vent.004",
+   "weak_point",
+   "weak_frame",
+   "exhaust",
+   "exhaust_hole",
+   "exhaust.001",
+   "exhaust_hole.001",
+   "antenna",
+   "antenna_tip"
+  ],
+  "head": [
+   "neck",
+   "neck_ring",
+   "neck_ring.001",
+   "neck_ring.002",
+   "skull",
+   "cap",
+   "visor_frame",
+   "visor",
+   "jaw",
+   "grill",
+   "grill.001",
+   "grill.002",
+   "ear_pod",
+   "ear_lens",
+   "cheek",
+   "ear_pod.001",
+   "ear_lens.001",
+   "cheek.001",
+   "fin"
+  ],
+  "thigh_L": [
+   "hip_ball",
+   "hip_cap",
+   "thigh_core",
+   "thigh_front",
+   "thigh_front_inlay",
+   "thigh_back",
+   "thigh_stripe",
+   "bolt",
+   "bolt.001",
+   "bolt.002",
+   "bolt.003"
+  ],
+  "shin_L": [
+   "knee_hinge",
+   "knee_pin",
+   "knee_cap",
+   "shin_core",
+   "shin_front",
+   "shin_inlay",
+   "shin_glow",
+   "calf",
+   "achilles_sleeve",
+   "achilles_rod",
+   "achilles_sleeve.001",
+   "achilles_rod.001"
+  ],
+  "foot_L": [
+   "ankle",
+   "sole",
+   "foot_upper",
+   "toe_cap",
+   "heel"
+  ],
+  "upperarm_L": [
+   "shoulder_ball",
+   "pauldron_cap",
+   "pauldron_top",
+   "pauldron_low",
+   "pauldron_trim",
+   "status_lamp",
+   "upperarm_core",
+   "upperarm_outer",
+   "upperarm_inner"
+  ],
+  "forearm_L": [
+   "elbow_hinge",
+   "elbow_pin",
+   "forearm_core",
+   "forearm_outer",
+   "forearm_inner",
+   "wrist",
+   "lamp_body",
+   "lamp_lens",
+   "scanner",
+   "scanner_glow"
+  ],
+  "hand_L": [
+   "palm",
+   "hand_plate",
+   "finger_joint",
+   "finger",
+   "finger_plate",
+   "finger_joint.001",
+   "finger.001",
+   "finger_plate.001",
+   "finger_joint.002",
+   "finger.002",
+   "finger_plate.002",
+   "finger_joint.003",
+   "finger.003",
+   "finger_plate.003",
+   "finger_joint.004",
+   "finger.004",
+   "finger_plate.004",
+   "finger_joint.005",
+   "finger.005",
+   "finger_plate.005",
+   "thumb_joint",
+   "thumb",
+   "thumb_joint.001",
+   "thumb.001"
+  ],
+  "thigh_R": [
+   "hip_ball.001",
+   "hip_cap.001",
+   "thigh_core.001",
+   "thigh_front.001",
+   "thigh_front_inlay.001",
+   "thigh_back.001",
+   "thigh_stripe.001",
+   "bolt.004",
+   "bolt.005",
+   "bolt.006",
+   "bolt.007"
+  ],
+  "shin_R": [
+   "knee_hinge.001",
+   "knee_pin.001",
+   "knee_cap.001",
+   "shin_core.001",
+   "shin_front.001",
+   "shin_inlay.001",
+   "shin_glow.001",
+   "calf.001",
+   "achilles_sleeve.002",
+   "achilles_rod.002",
+   "achilles_sleeve.003",
+   "achilles_rod.003"
+  ],
+  "foot_R": [
+   "ankle.001",
+   "sole.001",
+   "foot_upper.001",
+   "toe_cap.001",
+   "heel.001"
+  ],
+  "upperarm_R": [
+   "shoulder_ball.001",
+   "pauldron_cap.001",
+   "pauldron_top.001",
+   "pauldron_low.001",
+   "pauldron_trim.001",
+   "status_lamp.001",
+   "upperarm_core.001",
+   "upperarm_outer.001",
+   "upperarm_inner.001"
+  ],
+  "forearm_R": [
+   "elbow_hinge.001",
+   "elbow_pin.001",
+   "forearm_core.001",
+   "forearm_outer.001",
+   "forearm_inner.001",
+   "wrist.001",
+   "gun_pod",
+   "gun_pod_top",
+   "gun_feed",
+   "gun_barrel",
+   "gun_bore",
+   "gun_barrel.001",
+   "gun_bore.001",
+   "gun_shroud",
+   "gun_sight"
+  ],
+  "hand_R": [
+   "palm.001",
+   "hand_plate.001",
+   "finger_joint.006",
+   "finger.006",
+   "finger_plate.006",
+   "finger_joint.007",
+   "finger.007",
+   "finger_plate.007",
+   "finger_joint.008",
+   "finger.008",
+   "finger_plate.008",
+   "finger_joint.009",
+   "finger.009",
+   "finger_plate.009",
+   "finger_joint.010",
+   "finger.010",
+   "finger_plate.010",
+   "finger_joint.011",
+   "finger.011",
+   "finger_plate.011",
+   "thumb_joint.002",
+   "thumb.002",
+   "thumb_joint.003",
+   "thumb.003"
+  ]
+ },
+ "pivots": {
+  "waist": {
+   "pos": [
+    0,
+    0,
+    1.14
+   ],
+   "axis": [
+    0,
+    0,
+    1
+   ],
+   "parent": "pelvis",
+   "child": "torso",
+   "range": [
+    -45,
+    45
+   ]
+  },
+  "neck": {
+   "pos": [
+    0,
+    0.005,
+    1.66
+   ],
+   "axis": [
+    0,
+    0,
+    1
+   ],
+   "parent": "torso",
+   "child": "head",
+   "range": [
+    -80,
+    80
+   ]
+  },
+  "hip_L": {
+   "pos": [
+    0.128,
+    0.0,
+    1.012
+   ],
+   "axis": [
+    1,
+    0,
+    0
+   ],
+   "parent": "pelvis",
+   "child": "thigh_L",
+   "range": [
+    -70,
+    40
+   ]
+  },
+  "knee_L": {
+   "pos": [
+    0.128,
+    -0.0238,
+    0.5576
+   ],
+   "axis": [
+    1,
+    0,
+    0
+   ],
+   "parent": "thigh_L",
+   "child": "shin_L",
+   "range": [
+    0,
+    130
+   ]
+  },
+  "ankle_L": {
+   "pos": [
+    0.128,
+    -0.0005,
+    0.1132
+   ],
+   "axis": [
+    1,
+    0,
+    0
+   ],
+   "parent": "shin_L",
+   "child": "foot_L",
+   "range": [
+    -40,
+    40
+   ]
+  },
+  "shoulder_L": {
+   "pos": [
+    0.305,
+    0.0,
+    1.56
+   ],
+   "axis": [
+    1,
+    0,
+    0
+   ],
+   "parent": "torso",
+   "child": "upperarm_L",
+   "range": [
+    -170,
+    60
+   ]
+  },
+  "elbow_L": {
+   "pos": [
+    0.3542,
+    -0.022,
+    1.2496
+   ],
+   "axis": [
+    0.9877,
+    0.0,
+    0.1564
+   ],
+   "parent": "upperarm_L",
+   "child": "forearm_L",
+   "range": [
+    0,
+    140
+   ]
+  },
+  "wrist_L": {
+   "pos": [
+    0.4021,
+    -0.1215,
+    0.9472
+   ],
+   "axis": [
+    0.0483,
+    0.9511,
+    -0.3052
+   ],
+   "parent": "forearm_L",
+   "child": "hand_L",
+   "range": [
+    -60,
+    60
+   ]
+  },
+  "hip_R": {
+   "pos": [
+    -0.128,
+    0.0,
+    1.012
+   ],
+   "axis": [
+    1,
+    0,
+    0
+   ],
+   "parent": "pelvis",
+   "child": "thigh_R",
+   "range": [
+    -70,
+    40
+   ]
+  },
+  "knee_R": {
+   "pos": [
+    -0.128,
+    -0.0238,
+    0.5576
+   ],
+   "axis": [
+    1,
+    0,
+    0
+   ],
+   "parent": "thigh_R",
+   "child": "shin_R",
+   "range": [
+    0,
+    130
+   ]
+  },
+  "ankle_R": {
+   "pos": [
+    -0.128,
+    -0.0005,
+    0.1132
+   ],
+   "axis": [
+    1,
+    0,
+    0
+   ],
+   "parent": "shin_R",
+   "child": "foot_R",
+   "range": [
+    -40,
+    40
+   ]
+  },
+  "shoulder_R": {
+   "pos": [
+    -0.305,
+    0.0,
+    1.56
+   ],
+   "axis": [
+    1,
+    0,
+    0
+   ],
+   "parent": "torso",
+   "child": "upperarm_R",
+   "range": [
+    -170,
+    60
+   ]
+  },
+  "elbow_R": {
+   "pos": [
+    -0.354,
+    -0.0329,
+    1.2506
+   ],
+   "axis": [
+    -0.9877,
+    0.0,
+    0.1564
+   ],
+   "parent": "upperarm_R",
+   "child": "forearm_R",
+   "range": [
+    0,
+    140
+   ]
+  },
+  "wrist_R": {
+   "pos": [
+    -0.3985,
+    -0.1841,
+    0.9698
+   ],
+   "axis": [
+    0.0734,
+    -0.8829,
+    0.4637
+   ],
+   "parent": "forearm_R",
+   "child": "hand_R",
+   "range": [
+    -60,
+    60
+   ]
+  }
+ },
+ "materials": [
+  "accent",
+  "armor",
+  "armor2",
+  "black",
+  "chrome",
+  "fiber",
+  "frame",
+  "glow_amber",
+  "glow_cyan",
+  "glow_red",
+  "glow_white",
+  "rubber",
+  "steel",
+  "titan"
+ ]
+}

@@ -1,0 +1,27 @@
+{
+ "name": "lamp",
+ "units": "m",
+ "forward": "-Y",
+ "up": "+Z",
+ "triangles": 344,
+ "triangles_by_part": {
+  "lamp": 344
+ },
+ "parts": {
+  "lamp": [
+   "lamp_base",
+   "lamp_pole",
+   "lamp_arm",
+   "lamp_head",
+   "lamp_glow",
+   "lamp_box"
+  ]
+ },
+ "pivots": {},
+ "materials": [
+  "dark",
+  "gunmetal",
+  "prop_paint",
+  "sodium"
+ ]
+}

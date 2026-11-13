@@ -1,0 +1,186 @@
+{
+ "name": "sniper",
+ "units": "m",
+ "forward": "-Y",
+ "up": "+Z",
+ "triangles": 12120,
+ "triangles_by_part": {
+  "body": 9064,
+  "coil_glow": 2808,
+  "trigger": 44,
+  "bolt": 204
+ },
+ "parts": {
+  "body": [
+   "receiver",
+   "receiver_inlay",
+   "capacitor",
+   "cap_cell",
+   "cap_cell.001",
+   "cap_cell.002",
+   "cap_cell.003",
+   "cap_rib",
+   "cap_rib.001",
+   "cap_rib.002",
+   "cap_rib.003",
+   "cap_rib.004",
+   "barrel",
+   "barrel_frame",
+   "coil",
+   "coil.001",
+   "coil.002",
+   "coil.003",
+   "coil.004",
+   "coil.005",
+   "coil.006",
+   "coil.007",
+   "coil.008",
+   "muzzle",
+   "muzzle_slot",
+   "muzzle_slot.001",
+   "muzzle_slot.002",
+   "bore",
+   "grip",
+   "guard_front",
+   "guard_bottom",
+   "stock",
+   "cheek_rest",
+   "butt_pad",
+   "rail_base",
+   "rail_teeth",
+   "scope_ring",
+   "scope_ring.001",
+   "scope_tube",
+   "scope_bell",
+   "scope_eye",
+   "scope_lens",
+   "scope_turret",
+   "scope_turret_side",
+   "bipod_leg",
+   "bipod_foot",
+   "bipod_leg.001",
+   "bipod_foot.001",
+   "bipod_mount"
+  ],
+  "coil_glow": [
+   "coil_glow",
+   "coil_glow.001",
+   "coil_glow.002",
+   "coil_glow.003",
+   "coil_glow.004",
+   "coil_glow.005",
+   "coil_glow.006",
+   "coil_glow.007",
+   "coil_glow.008"
+  ],
+  "trigger": [
+   "trigger"
+  ],
+  "bolt": [
+   "bolt_handle",
+   "bolt_knob"
+  ]
+ },
+ "pivots": {
+  "muzzle": {
+   "pos": [
+    0,
+    -0.992,
+    0.05
+   ],
+   "axis": [
+    0,
+    -1,
+    0
+   ],
+   "parent": "body",
+   "child": "fx",
+   "range": [
+    -90,
+    90
+   ]
+  },
+  "eject": {
+   "pos": [
+    0.028,
+    0.0,
+    0.07
+   ],
+   "axis": [
+    1,
+    0,
+    0.4
+   ],
+   "parent": "body",
+   "child": "fx",
+   "range": [
+    -90,
+    90
+   ]
+  },
+  "grip": {
+   "pos": [
+    0,
+    0.082,
+    -0.05
+   ],
+   "axis": [
+    0,
+    0,
+    1
+   ],
+   "parent": "body",
+   "child": "hand_R",
+   "range": [
+    -90,
+    90
+   ]
+  },
+  "support": {
+   "pos": [
+    0,
+    -0.33,
+    0.01
+   ],
+   "axis": [
+    0,
+    0,
+    1
+   ],
+   "parent": "body",
+   "child": "hand_L",
+   "range": [
+    -90,
+    90
+   ]
+  },
+  "sight": {
+   "pos": [
+    0,
+    -0.05,
+    0.13
+   ],
+   "axis": [
+    0,
+    -1,
+    0
+   ],
+   "parent": "body",
+   "child": "attachment",
+   "range": [
+    -90,
+    90
+   ]
+  }
+ },
+ "materials": [
+  "black",
+  "glow_amber",
+  "glow_cyan",
+  "gunmetal",
+  "steel",
+  "w_black",
+  "w_grip",
+  "w_white"
+ ]
+}

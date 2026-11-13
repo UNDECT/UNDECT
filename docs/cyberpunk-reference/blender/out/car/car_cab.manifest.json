@@ -1,0 +1,235 @@
+{
+ "name": "car_cab",
+ "units": "m",
+ "forward": "-Y",
+ "up": "+Z",
+ "triangles": 27058,
+ "triangles_by_part": {
+  "body": 8786,
+  "wheel_FL": 4568,
+  "wheel_FR": 4568,
+  "wheel_RL": 4568,
+  "wheel_RR": 4568
+ },
+ "parts": {
+  "body": [
+   "body",
+   "light_bar_f",
+   "headlamp",
+   "headlamp_frame",
+   "headlamp.001",
+   "headlamp_frame.001",
+   "intake",
+   "intake_fin",
+   "intake_fin.001",
+   "intake_fin.002",
+   "intake_fin.003",
+   "intake_fin.004",
+   "splitter",
+   "hood_vent",
+   "hood_slat",
+   "hood_slat.001",
+   "hood_slat.002",
+   "hood_slat.003",
+   "skirt",
+   "side_line",
+   "mirror_stalk",
+   "mirror_cam",
+   "mirror_lens",
+   "door_handle",
+   "door_handle.001",
+   "intake_side",
+   "pillar_b",
+   "skirt.001",
+   "side_line.001",
+   "mirror_stalk.001",
+   "mirror_cam.001",
+   "mirror_lens.001",
+   "door_handle.002",
+   "door_handle.003",
+   "intake_side.001",
+   "pillar_b.001",
+   "light_bar_r",
+   "tail_panel",
+   "diffuser",
+   "diffuser_fin",
+   "diffuser_fin.001",
+   "diffuser_fin.002",
+   "diffuser_fin.003",
+   "diffuser_fin.004",
+   "diffuser_fin.005",
+   "spoiler",
+   "plate",
+   "plate_text",
+   "roof_fin",
+   "roof_sensor",
+   "roof_sensor_eye",
+   "cab_sign",
+   "cab_sign_face_f",
+   "cab_sign_face_r",
+   "cab_text",
+   "cab_check",
+   "cab_check.001",
+   "cab_check.002",
+   "cab_check.003",
+   "cab_check.004",
+   "cab_check.005",
+   "cab_check.006",
+   "cab_check.007"
+  ],
+  "wheel_FL": [
+   "tire",
+   "tread",
+   "tread.001",
+   "tread.002",
+   "rim",
+   "aero_cover",
+   "hub_ring",
+   "hub",
+   "cover_slot",
+   "cover_slot.001",
+   "cover_slot.002",
+   "cover_slot.003",
+   "cover_slot.004",
+   "brake"
+  ],
+  "wheel_FR": [
+   "tire.001",
+   "tread.003",
+   "tread.004",
+   "tread.005",
+   "rim.001",
+   "aero_cover.001",
+   "hub_ring.001",
+   "hub.001",
+   "cover_slot.005",
+   "cover_slot.006",
+   "cover_slot.007",
+   "cover_slot.008",
+   "cover_slot.009",
+   "brake.001"
+  ],
+  "wheel_RL": [
+   "tire.002",
+   "tread.006",
+   "tread.007",
+   "tread.008",
+   "rim.002",
+   "aero_cover.002",
+   "hub_ring.002",
+   "hub.002",
+   "cover_slot.010",
+   "cover_slot.011",
+   "cover_slot.012",
+   "cover_slot.013",
+   "cover_slot.014",
+   "brake.002"
+  ],
+  "wheel_RR": [
+   "tire.003",
+   "tread.009",
+   "tread.010",
+   "tread.011",
+   "rim.003",
+   "aero_cover.003",
+   "hub_ring.003",
+   "hub.003",
+   "cover_slot.015",
+   "cover_slot.016",
+   "cover_slot.017",
+   "cover_slot.018",
+   "cover_slot.019",
+   "brake.003"
+  ]
+ },
+ "pivots": {
+  "wheel_FL": {
+   "pos": [
+    0.805,
+    -1.45,
+    0.345
+   ],
+   "axis": [
+    1,
+    0,
+    0
+   ],
+   "parent": "body",
+   "child": "wheel_FL",
+   "range": [
+    -360,
+    360
+   ]
+  },
+  "wheel_FR": {
+   "pos": [
+    -0.805,
+    -1.45,
+    0.345
+   ],
+   "axis": [
+    1,
+    0,
+    0
+   ],
+   "parent": "body",
+   "child": "wheel_FR",
+   "range": [
+    -360,
+    360
+   ]
+  },
+  "wheel_RL": {
+   "pos": [
+    0.805,
+    1.42,
+    0.345
+   ],
+   "axis": [
+    1,
+    0,
+    0
+   ],
+   "parent": "body",
+   "child": "wheel_RL",
+   "range": [
+    -360,
+    360
+   ]
+  },
+  "wheel_RR": {
+   "pos": [
+    -0.805,
+    1.42,
+    0.345
+   ],
+   "axis": [
+    1,
+    0,
+    0
+   ],
+   "parent": "body",
+   "child": "wheel_RR",
+   "range": [
+    -360,
+    360
+   ]
+  }
+ },
+ "materials": [
+  "black",
+  "body",
+  "body_dark",
+  "glass",
+  "glow_amber",
+  "glow_cyan",
+  "glow_red",
+  "glow_white",
+  "gunmetal",
+  "rubber",
+  "steel",
+  "titan"
+ ],
+ "variant": "cab",
+ "wheel_radius": 0.345
+}
