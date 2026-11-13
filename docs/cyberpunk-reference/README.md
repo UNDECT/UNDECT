@@ -12,5 +12,5 @@
 | [send-to-claude-code-characters.md](send-to-claude-code-characters.md) | 캐릭터·1인칭 팔·총·로봇·차량 Blender 사실화 패스(MPFB2 CC0 인간, 자동화 파이프라인, 규격 검사, LOD, 애니메이션) |
 | [send-to-claude-code-c3-onward.md](send-to-claude-code-c3-onward.md) | C3부터 바뀐 절차: 분위기·배경 우선, 간판 정리(계층·면적 규칙), 구역 스타일 4종, 이후 팔·총·캐릭터 |
 | [send-to-claude-code-ui-maps.md](send-to-claude-code-ui-maps.md) | UI 전면 제작(디자인 시스템, HUD, 메뉴 전체, Blender 아이콘·3D 미리보기·홀로그램 지도) + 모험 맵 기획·제작, 최종 순서표 |
-| [spec/](spec/00-index.md) | **마스터 스펙**: 레퍼런스 전 요소 명세 588개(전투 이펙트, 시술소·시술의, 사이버웨어, 넷러닝, 이동, 적·AI, NPC, 세계, UI, 성장, 차량, 사운드, 보안 NPC, 제외 목록) |
-| [send-to-claude-code-master-spec.md](send-to-claude-code-master-spec.md) | 마스터 스펙 합본(지시 + spec 7개 파일). Claude Code에 보내는 파일 |
+| [spec/](spec/00-index.md) | **마스터 스펙**: 레퍼런스 전 요소 명세 659개(전투 이펙트, 시술소·시술의, 사이버웨어, 넷러닝, 이동, 적·AI, NPC, 세계, UI, 성장, 차량, 사운드, 보안 NPC, 제외 목록) |
+| [send-to-claude-code-master-spec.md](send-to-claude-code-master-spec.md) | 마스터 스펙 합본(지시 + spec 8개 파일). Claude Code에 보내는 파일 |
