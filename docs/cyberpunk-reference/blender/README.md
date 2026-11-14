@@ -54,6 +54,8 @@ python anim.py out/anim clips          # 애니메이션 클립 157개
 1. Blender 확장 **MPFB 2.0.x**(GPL)를 설치한다. `pip install bpy` 환경이면 `~/.config/blender/5.3/extensions/user_default/mpfb`에 풀고 `bl_ext.user_default.mpfb`를 켠다.
 2. MakeHuman 에셋 묶음을 MPFB 사용자 데이터 폴더(`~/.config/blender/5.3/extensions/.user/user_default/mpfb/data`, 다른 위치면 환경 변수 `MPFB_DATA`)에 푼다: 시스템 에셋, shirts01, pants01, shoes01, suits01, gloves01, eyebrows01, eyelashes01, skins02.
 3. **CC0 묶음만 쓴다.** `human.py`가 `data/packs/*.json`으로 목록을 만들고, CC0가 아닌 묶음(`hair03`, `masks02`)의 에셋을 쓰면 멈춘다. 로고가 찍힌 옷, 정치 문구 소품, 다른 작품 캐릭터를 닮은 소품도 쓰지 않는다.
+- **텍스처 정리**: 원본 그림에는 제작처 주소 글자가 찍혀 있고 피부 그림은 몸 전체다. `human.py`는 내보내기 전에 (1) 옷·신발·장갑에 가려진 몸을 메시에서 빼고(`hide_covered`), (2) 모든 그림에서 메시가 쓰는 부분만 남긴다(`clean_textures`, 그림 이름 끝에 `_u`). 이렇게 만든 파일만 `manifest.json`에 `"texture_safety": 2`가 붙는다. 그림에 상표나 글자가 든 에셋은 `BANNED_ASSETS`에 넣어 막는다.
+- **올리기 전 검사**: `python upload_check.py <꺼낼 폴더> out` → GLB 안의 그림을 꺼내 주고, 정리되지 않은 사람 파일을 `BLOCK`으로 표시한다. 꺼낸 그림은 전부 눈으로 본다.
 - 결과물(`out/human/<이름>/human_<이름>.glb`)은 CC0 에셋과 이 스크립트가 만든 장식으로만 이뤄진다. 쓴 에셋 이름은 `manifest.json`의 `assets_cc0`에 있다.
 - 옷과 머리 색은 텍스처를 흑백으로 만든 뒤 다시 칠한다(`tint`). 사람을 늘리려면 `PEOPLE` 표에 한 줄을 더한다.
 - `manifest.json`의 `joints`는 애니메이션 클립의 관절 이름 → 이 뼈대의 뼈 이름 대응표다. 기본 자세가 팔을 벌린 자세라서 팔을 내린 자세까지의 회전(`neutral`)이 같이 들어 있다.

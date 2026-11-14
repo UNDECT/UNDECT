@@ -19,6 +19,8 @@ ONLY = ARGS[2:] if len(ARGS) > 2 else []
 DATA = os.path.expanduser(os.environ.get("MPFB_DATA", "~/.config/blender/5.3/extensions/.user/user_default/mpfb/data"))
 TEX = 1024
 NOT_CC0_PACKS = ("hair03", "masks02")   # CC-BY 묶음은 쓰지 않는다
+# CC0여도 쓰지 않는 에셋: 그림에 실제 상표나 글자가 찍혀 있다(shoes05 = 밑창과 옆면에 운동화 회사 로고)
+BANNED_ASSETS = ("shoes05",)
 
 def cc0_assets():
     ok = set()
@@ -44,7 +46,7 @@ PEOPLE = {
                     clothes=["joepal_crude_t-shirt_female", "cortu_cargo_pants", "toigo_gloves_short"], shoes="toigo_ankle_boots_female",
                     tint={"joepal_crude_t-shirt_female": INK, "cortu_cargo_pants": NAVY}, hair_tint=(0.10, 0.75, 0.80), cyber=["cheek", "neck"], glow="glow_magenta"),
     "man_b": dict(role="노동자", gender=1.0, age=0.62, weight=0.62, muscle=0.50, height=0.55, race=(0.05, 0.15, 0.8), skin="middleage_african_male", hair="short04", brow="eyebrow009",
-                  clothes=["male_worksuit01"], shoes="shoes05", tint={"male_worksuit01": RUST}, cyber=["ear", "neck"], glow="glow_amber"),
+                  clothes=["male_worksuit01"], shoes="toigo_ankle_boots_male", tint={"male_worksuit01": RUST}, cyber=["ear", "neck"], glow="glow_amber"),
     "woman_b": dict(role="회사원", gender=0.0, age=0.56, weight=0.45, muscle=0.38, height=0.62, race=(0.1, 0.85, 0.05), skin="young_caucasian_female", hair="braid01", brow="eyebrow001",
                     clothes=["toigo_female_double-breasted_suit"], shoes="toigo_ankle_boots_female", tint={"toigo_female_double-breasted_suit": INK}, cyber=["visor_thin", "ear"], glow="glow_cyan"),
     "man_c": dict(role="임원", gender=1.0, age=0.85, weight=0.55, muscle=0.35, height=0.5, race=(0.1, 0.85, 0.05), skin="old_caucasian_male", hair="short04", brow="eyebrow010",
@@ -58,7 +60,7 @@ PEOPLE = {
     "woman_d": dict(role="거리 사람", gender=0.0, age=0.58, weight=0.50, muscle=0.40, height=0.58, race=(0.3, 0.6, 0.1), skin="middleage_caucasian_female", hair="long01", brow="eyebrow002",
                     clothes=["toigo_female_suit_2"], shoes="toigo_ankle_boots_female", tint={"toigo_female_suit_2": WINE}, hair_tint=(0.75, 0.78, 0.85), cyber=["cheek", "ear"], glow="glow_cyan"),
     "merchant": dict(role="상인", gender=1.0, age=0.74, weight=0.72, muscle=0.40, height=0.42, race=(0.6, 0.3, 0.1), skin="old_asian_male", hair="short04", brow="eyebrow007",
-                     clothes=["namuhekam_male_polo_shirt", "toigo_wool_pants", "jujube_newsboy_cap"], shoes="shoes05", tint={"namuhekam_male_polo_shirt": OLIVE, "toigo_wool_pants": INK, "jujube_newsboy_cap": CHAR},
+                     clothes=["namuhekam_male_polo_shirt", "toigo_wool_pants", "jujube_newsboy_cap"], shoes="toigo_ankle_boots_male", tint={"namuhekam_male_polo_shirt": OLIVE, "toigo_wool_pants": INK, "jujube_newsboy_cap": CHAR},
                      hair_tint=(0.6, 0.6, 0.62), cyber=["ear", "neck", "badge"], glow="glow_amber"),
     # 시술소 의사: 수술복 느낌의 청록 작업복 + 장갑 + 확대경 + 귀 장치 + 가슴 표지
     "doctor": dict(role="시술의", gender=1.0, age=0.7, weight=0.58, muscle=0.45, height=0.5, race=(0.7, 0.3, 0.0), skin="middleage_asian_male", hair="short04", brow="eyebrow008",
@@ -110,6 +112,99 @@ def tint(ob, color, strength=1.0, lift=1.0):
             a[:, :3] = np.where(out <= 0.0031308, out * 12.92, 1.055 * out ** (1 / 2.4) - 0.055)
             im2 = bpy.data.images.new(im.name.rsplit(".", 1)[0] + "_" + ob.name.split(".")[-1] + "_tint", w, h, alpha=True)
             im2.pixels = a.ravel(); im2.pack(); n.image = im2
+
+# ------------------------------------------------------------------ 텍스처 정리 (올리기 전에 반드시 거친다)
+# 받은 텍스처에는 (1) 구석에 출처 주소 글자가 찍혀 있고 (2) 피부는 옷 없는 온몸 전개도다.
+# 그대로 올리면 플랫폼 규정(외부 링크, 노출)에 걸린다. 그래서 모델이 실제로 쓰는 부분만 남기고 나머지는 한 가지 색으로 지운다.
+def uv_mask(me, size, polys=None, grow=5):
+    """메시의 UV 삼각형이 덮는 픽셀. polys를 주면 그 면들만. grow = 가장자리로 넓히는 픽셀 수."""
+    import numpy as np
+    mask = np.zeros((size, size), bool); uv = me.uv_layers.active.data; me.calc_loop_triangles()
+    ok = None if polys is None else set(polys)
+    for t in me.loop_triangles:
+        if ok is not None and t.polygon_index not in ok: continue
+        p = [(uv[l].uv[0] * size, uv[l].uv[1] * size) for l in t.loops]
+        x0, x1 = int(max(0, min(q[0] for q in p) - 1)), int(min(size - 1, max(q[0] for q in p) + 1)); y0, y1 = int(max(0, min(q[1] for q in p) - 1)), int(min(size - 1, max(q[1] for q in p) + 1))
+        if x1 < x0 or y1 < y0: continue
+        xs, ys = np.meshgrid(np.arange(x0, x1 + 1) + 0.5, np.arange(y0, y1 + 1) + 0.5)
+        (ax, ay), (bx, by), (cx, cy) = p; d = (by - cy) * (ax - cx) + (cx - bx) * (ay - cy)
+        if abs(d) < 1e-12: continue
+        w0 = ((by - cy) * (xs - cx) + (cx - bx) * (ys - cy)) / d; w1 = ((cy - ay) * (xs - cx) + (ax - cx) * (ys - cy)) / d
+        mask[y0:y1 + 1, x0:x1 + 1] |= (w0 >= -0.02) & (w1 >= -0.02) & (w0 + w1 <= 1.02)
+    for _ in range(grow):
+        m = mask.copy(); m[1:] |= mask[:-1]; m[:-1] |= mask[1:]; m[:, 1:] |= mask[:, :-1]; m[:, :-1] |= mask[:, 1:]; mask = m
+    return mask
+
+def image_pixels(im):
+    import numpy as np
+    if max(im.size) > TEX: im.scale(min(TEX, im.size[0]), min(TEX, im.size[1]))
+    return np.array(im.pixels[:], dtype=np.float32).reshape(im.size[1], im.size[0], 4)
+
+def new_image(name, a):
+    im = bpy.data.images.new(name, a.shape[1], a.shape[0], alpha=True); im.pixels = a.ravel(); im.pack(); return im
+
+def hide_covered(base, reach=0.12, keep_rings=5):
+    """옷·신발·장갑에 가려진 몸을 지운다. 옷 에셋에 든 '가림 목록'이 없거나 모자란 옷이 있어서 직접 찾는다.
+    몸의 각 점에서 바깥으로 reach(m)만큼 쏴서 옷에 닿으면 가려진 것이다. 소매 끝·목둘레처럼 안이 들여다보이는 곳은 keep_rings칸만큼 남긴다."""
+    from mathutils.bvhtree import BVHTree
+    dg = bpy.context.evaluated_depsgraph_get()
+    skip = (".high-poly", ".low-poly", "eyebrow", "eyelash", "teeth", "tongue")
+    hair = {o.name for o in bpy.context.scene.objects if o.type == "MESH" and any(o.name.endswith("." + h) for h in os.listdir(os.path.join(DATA, "hair")))}
+    cloth = [o for o in bpy.context.scene.objects if o.type == "MESH" and o != base and not o.get("part") and o.name not in hair and not any(k in o.name for k in skip)]
+    trees = [BVHTree.FromObject(o, dg) for o in cloth]
+    me = base.data; n = len(me.vertices); covered = [False] * n
+    for v in me.vertices:
+        for t in trees:
+            hit = t.ray_cast(v.co - v.normal * 0.02, v.normal, reach + 0.02)   # 옷이 살에 파묻힌 곳도 잡도록 2 cm 안쪽에서 쏜다
+            if hit[0] is not None: covered[v.index] = True; break
+    nb = [[] for _ in range(n)]
+    for e in me.edges: nb[e.vertices[0]].append(e.vertices[1]); nb[e.vertices[1]].append(e.vertices[0])
+    for _ in range(keep_rings):   # 가려지지 않은 점과 이웃한 점은 남긴다
+        covered = [covered[i] and all(covered[j] for j in nb[i]) for i in range(n)]
+    vg = base.vertex_groups.new(name="covered_by_clothes"); vg.add([i for i in range(n) if covered[i]], 1.0, "REPLACE")
+    md = base.modifiers.new("Delete.covered", "MASK"); md.vertex_group = vg.name; md.invert_vertex_group = True
+    return sum(covered)
+
+def cover_private(base):
+    """피부 텍스처에서 가슴 끝과 사타구니 부분을 주변 피부색으로 덮는다(그 면이 모델에 남아 있더라도 그림에는 없게 한다)."""
+    import numpy as np
+    polys = [p.index for p in base.data.polygons if any(k in base.material_slots[p.material_index].name.lower() for k in ("nipple", "genital"))]
+    if not polys: return 0
+    for sl in base.material_slots:
+        for n in [n for n in sl.material.node_tree.nodes if n.type == "TEX_IMAGE" and n.image]:
+            if n.image.get("covered"): continue
+            a = image_pixels(n.image); m = uv_mask(base.data, a.shape[0], polys, grow=14); ring = uv_mask(base.data, a.shape[0], polys, grow=40) & ~m
+            a[m, :3] = a[ring, :3].mean(axis=0) if ring.any() else a[..., :3].reshape(-1, 3).mean(axis=0)
+            im = new_image(n.image.name.rsplit(".", 1)[0] + "_c", a); im["covered"] = True
+            for sl2 in base.material_slots:
+                for n2 in sl2.material.node_tree.nodes:
+                    if n2.type == "TEX_IMAGE" and n2.image == n.image and n2 != n: n2.image = im
+            n.image = im
+    return len(polys)
+
+def clean_textures():
+    """모든 텍스처에서 모델이 쓰지 않는 부분(구석의 글자, 옷 아래 몸)을 지운다. 지운 뒤 남은 비율을 돌려준다."""
+    import numpy as np
+    dg = bpy.context.evaluated_depsgraph_get(); report = {}
+    for ob in [o for o in bpy.context.scene.objects if o.type == "MESH" and not o.get("part")]:
+        ev = ob.evaluated_get(dg); me = ev.to_mesh()          # 가림 마스크가 적용된 메시 = 실제로 보이는 면만
+        if not me.uv_layers.active or not me.polygons: ev.to_mesh_clear(); continue
+        masks = {}
+        for sl in ob.material_slots:
+            m = sl.material
+            for n in ([n for n in m.node_tree.nodes if n.type == "TEX_IMAGE" and n.image] if m and m.node_tree else []):
+                if n.image.get("clean"): continue
+                a = image_pixels(n.image); size = a.shape[0]
+                if size not in masks: masks[size] = uv_mask(me, size)
+                keep = masks[size]; inside = a[keep]
+                fill = inside[:, :3].mean(axis=0) if len(inside) else np.array([0.5, 0.5, 0.5], np.float32)
+                cut = float(inside[:, 3].min()) < 0.98 if len(inside) else False      # 머리카락·눈썹처럼 알파를 쓰는 그림
+                a[~keep, :3] = fill; a[~keep, 3] = 0.0 if cut else 1.0
+                im = new_image(n.image.name.rsplit(".", 1)[0] + "_u", a); im["clean"] = True
+                if n.image.colorspace_settings.name != "sRGB": im.colorspace_settings.name = n.image.colorspace_settings.name
+                n.image = im; report[im.name] = round(float(keep.mean()), 3)
+        ev.to_mesh_clear()
+    return report
 
 def band(r, thick, h, half_deg, n=28):
     """머리를 감싸는 휜 띠. 앞(-Y)을 중심으로 좌우 half_deg도."""
@@ -283,6 +378,7 @@ def build(name):
     sp = PEOPLE[name]; ok = cc0_assets()
     for a in [sp["hair"], sp["brow"], sp["shoes"], sp["skin"]] + sp["clothes"]:
         if a not in ok: raise RuntimeError("CC0 목록에 없는 에셋: " + a)
+        if a in BANNED_ASSETS: raise RuntimeError("상표나 글자가 찍힌 에셋: " + a)
     if sp["age"] < 0.5: raise RuntimeError("성인만 만든다: " + name)
     macro = {"gender": sp["gender"], "age": sp["age"], "muscle": sp["muscle"], "weight": sp["weight"], "proportions": 0.6, "height": sp["height"],
              "cupsize": 0.45, "firmness": 0.5, "race": {"asian": sp["race"][0], "caucasian": sp["race"][1], "african": sp["race"][2]}}
@@ -299,11 +395,19 @@ def build(name):
         if ob: tint(ob, col)
     if sp["shoes"].startswith("toigo_"): tint(find("." + sp["shoes"]), INK)
     if sp.get("hair_tint"): tint(find("." + sp["hair"]), [c * 0.30 for c in sp["hair_tint"]], 0.95, lift=0.7)
+    hidden = hide_covered(base)                                  # 옷에 가려진 몸을 지운다
+    cover_private(base)                                          # 합치기 전에: 면 묶음 이름으로 가릴 곳을 찾는다
     skin = base.material_slots[0].material; skin.name = "skin"   # 몸은 재질 하나로 합친다(전부 같은 텍스처)
     for sl in base.material_slots: sl.material = skin
     rig = next(o for o in bpy.context.scene.objects if o.type == "ARMATURE")
     kit.M.clear(); kit.base_materials()   # MPFB가 안 쓰는 재질을 지우므로 다시 만든다
     made = cyberware(sp, base, rig)
+    rep = clean_textures()
+    if os.environ.get("HUMAN_TEXDUMP"):   # 정리한 텍스처를 그림으로 떠서 눈으로 확인한다
+        d = os.path.join(OUT, "_tex"); os.makedirs(d, exist_ok=True)
+        for nm in rep:
+            im = bpy.data.images[nm].copy(); im.filepath_raw = os.path.abspath(os.path.join(d, f"{name}__{nm}.png")); im.file_format = "PNG"; im.save()
+    print("TEXCLEAN", name, "hidden_verts", hidden, {k: v for k, v in rep.items() if "diffuse" in k})
     return base, rig, made
 
 def export(name, base, rig, made, sp, joints, extra=None):
@@ -324,6 +428,8 @@ def export(name, base, rig, made, sp, joints, extra=None):
            "attach": {"cyber_head": "head", "cyber_neck": "neck_01", "cyber_chest": "spine_03", "hand_R": "hand_r", "hand_L": "hand_l"},
            "assets_cc0": [sp["skin"], sp["hair"], sp["brow"], sp["shoes"]] + sp["clothes"] + ["high-poly", "eyelashes01", "teeth_base"],
            "tint": {k: list(v) for k, v in sp.get("tint", {}).items()}, "hair_tint": list(sp["hair_tint"]) if sp.get("hair_tint") else None}
+    # 올려도 되는 텍스처인지 표시. 2 = 주소 글자와 안 쓰는 부분을 지웠고, 옷에 가려진 몸과 피부 그림을 뺐다. 이 값이 없는 예전 파일은 올리지 않는다
+    man["texture_safety"] = 2
     man.update(extra or {})
     json.dump(man, open(os.path.join(d, f"human_{name}.manifest.json"), "w"), indent=1, ensure_ascii=False)
     print(f"EXPORT human_{name} tris={man['triangles']} meshes={len(tris)} cyber={len(made)} h={man['height']}", flush=True)
