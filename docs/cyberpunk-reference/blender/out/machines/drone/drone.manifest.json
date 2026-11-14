@@ -1,0 +1,303 @@
+{
+ "name": "drone",
+ "units": "m",
+ "forward": "-Y",
+ "up": "+Z",
+ "triangles": 14284,
+ "triangles_by_part": {
+  "body": 10156,
+  "eye": 92,
+  "fan_FL": 344,
+  "thrust_glow": 1536,
+  "fan_FR": 344,
+  "fan_RL": 344,
+  "fan_RR": 344,
+  "gimbal": 476,
+  "gun": 648
+ },
+ "parts": {
+  "body": [
+   "hull",
+   "top_cover",
+   "nose",
+   "eye_ring",
+   "eye_core",
+   "side_sensor",
+   "side_vent",
+   "vent_fin",
+   "vent_fin.001",
+   "vent_fin.002",
+   "vent_fin.003",
+   "vent_fin.004",
+   "nav",
+   "side_sensor.001",
+   "side_vent.001",
+   "vent_fin.005",
+   "vent_fin.006",
+   "vent_fin.007",
+   "vent_fin.008",
+   "vent_fin.009",
+   "nav.001",
+   "stripe",
+   "id",
+   "tail_fin",
+   "tail_light",
+   "antenna",
+   "arm",
+   "arm_glow",
+   "duct",
+   "duct_lip",
+   "strut",
+   "strut.001",
+   "strut.002",
+   "motor",
+   "arm.001",
+   "arm_glow.001",
+   "duct.001",
+   "duct_lip.001",
+   "strut.003",
+   "strut.004",
+   "strut.005",
+   "motor.001",
+   "arm.002",
+   "arm_glow.002",
+   "duct.002",
+   "duct_lip.002",
+   "strut.006",
+   "strut.007",
+   "strut.008",
+   "motor.002",
+   "arm.003",
+   "arm_glow.003",
+   "duct.003",
+   "duct_lip.003",
+   "strut.009",
+   "strut.010",
+   "strut.011",
+   "motor.003",
+   "gimbal_ring",
+   "skid",
+   "skid.001",
+   "skid_bar",
+   "skid.002",
+   "skid.003",
+   "skid_bar.001"
+  ],
+  "eye": [
+   "eye"
+  ],
+  "fan_FL": [
+   "hub",
+   "blade",
+   "blade.001",
+   "blade.002",
+   "blade.003",
+   "blade.004"
+  ],
+  "thrust_glow": [
+   "thrust_glow",
+   "thrust_glow.001",
+   "thrust_glow.002",
+   "thrust_glow.003"
+  ],
+  "fan_FR": [
+   "hub.001",
+   "blade.005",
+   "blade.006",
+   "blade.007",
+   "blade.008",
+   "blade.009"
+  ],
+  "fan_RL": [
+   "hub.002",
+   "blade.010",
+   "blade.011",
+   "blade.012",
+   "blade.013",
+   "blade.014"
+  ],
+  "fan_RR": [
+   "hub.003",
+   "blade.015",
+   "blade.016",
+   "blade.017",
+   "blade.018",
+   "blade.019"
+  ],
+  "gimbal": [
+   "gimbal_body",
+   "gimbal_ear",
+   "gimbal_ear.001"
+  ],
+  "gun": [
+   "gun_block",
+   "gun_barrel",
+   "gun_bore",
+   "gun_barrel.001",
+   "gun_bore.001",
+   "gun_shroud",
+   "gun_laser",
+   "gun_feed"
+  ]
+ },
+ "pivots": {
+  "fan_FL": {
+   "pos": [
+    -0.33,
+    -0.25,
+    0.08
+   ],
+   "axis": [
+    0,
+    0,
+    1
+   ],
+   "parent": "body",
+   "child": "fan_FL",
+   "range": [
+    -360,
+    360
+   ]
+  },
+  "fan_FR": {
+   "pos": [
+    0.33,
+    -0.25,
+    0.08
+   ],
+   "axis": [
+    0,
+    0,
+    1
+   ],
+   "parent": "body",
+   "child": "fan_FR",
+   "range": [
+    -360,
+    360
+   ]
+  },
+  "fan_RL": {
+   "pos": [
+    -0.33,
+    0.25,
+    0.08
+   ],
+   "axis": [
+    0,
+    0,
+    1
+   ],
+   "parent": "body",
+   "child": "fan_RL",
+   "range": [
+    -360,
+    360
+   ]
+  },
+  "fan_RR": {
+   "pos": [
+    0.33,
+    0.25,
+    0.08
+   ],
+   "axis": [
+    0,
+    0,
+    1
+   ],
+   "parent": "body",
+   "child": "fan_RR",
+   "range": [
+    -360,
+    360
+   ]
+  },
+  "gimbal_yaw": {
+   "pos": [
+    0,
+    -0.06,
+    -0.068
+   ],
+   "axis": [
+    0,
+    0,
+    1
+   ],
+   "parent": "body",
+   "child": "gimbal",
+   "range": [
+    -180,
+    180
+   ]
+  },
+  "gun_pitch": {
+   "pos": [
+    0,
+    -0.06,
+    -0.126
+   ],
+   "axis": [
+    1,
+    0,
+    0
+   ],
+   "parent": "gimbal",
+   "child": "gun",
+   "range": [
+    -60,
+    20
+   ]
+  },
+  "muzzle": {
+   "pos": [
+    0,
+    -0.334,
+    -0.13
+   ],
+   "axis": [
+    0,
+    -1,
+    0
+   ],
+   "parent": "gun",
+   "child": "fx",
+   "range": [
+    -90,
+    90
+   ]
+  },
+  "eye": {
+   "pos": [
+    0,
+    -0.336,
+    0.026
+   ],
+   "axis": [
+    0,
+    -1,
+    0
+   ],
+   "parent": "body",
+   "child": "fx",
+   "range": [
+    -90,
+    90
+   ]
+  }
+ },
+ "materials": [
+  "black",
+  "glow_cyan",
+  "glow_red",
+  "glow_white",
+  "gunmetal",
+  "m_accent",
+  "m_armor",
+  "m_frame",
+  "m_light",
+  "rubber",
+  "steel",
+  "titan"
+ ]
+}

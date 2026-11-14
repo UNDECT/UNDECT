@@ -1,0 +1,101 @@
+{
+ "name": "katana",
+ "units": "m",
+ "forward": "-Y",
+ "up": "+Z",
+ "triangles": 2966,
+ "triangles_by_part": {
+  "body": 2946,
+  "edge_glow": 20
+ },
+ "parts": {
+  "body": [
+   "blade",
+   "fuller",
+   "habaki",
+   "guard",
+   "guard_plate",
+   "guard_led",
+   "handle",
+   "wrap",
+   "wrap.001",
+   "wrap.002",
+   "wrap.003",
+   "wrap.004",
+   "wrap.005",
+   "wrap.006",
+   "wrap.007",
+   "wrap.008",
+   "pommel",
+   "power_cell"
+  ],
+  "edge_glow": [
+   "edge_glow"
+  ]
+ },
+ "pivots": {
+  "grip": {
+   "pos": [
+    0,
+    0.1,
+    0
+   ],
+   "axis": [
+    0,
+    -1,
+    0
+   ],
+   "parent": "body",
+   "child": "hand_R",
+   "range": [
+    -90,
+    90
+   ]
+  },
+  "tip": {
+   "pos": [
+    0,
+    -0.76,
+    0.004
+   ],
+   "axis": [
+    0,
+    -1,
+    0
+   ],
+   "parent": "body",
+   "child": "fx",
+   "range": [
+    -90,
+    90
+   ]
+  },
+  "support": {
+   "pos": [
+    0,
+    0.22,
+    0
+   ],
+   "axis": [
+    0,
+    -1,
+    0
+   ],
+   "parent": "body",
+   "child": "hand_L",
+   "range": [
+    -90,
+    90
+   ]
+  }
+ },
+ "materials": [
+  "dark",
+  "glow_cyan",
+  "gunmetal",
+  "steel",
+  "titan",
+  "w_grip",
+  "w_wrap"
+ ]
+}

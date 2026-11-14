@@ -1,0 +1,251 @@
+{
+ "name": "lmg",
+ "units": "m",
+ "forward": "-Y",
+ "up": "+Z",
+ "triangles": 6264,
+ "triangles_by_part": {
+  "body": 4232,
+  "cover": 1556,
+  "mag": 352,
+  "trigger": 44,
+  "bolt": 80
+ },
+ "parts": {
+  "body": [
+   "receiver",
+   "receiver_plate",
+   "rivet",
+   "rivet.001",
+   "rivet.002",
+   "rivet.003",
+   "rivet.004",
+   "rivet.005",
+   "rivet.006",
+   "rivet.007",
+   "rivet.008",
+   "rivet.009",
+   "rivet.010",
+   "rivet.011",
+   "belt_chute",
+   "belt_round",
+   "belt_round.001",
+   "belt_round.002",
+   "belt_round.003",
+   "belt_round.004",
+   "barrel",
+   "fin",
+   "fin.001",
+   "fin.002",
+   "fin.003",
+   "fin.004",
+   "fin.005",
+   "fin.006",
+   "fin.007",
+   "fin.008",
+   "fin.009",
+   "fin.010",
+   "fin.011",
+   "fin.012",
+   "fin.013",
+   "barrel_jacket",
+   "jacket_hole",
+   "jacket_hole.001",
+   "jacket_hole.002",
+   "jacket_hole.003",
+   "jacket_hole.004",
+   "jacket_hole.005",
+   "jacket_hole.006",
+   "jacket_hole.007",
+   "jacket_hole.008",
+   "carry_handle",
+   "gas_block",
+   "gas_tube",
+   "flash_hider",
+   "hider_slot",
+   "hider_slot.001",
+   "hider_slot.002",
+   "hider_slot.003",
+   "hider_slot.004",
+   "hider_slot.005",
+   "bore",
+   "bipod_mount",
+   "bipod_leg",
+   "bipod_foot",
+   "bipod_leg.001",
+   "bipod_foot.001",
+   "grip",
+   "guard_front",
+   "guard_bottom",
+   "stock",
+   "stock_cut",
+   "butt_pad",
+   "shoulder_rest",
+   "eject_port"
+  ],
+  "cover": [
+   "feed_cover",
+   "cover_latch",
+   "rail_base",
+   "rail_teeth",
+   "sight_body",
+   "sight_wall",
+   "sight_wall.001",
+   "sight_top",
+   "sight_lens"
+  ],
+  "mag": [
+   "ammo_box",
+   "ammo_box_band",
+   "ammo_window",
+   "ammo_latch"
+  ],
+  "trigger": [
+   "trigger"
+  ],
+  "bolt": [
+   "bolt",
+   "charging_handle"
+  ]
+ },
+ "pivots": {
+  "cover": {
+   "pos": [
+    0,
+    0.04,
+    0.08
+   ],
+   "axis": [
+    1,
+    0,
+    0
+   ],
+   "parent": "body",
+   "child": "cover",
+   "range": [
+    0,
+    75
+   ]
+  },
+  "muzzle": {
+   "pos": [
+    0,
+    -0.842,
+    0.046
+   ],
+   "axis": [
+    0,
+    -1,
+    0
+   ],
+   "parent": "body",
+   "child": "fx",
+   "range": [
+    -90,
+    90
+   ]
+  },
+  "eject": {
+   "pos": [
+    0.032,
+    -0.1,
+    0.03
+   ],
+   "axis": [
+    1,
+    0,
+    0.4
+   ],
+   "parent": "body",
+   "child": "fx",
+   "range": [
+    -90,
+    90
+   ]
+  },
+  "grip": {
+   "pos": [
+    0,
+    0.092,
+    -0.058
+   ],
+   "axis": [
+    0,
+    0,
+    1
+   ],
+   "parent": "body",
+   "child": "hand_R",
+   "range": [
+    -90,
+    90
+   ]
+  },
+  "support": {
+   "pos": [
+    0,
+    -0.345,
+    0.13
+   ],
+   "axis": [
+    0,
+    0,
+    1
+   ],
+   "parent": "body",
+   "child": "hand_L",
+   "range": [
+    -90,
+    90
+   ]
+  },
+  "sight": {
+   "pos": [
+    0,
+    -0.1,
+    0.115
+   ],
+   "axis": [
+    0,
+    -1,
+    0
+   ],
+   "parent": "body",
+   "child": "attachment",
+   "range": [
+    -90,
+    90
+   ]
+  },
+  "mag": {
+   "pos": [
+    0,
+    -0.125,
+    -0.004
+   ],
+   "axis": [
+    0,
+    0,
+    -1
+   ],
+   "parent": "body",
+   "child": "mag",
+   "range": [
+    0,
+    0
+   ]
+  }
+ },
+ "materials": [
+  "black",
+  "glow_amber",
+  "glow_red",
+  "gunmetal",
+  "steel",
+  "titan",
+  "w_black",
+  "w_grip",
+  "w_olive",
+  "w_orange"
+ ]
+}

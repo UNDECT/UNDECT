@@ -1,0 +1,29 @@
+{
+ "name": "billboard",
+ "units": "m",
+ "forward": "-Y",
+ "up": "+Z",
+ "triangles": 564,
+ "triangles_by_part": {
+  "billboard": 564
+ },
+ "parts": {
+  "billboard": [
+   "bb_leg",
+   "bb_brace",
+   "bb_leg.001",
+   "bb_brace.001",
+   "bb_leg.002",
+   "bb_brace.002",
+   "bb_frame",
+   "bb_screen",
+   "bb_text"
+  ]
+ },
+ "pivots": {},
+ "materials": [
+  "ad_ZENTH",
+  "glow_white",
+  "gunmetal"
+ ]
+}

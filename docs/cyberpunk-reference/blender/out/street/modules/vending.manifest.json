@@ -1,0 +1,30 @@
+{
+ "name": "vending",
+ "units": "m",
+ "forward": "-Y",
+ "up": "+Z",
+ "triangles": 1484,
+ "triangles_by_part": {
+  "vending": 1484
+ },
+ "parts": {
+  "vending": [
+   "vend_body",
+   "vend_screen",
+   "vend_slot",
+   "vend_pay",
+   "vend_row",
+   "vend_row.001",
+   "vend_row.002",
+   "vend_row.003",
+   "vend_text"
+  ]
+ },
+ "pivots": {},
+ "materials": [
+  "black",
+  "glow_cyan",
+  "glow_white",
+  "prop_paint"
+ ]
+}

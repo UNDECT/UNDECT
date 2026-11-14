@@ -1,0 +1,182 @@
+{
+ "name": "dmr",
+ "units": "m",
+ "forward": "-Y",
+ "up": "+Z",
+ "triangles": 7784,
+ "triangles_by_part": {
+  "body": 7576,
+  "mag": 120,
+  "trigger": 44,
+  "bolt": 44
+ },
+ "parts": {
+  "body": [
+   "receiver",
+   "side_inlay",
+   "glow_line",
+   "glow_line.001",
+   "handguard",
+   "handguard_inlay",
+   "barrel",
+   "suppressor",
+   "supp_ring",
+   "supp_ring.001",
+   "supp_ring.002",
+   "supp_ring.003",
+   "supp_ring.004",
+   "supp_cap",
+   "bore",
+   "magwell",
+   "guard_front",
+   "guard_bottom",
+   "stock",
+   "thumbhole",
+   "grip_pad",
+   "cheek_rest",
+   "butt_pad",
+   "rail_base",
+   "rail_teeth",
+   "scope_ring",
+   "scope_ring.001",
+   "scope_body",
+   "scope_lens",
+   "scope_eye",
+   "scope_led",
+   "bipod_leg",
+   "bipod_leg.001",
+   "bipod_mount",
+   "eject_port"
+  ],
+  "mag": [
+   "mag",
+   "mag_window"
+  ],
+  "trigger": [
+   "trigger"
+  ],
+  "bolt": [
+   "bolt"
+  ]
+ },
+ "pivots": {
+  "muzzle": {
+   "pos": [
+    0,
+    -0.892,
+    0.048
+   ],
+   "axis": [
+    0,
+    -1,
+    0
+   ],
+   "parent": "body",
+   "child": "fx",
+   "range": [
+    -90,
+    90
+   ]
+  },
+  "eject": {
+   "pos": [
+    0.026,
+    -0.1,
+    0.066
+   ],
+   "axis": [
+    1,
+    0,
+    0.4
+   ],
+   "parent": "body",
+   "child": "fx",
+   "range": [
+    -90,
+    90
+   ]
+  },
+  "grip": {
+   "pos": [
+    0,
+    0.082,
+    -0.05
+   ],
+   "axis": [
+    0,
+    0,
+    1
+   ],
+   "parent": "body",
+   "child": "hand_R",
+   "range": [
+    -90,
+    90
+   ]
+  },
+  "support": {
+   "pos": [
+    0,
+    -0.4,
+    0.01
+   ],
+   "axis": [
+    0,
+    0,
+    1
+   ],
+   "parent": "body",
+   "child": "hand_L",
+   "range": [
+    -90,
+    90
+   ]
+  },
+  "sight": {
+   "pos": [
+    0,
+    -0.05,
+    0.122
+   ],
+   "axis": [
+    0,
+    -1,
+    0
+   ],
+   "parent": "body",
+   "child": "attachment",
+   "range": [
+    -90,
+    90
+   ]
+  },
+  "mag": {
+   "pos": [
+    0,
+    -0.112,
+    -0.03
+   ],
+   "axis": [
+    0,
+    0,
+    -1
+   ],
+   "parent": "body",
+   "child": "mag",
+   "range": [
+    0,
+    0
+   ]
+  }
+ },
+ "materials": [
+  "black",
+  "glass",
+  "glow_cyan",
+  "gunmetal",
+  "steel",
+  "w_black",
+  "w_grip",
+  "w_white"
+ ]
+}

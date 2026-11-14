@@ -1,0 +1,565 @@
+{
+ "name": "arm_launcher",
+ "units": "m",
+ "forward": "-Y",
+ "up": "+Z",
+ "triangles": 15404,
+ "triangles_by_part": {
+  "forearm": 7012,
+  "glow": 216,
+  "hatch_L": 852,
+  "hatch_R": 852,
+  "tube": 1260,
+  "rocket": 184,
+  "hand": 1476,
+  "finger1_a": 260,
+  "finger1_b": 260,
+  "finger1_c": 260,
+  "finger2_a": 260,
+  "finger2_b": 260,
+  "finger2_c": 260,
+  "finger3_a": 260,
+  "finger3_b": 260,
+  "finger3_c": 260,
+  "finger4_a": 260,
+  "finger4_b": 260,
+  "finger4_c": 260,
+  "thumb_a": 216,
+  "thumb_b": 216
+ },
+ "parts": {
+  "forearm": [
+   "elbow_hinge",
+   "elbow_cap",
+   "bolt",
+   "elbow_cap.001",
+   "bolt.001",
+   "bellows",
+   "core",
+   "ventral",
+   "side_plate",
+   "side_plate.001",
+   "bay_floor",
+   "collar_rear",
+   "collar_front"
+  ],
+  "glow": [
+   "ammo_led",
+   "ammo_led.001",
+   "ammo_led.002",
+   "ammo_led.003",
+   "ammo_led.004",
+   "ammo_led.005",
+   "sight_lens",
+   "palm_led"
+  ],
+  "hatch_L": [
+   "hatch",
+   "hatch_stripe"
+  ],
+  "hatch_R": [
+   "hatch.001",
+   "hatch_stripe.001"
+  ],
+  "tube": [
+   "tube_body",
+   "tube_band",
+   "tube_band.001",
+   "tube_band.002",
+   "tube_mouth",
+   "tube_sight",
+   "tube_strut",
+   "tube_strut.001"
+  ],
+  "rocket": [
+   "rocket_tip",
+   "rocket_band"
+  ],
+  "hand": [
+   "wrist_ball",
+   "wrist_ring",
+   "palm",
+   "palm_back",
+   "palm_pad"
+  ],
+  "finger1_a": [
+   "knuckle",
+   "phalanx",
+   "phalanx_pad"
+  ],
+  "finger1_b": [
+   "knuckle.001",
+   "phalanx.001",
+   "phalanx_pad.001"
+  ],
+  "finger1_c": [
+   "knuckle.002",
+   "phalanx.002",
+   "phalanx_pad.002"
+  ],
+  "finger2_a": [
+   "knuckle.003",
+   "phalanx.003",
+   "phalanx_pad.003"
+  ],
+  "finger2_b": [
+   "knuckle.004",
+   "phalanx.004",
+   "phalanx_pad.004"
+  ],
+  "finger2_c": [
+   "knuckle.005",
+   "phalanx.005",
+   "phalanx_pad.005"
+  ],
+  "finger3_a": [
+   "knuckle.006",
+   "phalanx.006",
+   "phalanx_pad.006"
+  ],
+  "finger3_b": [
+   "knuckle.007",
+   "phalanx.007",
+   "phalanx_pad.007"
+  ],
+  "finger3_c": [
+   "knuckle.008",
+   "phalanx.008",
+   "phalanx_pad.008"
+  ],
+  "finger4_a": [
+   "knuckle.009",
+   "phalanx.009",
+   "phalanx_pad.009"
+  ],
+  "finger4_b": [
+   "knuckle.010",
+   "phalanx.010",
+   "phalanx_pad.010"
+  ],
+  "finger4_c": [
+   "knuckle.011",
+   "phalanx.011",
+   "phalanx_pad.011"
+  ],
+  "thumb_a": [
+   "knuckle.012",
+   "phalanx.012"
+  ],
+  "thumb_b": [
+   "knuckle.013",
+   "phalanx.013"
+  ]
+ },
+ "pivots": {
+  "elbow": {
+   "pos": [
+    0,
+    0,
+    0
+   ],
+   "axis": [
+    0,
+    1,
+    0
+   ],
+   "parent": "upperarm",
+   "child": "forearm",
+   "range": [
+    0,
+    140
+   ]
+  },
+  "hatch_L": {
+   "pos": [
+    0.136,
+    0.0358,
+    0.0253
+   ],
+   "axis": [
+    1,
+    0,
+    0
+   ],
+   "parent": "forearm",
+   "child": "hatch_L",
+   "range": [
+    0,
+    72
+   ]
+  },
+  "hatch_R": {
+   "pos": [
+    0.136,
+    -0.0358,
+    0.0253
+   ],
+   "axis": [
+    1,
+    0,
+    0
+   ],
+   "parent": "forearm",
+   "child": "hatch_R",
+   "range": [
+    0,
+    72
+   ]
+  },
+  "tube": {
+   "pos": [
+    0.136,
+    0,
+    0.022
+   ],
+   "axis": [
+    0,
+    1,
+    0
+   ],
+   "parent": "forearm",
+   "child": "tube",
+   "range": [
+    -6,
+    0
+   ]
+  },
+  "muzzle": {
+   "pos": [
+    0.236,
+    0.0,
+    0.022
+   ],
+   "axis": [
+    1,
+    0,
+    0
+   ],
+   "parent": "tube",
+   "child": "fx",
+   "range": [
+    -90,
+    90
+   ]
+  },
+  "backblast": {
+   "pos": [
+    0.046,
+    0.0,
+    0.022
+   ],
+   "axis": [
+    -1,
+    0,
+    0
+   ],
+   "parent": "tube",
+   "child": "fx",
+   "range": [
+    -90,
+    90
+   ]
+  },
+  "wrist": {
+   "pos": [
+    0.27,
+    0,
+    0
+   ],
+   "axis": [
+    0,
+    1,
+    0
+   ],
+   "parent": "forearm",
+   "child": "hand",
+   "range": [
+    -70,
+    70
+   ]
+  },
+  "finger1_a": {
+   "pos": [
+    0.3792,
+    0.0347,
+    0.001
+   ],
+   "axis": [
+    0.0,
+    1.0,
+    0.0
+   ],
+   "parent": "hand",
+   "child": "finger1_a",
+   "range": [
+    0,
+    95
+   ]
+  },
+  "finger1_b": {
+   "pos": [
+    0.4208,
+    0.0347,
+    -0.0048
+   ],
+   "axis": [
+    0.0,
+    1.0,
+    0.0
+   ],
+   "parent": "finger1_a",
+   "child": "finger1_b",
+   "range": [
+    0,
+    95
+   ]
+  },
+  "finger1_c": {
+   "pos": [
+    0.4468,
+    0.0347,
+    -0.0133
+   ],
+   "axis": [
+    0.0,
+    1.0,
+    0.0
+   ],
+   "parent": "finger1_b",
+   "child": "finger1_c",
+   "range": [
+    0,
+    95
+   ]
+  },
+  "finger2_a": {
+   "pos": [
+    0.3792,
+    0.0115,
+    0.001
+   ],
+   "axis": [
+    0.0,
+    1.0,
+    0.0
+   ],
+   "parent": "hand",
+   "child": "finger2_a",
+   "range": [
+    0,
+    95
+   ]
+  },
+  "finger2_b": {
+   "pos": [
+    0.425,
+    0.0115,
+    -0.0054
+   ],
+   "axis": [
+    0.0,
+    1.0,
+    0.0
+   ],
+   "parent": "finger2_a",
+   "child": "finger2_b",
+   "range": [
+    0,
+    95
+   ]
+  },
+  "finger2_c": {
+   "pos": [
+    0.4539,
+    0.0115,
+    -0.0148
+   ],
+   "axis": [
+    0.0,
+    1.0,
+    0.0
+   ],
+   "parent": "finger2_b",
+   "child": "finger2_c",
+   "range": [
+    0,
+    95
+   ]
+  },
+  "finger3_a": {
+   "pos": [
+    0.3792,
+    -0.0115,
+    0.001
+   ],
+   "axis": [
+    0.0,
+    1.0,
+    0.0
+   ],
+   "parent": "hand",
+   "child": "finger3_a",
+   "range": [
+    0,
+    95
+   ]
+  },
+  "finger3_b": {
+   "pos": [
+    0.4218,
+    -0.0115,
+    -0.005
+   ],
+   "axis": [
+    0.0,
+    1.0,
+    0.0
+   ],
+   "parent": "finger3_a",
+   "child": "finger3_b",
+   "range": [
+    0,
+    95
+   ]
+  },
+  "finger3_c": {
+   "pos": [
+    0.4488,
+    -0.0115,
+    -0.0138
+   ],
+   "axis": [
+    0.0,
+    1.0,
+    0.0
+   ],
+   "parent": "finger3_b",
+   "child": "finger3_c",
+   "range": [
+    0,
+    95
+   ]
+  },
+  "finger4_a": {
+   "pos": [
+    0.3792,
+    -0.0347,
+    0.001
+   ],
+   "axis": [
+    0.0,
+    1.0,
+    0.0
+   ],
+   "parent": "hand",
+   "child": "finger4_a",
+   "range": [
+    0,
+    95
+   ]
+  },
+  "finger4_b": {
+   "pos": [
+    0.4135,
+    -0.0347,
+    -0.0038
+   ],
+   "axis": [
+    0.0,
+    1.0,
+    0.0
+   ],
+   "parent": "finger4_a",
+   "child": "finger4_b",
+   "range": [
+    0,
+    95
+   ]
+  },
+  "finger4_c": {
+   "pos": [
+    0.4355,
+    -0.0347,
+    -0.011
+   ],
+   "axis": [
+    0.0,
+    1.0,
+    0.0
+   ],
+   "parent": "finger4_b",
+   "child": "finger4_c",
+   "range": [
+    0,
+    95
+   ]
+  },
+  "thumb_a": {
+   "pos": [
+    0.3078,
+    0.0483,
+    -0.004
+   ],
+   "axis": [
+    -0.5795,
+    0.6436,
+    -0.5
+   ],
+   "parent": "hand",
+   "child": "thumb_a",
+   "range": [
+    0,
+    80
+   ]
+  },
+  "thumb_b": {
+   "pos": [
+    0.3384,
+    0.068,
+    -0.0141
+   ],
+   "axis": [
+    -0.5795,
+    0.6436,
+    -0.5
+   ],
+   "parent": "thumb_a",
+   "child": "thumb_b",
+   "range": [
+    0,
+    80
+   ]
+  }
+ },
+ "materials": [
+  "a_black",
+  "a_olive",
+  "a_yellow",
+  "black",
+  "chrome",
+  "fiber",
+  "glow_red",
+  "gunmetal",
+  "rubber",
+  "steel",
+  "titan"
+ ],
+ "deploy": [
+  {
+   "part": "hatch_L / hatch_R",
+   "open_deg": 72,
+   "time": 0.15
+  },
+  {
+   "part": "tube",
+   "lift_z": 0.03,
+   "pitch_deg": -6,
+   "time": 0.15
+  },
+  {
+   "part": "glow",
+   "emissive": "0.3 -> 1",
+   "time": 0.1
+  }
+ ]
+}

@@ -1,0 +1,24 @@
+{
+ "name": "ac_unit",
+ "units": "m",
+ "forward": "-Y",
+ "up": "+Z",
+ "triangles": 468,
+ "triangles_by_part": {
+  "ac_unit": 468
+ },
+ "parts": {
+  "ac_unit": [
+   "ac_body",
+   "ac_fan",
+   "ac_grill",
+   "ac_bracket"
+  ]
+ },
+ "pivots": {},
+ "materials": [
+  "black",
+  "gunmetal",
+  "titan"
+ ]
+}

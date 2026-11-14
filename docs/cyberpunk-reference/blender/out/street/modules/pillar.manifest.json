@@ -1,0 +1,22 @@
+{
+ "name": "pillar",
+ "units": "m",
+ "forward": "-Y",
+ "up": "+Z",
+ "triangles": 228,
+ "triangles_by_part": {
+  "pillar": 228
+ },
+ "parts": {
+  "pillar": [
+   "pillar",
+   "pillar_cap",
+   "pillar_band"
+  ]
+ },
+ "pivots": {},
+ "materials": [
+  "concrete",
+  "prop_yellow"
+ ]
+}
