@@ -101,7 +101,7 @@ do  -- 새 클립: 넘어지면 골반이 바닥 가까이 내려가고, 일어�
 	check("melee slash emits hit event", #ev == 1 and ev[1] == "hit", #ev)
 	local n = 0
 	for _, c in load("_index").clips do n += 1 end
-	check("clip index lists every clip", n == 157, n)
+	check("clip index lists every clip", n == 158, n)
 	local r = AnimSampler.sample(clips.fp_recoil_shotgun, 1 / 30)
 	check("first-person recoil kicks back and up", r.view.y > 0.03 and r.view.pitch > 4, r.view.y)
 end
@@ -113,6 +113,33 @@ do  -- 중립 자세에서는 팔이 아래를 향해야 한다(어깨 -> 팔꿈
 	local dx, dy, dz = el[1] - sh[1], el[2] - sh[2], el[3] - sh[3]
 	local len = math.sqrt(dx*dx + dy*dy + dz*dz)
 	check("human neutral pose hangs the arms down", -dz / len > 0.98, -dz / len)
+end
+
+-- 3-2. 가져온 모델의 축과 배율을 뼈 위치로 알아낸다
+do
+	local J = gh.manifest.joints
+	local function samples(P, scale, noise)
+		local out, k = {}, 0
+		for name, j in J do
+			if name ~= "root" and j.pos then
+				local b = {j.pos[1] - J.root.pos[1], j.pos[2] - J.root.pos[2], j.pos[3] - J.root.pos[3]}
+				local r = {}
+				for i = 1, 3 do k += 1; r[i] = (P[i][1] * b[1] + P[i][2] * b[2] + P[i][3] * b[3]) * scale + noise * math.sin(k * 12.9898) end
+				table.insert(out, {b = b, r = r})
+			end
+		end
+		return out
+	end
+	local P1, s1, e1, front1 = RigSolver.detectAxis(samples(RigSolver.AXES[1], 3.143, 0))
+	local P2, s2, e2, front2 = RigSolver.detectAxis(samples(RigSolver.AXES[2], 2.0, 0))
+	check("axis detection picks the import path and the scale", P1 == RigSolver.AXES[1] and front1 and math.abs(s1 - 3.143) < 1e-6 and e1 < 1e-9
+		and P2 == RigSolver.AXES[2] and not front2 and math.abs(s2 - 2.0) < 1e-6 and e2 < 1e-9)
+	local P3, s3, e3 = RigSolver.detectAxis(samples(RigSolver.AXES[2], 3.143, 0.03))
+	check("axis detection tolerates a few centimetres of import error", P3 == RigSolver.AXES[2] and math.abs(s3 - 3.143) < 0.1 and e3 < 0.1, e3)
+	local bad = samples(RigSolver.AXES[1], 3.143, 0)
+	for _, sm in bad do sm.r[1], sm.r[2] = sm.r[2], sm.r[1] end                     -- 누운 모델(기본 자세가 아님)
+	local _, _, e4 = RigSolver.detectAxis(bad)
+	check("a model that is not in rest pose is flagged by a large error", e4 > 0.15, e4)
 end
 
 -- 4. 군중

@@ -107,4 +107,33 @@ function RigSolver.solve(rig, pose)
 	return D
 end
 
+-- 가져온 모델의 축과 크기를 알아낸다.
+-- samples = {{b = {x, y, z}, r = {x, y, z}}, ...}: 같은 두 뼈 사이의 벡터를 에셋 좌표(Blender)와 가져온 모델 좌표(Roblox)로 잰 것.
+-- 가져오는 길에 따라 축이 둘 중 하나로 바뀐다: (-x, z, y)는 앞이 -Z, (x, z, -y)는 앞이 +Z. 뼈 위치가 더 잘 맞는 쪽을 고른다.
+-- 돌려주는 값: 축 표(행 = Roblox x, y, z), 배율(스터드/m), 오차(0에 가까울수록 잘 맞음), 앞이 -Z인가
+RigSolver.AXES = {
+	{{-1, 0, 0}, {0, 0, 1}, {0, 1, 0}},
+	{{1, 0, 0}, {0, 0, 1}, {0, -1, 0}},
+}
+function RigSolver.detectAxis(samples)
+	local sb, sr = 0, 0
+	for _, sm in samples do
+		sb += math.sqrt(sm.b[1] ^ 2 + sm.b[2] ^ 2 + sm.b[3] ^ 2); sr += math.sqrt(sm.r[1] ^ 2 + sm.r[2] ^ 2 + sm.r[3] ^ 2)
+	end
+	if sb < 1e-6 or sr < 1e-6 then return RigSolver.AXES[1], 1, 1, true end
+	local scale = sr / sb
+	local best, bestErr = 1, math.huge
+	for i, P in RigSolver.AXES do
+		local err = 0
+		for _, sm in samples do
+			for k = 1, 3 do
+				err += math.abs((P[k][1] * sm.b[1] + P[k][2] * sm.b[2] + P[k][3] * sm.b[3]) * scale - sm.r[k])
+			end
+		end
+		err /= sr
+		if err < bestErr then best, bestErr = i, err end
+	end
+	return RigSolver.AXES[best], scale, bestErr, best == 1
+end
+
 return RigSolver

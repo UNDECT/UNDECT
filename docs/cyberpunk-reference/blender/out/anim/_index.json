@@ -1270,6 +1270,14 @@
    ]
   },
   {
+   "name": "calibrate",
+   "rig": "humanoid",
+   "duration": 6.0,
+   "loop": false,
+   "speed": 0.0,
+   "events": []
+  },
+  {
    "name": "fp_idle",
    "rig": "fp",
    "duration": 4.0,

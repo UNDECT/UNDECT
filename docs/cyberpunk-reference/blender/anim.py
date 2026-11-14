@@ -428,6 +428,17 @@ def fp_pull(u):
     return seq(u, (0.30, {("view", "y"): -0.26, ("view", "z"): -0.06, ("view", "pitch"): -8}), (0.62, {("view", "y"): 0.22, ("view", "x"): 0.10, ("view", "yaw"): -44, ("view", "roll"): -10, ("view", "z"): 0.02}),
                (0.82, {("view", "y"): 0.16, ("view", "yaw"): -66, ("view", "roll"): -6}), (1.0, {}))
 
+# 축 확인용 자세 6개. Studio에서 이 클립을 틀어 0, 1.2, 2.4, 3.6, 4.8, 6.0초의 자세를 calibration_human.png와 견준다.
+#   0.0초 중립(팔을 내리고 선 자세)        1.2초 오른팔을 앞으로 수평           2.4초 왼팔을 옆으로 수평 + 고개를 왼쪽으로 45도
+#   3.6초 왼 정강이를 뒤로 90도 + 허리 숙임  4.8초 왼쪽으로 0.3 m 옮기고 왼쪽으로 45도 돎   6.0초 오른 팔꿈치 90도 + 오른손 주먹
+def calibrate(u):
+    fist = {(f"{f}_R_{k}", "curl"): v for f, cs in (("thumb", (30, 40, 45)), ("index", (80, 95, 70)), ("middle", (82, 98, 72)), ("ring", (84, 98, 72)), ("pinky", (86, 96, 70))) for k, v in zip((1, 2, 3), cs)}
+    P = [{}, {("shoulder_R", "flex"): 90}, {("shoulder_L", "abduct"): 90, ("neck", "yaw"): 45}, {("knee_L", "bend"): 90, ("waist", "pitch"): 30},
+         {("root", "x"): 0.3, ("root", "yaw"): 45}, {("elbow_R", "bend"): 90, **fist}]
+    st = [(0.05, P[0])]
+    for i in range(1, 6): st += [(0.2 * i - 0.05, P[i]), (min(1.0, 0.2 * i + 0.05), P[i])]
+    return seq(u, (0.0, P[0]), *st)
+
 def all_clips():
     c = []
     c.append(clip("walk", 1.06, True, lambda u: gait(u, 22, -6, 14, 60), 1.35, [(0.0, "foot_L"), (0.53, "foot_R")]))
@@ -489,6 +500,7 @@ def all_clips():
     h("hands_up", 2.0, hands_up, loop=True); h("point", 2.4, point); h("record_phone", 3.0, record_phone, loop=True); h("phone_report", 4.0, phone_report, [(0.3, "dial"), (3.6, "hang_up")], loop=True)
     h("startle", 0.8, startle, [(0.0, "gasp")]); h("dodge_left", 0.7, dodge(1), [(0.0, "gasp"), (0.5, "foot_L")]); h("dodge_right", 0.7, dodge(-1), [(0.0, "gasp"), (0.5, "foot_R")])
     h("shake_fist", 1.6, shake_fist, [(0.2, "shout")]); h("robot_halt", 1.2, robot_halt, [(0.3, "warn")])
+    h("calibrate", 6.0, calibrate)
     # 1인칭
     f = lambda n, d, fn, ev=(), loop=False: c.append(clip(n, d, loop, fn, events=ev, rig="fp"))
     f("fp_idle", 4.0, fp_idle, loop=True); f("fp_raise_light", 0.30, fp_raise, [(0.0, "draw")]); f("fp_raise_heavy", 0.60, fp_raise, [(0.0, "draw")]); f("fp_lower", 0.25, fp_lower)
