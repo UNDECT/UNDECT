@@ -73,7 +73,7 @@ anim:play(walkClip, 0.2)
 - 축과 배율은 스스로 알아낸다: 만들 때 뼈 위치를 manifest와 견주어 가져오기 축((-x, z, y) 또는 (x, z, -y))과 스터드/m 배율을 고른다. `anim.axisError`가 0.15를 넘으면 모델이 기본 자세가 아니거나 `frame`이 틀린 것이다. 부품 모델은 `RigAnimator.new(model, nil, nil, manifest.pivots)`처럼 pivots를 넘긴다.
 - 모델을 세울 때는 `anim:placement(위치, heading)`을 쓴다(앞이 -Z인지 +Z인지 맞춰 준다). 자세 하나를 바로 넣어 볼 때는 `anim:applyPose({shoulder_R = {flex = 90}})`.
 - 축 확인: `calibrate` 클립(6초)의 0, 1.2, 2.4, 3.6, 4.8, 6.0초 자세가 `../blender/out/anim/calibration_human.png`의 6칸과 같아야 한다.
-- 사람(`human_*`)은 뼈 이름을 바꾸지 않는다. `joints` 표가 `hip_L → thigh_l`처럼 이어 준다.
+- 사람(`human_*`)은 뼈 이름을 바꾸지 않는다. `joints` 표가 `hip_L → thigh_L`, `waist → spine`처럼 이어 준다. 기본 자세가 중립 자세라서 `neutral`은 전부 단위 행렬이다.
 - 사람 뼈대의 기본 자세는 팔을 벌린 자세다. `joints`의 `neutral`이 팔을 내린 자세로 돌려 준다. 클립이 없는 상태로 `update`만 돌려도 팔이 내려와야 한다.
 - 뼈의 기준 방향은 모델에서 직접 읽어 보정한다. 그래서 가져오기 도구가 뼈 축을 바꿔도 된다.
 

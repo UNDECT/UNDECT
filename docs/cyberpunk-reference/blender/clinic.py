@@ -1,6 +1,6 @@
 """시술소 (자체 디자인): 시술 의자, 천장 로봇 팔, 도구 수레, 그리고 시술소 장면.
 실행: python clinic.py <출력폴더> modules   -> 의자·로봇 팔·수레를 따로 내보내고 사진을 찍는다
-      python clinic.py <출력폴더> scene     -> 시술의와 함께 찍은 시술소 분위기 그림 (human.py 준비가 돼 있어야 한다)
+      python clinic.py <출력폴더> scene     -> 시술의와 함께 찍은 시술소 분위기 그림 (시술의는 person.py가 만든다)
 앞이 -Y, 위가 +Z. 원점은 의자 받침 가운데 바닥. 누운 사람의 머리가 +Y 쪽, 왼팔이 +X 쪽이다.
 """
 import sys, os
@@ -215,10 +215,11 @@ def room():
 def scene():
     doc = None
     try:
-        import human
-        base, rig, made = human.build("doctor"); joints, rest = human.rig_joints(rig)
-        human.apply_pose(rig, joints, rest, {"shoulder_L.flex": 38, "shoulder_R.flex": 30, "shoulder_L.abduct": 6, "shoulder_R.abduct": 10, "elbow_L.bend": 62, "elbow_R.bend": 78,
-                                             "waist.pitch": 10, "neck.pitch": 14, "neck.yaw": -8, "hip_L.flex": 4, "hip_R.flex": -3})
+        import person
+        rig, meshes, joints, rest, made, B, k = person.build("doctor")
+        pose = {"shoulder_L.flex": 38, "shoulder_R.flex": 30, "shoulder_L.abduct": 6, "shoulder_R.abduct": 10, "elbow_L.bend": 62, "elbow_R.bend": 78,
+                "waist.pitch": 10, "neck.pitch": 14, "neck.yaw": -8, "hip_L.flex": 4, "hip_R.flex": -3}
+        pose.update(person.hand_pose("relaxed")); person.apply_pose(rig, joints, rest, pose)
         rig.location = (0.98, -0.10, 0); rig.rotation_euler = (0, 0, radians(-96)); doc = rig
     except Exception as e:
         print("doctor skipped:", repr(e)[:160]); kit.reset()

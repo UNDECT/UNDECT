@@ -4,7 +4,7 @@
 
 하는 일
   1. GLB마다 안에 든 그림(텍스처)을 <꺼낼 폴더>/<파일 이름>/ 에 꺼낸다. 올리기 전에 이 그림을 전부 눈으로 본다.
-  2. 사람 파일(human_*.glb)은 옆의 manifest.json에 "texture_safety": 2 가 있고, 그림 이름이 전부 정리본(_u)이어야 한다.
+  2. 사람 파일(human_*.glb)은 그림이 한 장도 없어야 하고, 옆의 manifest.json의 made_by가 person.py여야 한다(자체 제작본).
      아니면 BLOCK으로 표시하고 종료 코드 1로 끝난다. BLOCK이 하나라도 있으면 아무것도 올리지 않는다.
 
 이 검사는 예전 파일을 걸러 낼 뿐이다. 글자·주소·알몸처럼 보이는 것이 없는지는 꺼낸 그림을 직접 보고 판단한다.
@@ -50,13 +50,11 @@ def check(path, out):
         os.makedirs(dest, exist_ok=True)
         with open(os.path.join(dest, name.replace("/", "_") + EXT.get(im.get("mimeType"), ".bin")), "wb") as fh:
             fh.write(data)
-        if stem.startswith("human_") and not (name.endswith("_u") or "_u." in name):
-            problems.append("정리되지 않은 그림: " + name)
     if stem.startswith("human_"):
         man = os.path.join(os.path.dirname(path), stem + ".manifest.json")
-        level = json.load(open(man, encoding="utf-8")).get("texture_safety") if os.path.exists(man) else None
-        if level != 2:
-            problems.append("manifest의 texture_safety가 2가 아니다(%r). 예전 파일이다" % level)
+        info = json.load(open(man, encoding="utf-8")) if os.path.exists(man) else {}
+        if images: problems.append("사람 파일에 그림이 %d장 들어 있다. 예전 파일이다" % len(images))
+        if not str(info.get("made_by", "")).startswith("person.py"): problems.append("manifest의 made_by가 person.py가 아니다. 예전 파일이다")
     print("%-5s %s  그림 %d장%s" % ("BLOCK" if problems else "OK", base, len(images), "" if not images else "  -> " + dest))
     for p in problems:
         print("      " + p)
