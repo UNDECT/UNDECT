@@ -14,8 +14,10 @@
 | `Driving.luau` | 모는 차의 움직임: 가속·제동, 속도에 따라 줄어드는 조향, 접지 한계, 핸드브레이크 미끄러짐, 충돌, 차 체력(연기 → 불 → 폭발) | ✅ |
 | `Carjack.luau` | 차 훔쳐 타기: 그냥 타기, 잠금 해킹, 창 깨기, 운전자 끌어내기, 총으로 위협, 시동 따기, 경보기, 운전자 반응 | ✅ |
 | `Wanted.luau` | 수배 0~5단계와 보안 대응: 알려진 범죄만 반영, 단계별 부대, 수색·해제·체포, 차단선, 순찰차 운전 입력, 보안 로봇 판단 | ✅ |
+| `Security.luau` | 보안 로봇 한 대의 두뇌: 순찰, 시야와 인지도, 정지 명령, 조준·점사, 차 피하기, 수색, 복귀, 피격·파괴 | ✅ |
+| `CrowdNet.luau` | 서버 → 클라이언트 전송: 주변 것만 10바이트씩 묶기, 풀기, 클라이언트 보간 | ✅ |
 | `RigAnimator.luau` | Roblox 연결: 자세를 Bone/Motor6D의 `Transform`에 적용, 동작 전환 섞기. 사람은 `RigAnimator.new(model, manifest.joints)` | ⚠️ Studio에서 확인 필요 |
-| `tests/run.luau` | 테스트 162개 | `lune run tests/run.luau` (이 폴더에서 실행) |
+| `tests/run.luau` | 테스트 186개 | `lune run tests/run.luau` (이 폴더에서 실행) |
 
 ## 클립
 위치는 `../blender/out/anim/*.json`(157개)이고 목록은 `_index.json`에 있다. `rig` 값으로 어디에 쓰는 클립인지 구분한다.
@@ -134,6 +136,27 @@ local order = Wanted.robotOrder(robot, {x = car.x, z = car.z, vx = car.vx, vz = 
 - 수배는 범죄가 보안에 **알려졌을 때만** 오른다: 보안이 직접 봤거나(`seenBySecurity`), 시민이 4초짜리 신고 전화를 끝냈거나(`reported`), 경보기가 보안 근처에서 울렸을 때(`alarm`). 신고하는 사람을 놀라게 해 쫓으면 신고가 끊긴다.
 - 단계별 부대와 허용 대응은 `Wanted.RESPONSE`, 범죄별 점수는 `Wanted.CRIMES`, 타는 방법별 시간은 `Carjack.METHODS`, 차의 성질은 `Driving.DEFAULTS`에 있다. 수치는 거기서만 고친다.
 - 순찰차는 멀어지면 빨라지는 보정(`boost`, 최대 1.6배)을 쓴다. 이것이 없으면 급하게 꺾는 차를 다시 따라잡지 못한다(테스트로 확인).
+
+## 보안 로봇과 서버 구조
+```lua
+-- 서버
+local bot = Security.new(waypoints, {rand = math.random})          -- waypoints가 없으면 제자리 경비
+for _, e in bot:update(dt, {x = px, z = pz, vx = vx, vz = vz, inVehicle = inCar, visible = lineOfSight, crouched = c, armed = a}, wanted.level) do
+	-- noticed / seen(1초마다) / warn / fire{at, hit, damage} / dodge / lost{x, z} / resume
+end
+local res = bot:damageBy({damage = 34, kind = "bullet", part = "torso", dirX = dx, dirZ = dz})   -- res.crime = assault_security | kill_security
+-- bot.x, bot.z, bot.heading, bot.anim, bot.awareness(0~1, 잠입 표시용)
+
+local anims = CrowdNet.animTable(sortedClipNames)                   -- 서버와 클라이언트가 같은 목록
+remote:FireClient(player, CrowdNet.pack(crowd.agents, {x = px, z = pz}, 120, anims))   -- 초당 10번, UnreliableRemoteEvent
+-- 클라이언트
+interp:push(CrowdNet.unpack(buf, anims), os.clock())                -- interp = CrowdNet.Interp.new(0.15)
+for id, a in interp:sample(os.clock()) do ... end                   -- a.x, a.z, a.heading, a.anim, a.animTime, a.dead
+```
+- 군중, 교통, 보안, 수배는 **서버에서** 돌린다. `crowd:step(dt, signals, {플레이어 위치들})`처럼 위치 목록을 넘기면 가장 가까운 플레이어 기준으로 갱신 빈도를 줄인다.
+- 클라이언트는 받은 위치를 0.15초 늦게 보간해서 놓고, 뼈 동작은 `anim`과 `animTime`으로 직접 튼다. 한 개에 10바이트, 위치 오차 2 cm, 방향 오차 1.4°다.
+- 단위는 전부 m다. 화면에 놓는 마지막 한 곳에서만 `RigAnimator.STUDS_PER_METER`(3.143)를 곱한다.
+- `Security`의 수치(시야 38 m·110°, 체력 260, 점사 3발, 한 발 피해 9)는 `Security.DEFAULTS`에 있다. 1~2단계는 쏘지 않고, 3단계부터 0.6초 조준한 뒤 쏜다. 명중률은 거리와 대상 속도에 따라 8~90%다.
 
 ## 손 레이저
 ```lua

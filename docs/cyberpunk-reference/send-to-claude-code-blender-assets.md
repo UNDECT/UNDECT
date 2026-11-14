@@ -13,14 +13,36 @@
 - **수위**: 지금은 Kids 설정을 끄고 가장 높은 수위(`Vitals.GORE = 3`)로 만든다. 나중에 내가 낮춘다.
 - 기존 규칙은 그대로다: 한국어, `cyber-3v3.rbxl` 저장 금지, `rojo build -o cyber-rpg.rbxl` 금지, computer-use 금지, 기능 브랜치 커밋, Lune 테스트 전부 통과, Studio 확인은 직접.
 
+## 0-1. 첫 보고에서 나온 충돌 8가지에 대한 결정
+아래가 이 문서의 다른 부분보다 우선한다.
+
+| # | 충돌 | 결정 |
+|---|---|---|
+| 1 | C2의 행인 36종·군중 배치·동작 10종과 겹침 | **겉모습은 둘 다 쓴다**: 가까운 거리(약 25 m 안)는 사람 10명, 중간 거리는 C2의 36종을 섞는다. **로직은 `Crowd` 하나만 쓴다**(죽음, 차 피하기, 신고가 여기에만 있다). C2의 배치·겹침 막기는 걷어 낸다. C2의 36종도 `RigAnimator`로 같은 클립을 틀 수 있게 관절 대응표(`manifest.joints`와 같은 꼴)를 만든다. 뼈대가 달라 안 되면 36종은 먼 거리의 단순 걷기 전용으로만 쓴다. C2 동작 10종 중 여기 없는 것만 남긴다 |
+| 2 | `out/` 전체를 커밋하면 저장소가 커짐 | 네 추천대로 한다. 커밋: 스크립트, 클립 JSON, `manifest.json`, GLB, 분위기 목표 그림(`street_night`, `street_day`, `district_*`, `clinic_scene`). 커밋 안 함: `.blend`, 미리보기·모음 그림. `.blend`는 스크립트로 다시 만들 수 있으니 굽기 작업 때 `.gitignore`된 작업 폴더에 둔다 |
+| 3 | 폴더 이름과 금지어 | 폴더는 `src/shared/Sim/`, `tools/blender/kit3d/`로 한다. 받은 파일 가운데 게임 저장소에 복사하는 것(스크립트, `runtime/`)에는 금지어가 없게 고쳐 두었다. **문서(`send-to-claude-code-*.md`, `spec/`, 조사 문서)는 게임 저장소에 복사하지 않는다.** 임시 폴더에 둔 채로 읽는다. 1번의 "문서를 `docs/reference/`에 복사"는 취소한다 |
+| 4 | 보안 로봇 AI가 없음 | `runtime/Security.luau`를 새로 넣었다(순찰 → 알아챔 → 정지 명령 → 교전 → 수색 → 복귀, 부서지면 꺼짐). 순서 3에서는 이 모듈을 수배 0단계로만 돌려 **순찰하고 알아채는 로봇**까지 세운다. 정지 명령과 사격은 순서 7·8에서 `Wanted`와 함께 켠다. 연습용 근접 로봇과 연습 인형은 건드리지 않는다 |
+| 5 | Kids 설정이 조작 편의 15가지도 같이 바꿈 | 수위를 `GameConfig.Kids.Gore`(0~3)로 따로 뺀다. 지금 값은 3. `Vitals.GORE`는 이 값만 따른다. **`Kids.Enabled`와 조작 편의 15가지는 지금 그대로 둔다.** 처치 연출은 수위 1 이상이면 죽는 클립과 시체, 0이면 지금의 "분해"를 쓴다 |
+| 6 | 군중과 차가 플레이어 화면에만 있음 | **서버에서 돌린다.** `Crowd`, `Traffic`, `Security`, `Wanted`, 훔친 차는 서버가 주인이다. 아래 "서버 구조"를 따른다. 구조가 바뀌는 일이므로 순서 5를 시작하기 전에 설계를 한 장으로 보고하고 승인을 받는다 |
+| 7 | 단위 | **1 m = 3.143스터드** 하나로 통일한다(`RigAnimator.STUDS_PER_METER`를 이 값으로 고쳤다). 받은 모듈은 전부 m로 계산하고, 화면에 놓는 마지막 한 곳에서만 곱한다. 보안 로봇 키는 1.95 m = 약 6.1스터드다(문서의 6.2~6.6 대신 이 값) |
+| 8 | 승인받았던 광고판·LED·홀로그램이 대량으로 지워짐 | 지운다. 다만 **되돌릴 수 있게** 한다: 삭제 대신 `Removed` 폴더로 옮기고(또는 생성 코드에 꺼짐 표시), 촬영 지점 5곳의 전후 사진과 지운 목록을 보고한 뒤 승인받고 확정한다. 전에 승인받은 것 중 규칙(받침 구조, 가려지지 않음, 가게와 연결, 면적 상한)을 통과하는 것은 남긴다. 영웅 광고는 번화가 화면에 1~2개까지 남긴다 |
+
+**서버 구조 (6번)**
+- 서버: `Crowd:step`, `Traffic:step`, `Security:update`, `Wanted:update`를 초당 15~20번 돈다. `Crowd:step`의 세 번째 인자에 플레이어 위치 목록을 넘기면 가장 가까운 플레이어 기준으로 갱신 빈도를 줄인다. 피격·사망·수배 판정은 전부 서버가 한다.
+- 전송: 플레이어마다 `CrowdNet.pack(crowd.agents, 그 플레이어 위치, 120, anims)`를 초당 10번 `UnreliableRemoteEvent`로 보낸다. 한 명에 10바이트라 60명이면 초당 6 KB쯤이다. 차와 보안 부대도 같은 꾸러미로 보낸다(차는 `Traffic.vehicles`에 `id`와 `anim`을 붙여서).
+- 클라이언트: `CrowdNet.unpack` → `CrowdNet.Interp`에 넣고 0.15초 늦은 시각을 뽑아 모델을 놓는다. 뼈 동작은 클라이언트가 받은 `anim`과 `animTime`으로 `RigAnimator`를 돌린다(뼈는 복제하지 않는다). 모델은 클라이언트에서 만들고 재활용한다.
+- 클라이언트가 쏜 것: 맞았다고 서버에 알리면(대상 id, 부위, 방향) 서버가 거리와 시야를 확인한 뒤 `crowd:damage`를 부른다.
+- 훔친 차: 서버가 만든 차의 네트워크 소유권을 운전자에게 주고, 서버는 `Driving`의 한계(최고 속도, 옆 가속)를 넘는 이동만 되돌린다. 차 위치는 서버가 받아 `crowd:vehicle`과 `traffic.obstacles`에 넣는다.
+- 사이버웨어·1인칭 팔처럼 한 사람만 보는 것은 지금처럼 클라이언트에 둔다.
+
 ## 1. 받아 오기
 ```
 git clone --depth 1 -b ccr-9e6cc8c3-bftdlm https://github.com/UNDECT/UNDECT.git <임시폴더>
 ```
-- `<임시폴더>/docs/cyberpunk-reference/blender/` → `cyber-rpg/tools/blender/fable/` 로 복사한다(스크립트와 `out/` 폴더 전부).
-- `<임시폴더>/docs/cyberpunk-reference/samples/cyber-arm/` → `cyber-rpg/tools/blender/fable/cyber-arm/` 로 복사한다.
+- `<임시폴더>/docs/cyberpunk-reference/blender/` → `cyber-rpg/tools/blender/kit3d/` 로 복사한다. 커밋할 것과 뺄 것은 0-1의 2번을 따른다.
+- `<임시폴더>/docs/cyberpunk-reference/samples/cyber-arm/` → `cyber-rpg/tools/blender/kit3d/cyber-arm/` 로 복사한다.
 - `<임시폴더>/docs/cyberpunk-reference/runtime/` → Luau 모듈과 테스트. 넣는 곳과 방법은 4-1을 본다.
-- `<임시폴더>/docs/cyberpunk-reference/`의 문서(`send-to-claude-code-*.md`, `spec/`, `runtime/README.md`, `blender/README.md`)는 `cyber-rpg/docs/reference/`에 복사해 두고 작업 중에 찾아본다.
+- 문서(`send-to-claude-code-*.md`, `spec/`)는 게임 저장소에 복사하지 않고 임시 폴더에서 읽는다(0-1의 3번). `runtime/README.md`와 `blender/README.md`는 같이 복사해도 된다.
 - 받은 폴더는 약 230 MB다. 저장소가 비공개라 받지 못하면 멈추고 사용자에게 알린다.
 - 다시 만들려면: `pip install bpy` 한 파이썬으로 `python security_robot.py <출력폴더> all` 처럼 실행한다. 스크립트 맨 위 주석에 사용법이 있다. Blender 실행 파일로 돌릴 때는 `blender --background --python security_robot.py -- <출력폴더> all`.
 - 이 스크립트들을 **고쳐서 디자인을 바꾸지 않는다.** 굽기·뼈·LOD·내보내기 단계는 네 파이프라인(`tools/blender/bake`, `validate.py`)에 추가한다.
@@ -52,7 +74,7 @@ git clone --depth 1 -b ccr-9e6cc8c3-bftdlm https://github.com/UNDECT/UNDECT.git 
 - `pivots`: 관절. `pos`(m), `axis`, `parent`, `child`, `range`(도). 뼈를 여기에 단다.
 - `triangles_by_part`: 부품별 삼각형 수.
 - `joints`(사람만): 애니메이션 관절 이름 → 뼈 이름 대응표. `RigAnimator.new(model, manifest.joints)`에 그대로 넘긴다.
-- 좌표: 단위 m, 앞 = -Y, 위 = +Z. 로블록스로 옮길 때 1 m ≈ 3스터드 기준으로 맞추고, 로봇 키가 약 6.2~6.6스터드가 되게 한다.
+- 좌표: 단위 m, 앞 = -Y, 위 = +Z. 로블록스로 옮길 때 **1 m = 3.143스터드**로 맞춘다(0-1의 7번). 아래 수치보다 이 배율이 우선이다. 예전 기준: 로봇 키가 약 6.2~6.6스터드가 되게 한다.
 
 ## 3. 에셋마다 할 일 (기계적인 변환만)
 1. **재질 굽기**: Blender 절차 재질(도장 벗겨짐, 긁힘, 때, 결)을 텍스처로 굽는다. Color, Normal, Roughness, Metalness, 발광 마스크. 부품 묶음마다 아틀라스 하나. `.blend` 파일을 열어 그대로 구우면 된다.
@@ -205,7 +227,7 @@ git clone --depth 1 -b ccr-9e6cc8c3-bftdlm https://github.com/UNDECT/UNDECT.git 
 ## 4-1. 애니메이션과 이동도 받아서 쓴다 (새로 만들지 않는다)
 `docs/cyberpunk-reference/runtime/`에 Luau 모듈과 테스트가, `blender/out/anim/`에 클립 157개와 손 모양 9개가 있다. `runtime/README.md`를 먼저 읽는다.
 
-1. **넣기**: `runtime/*.luau`를 `src/shared/Fable/`(이름은 프로젝트 규칙에 맞게)로 복사한다. 클립 JSON은 ModuleScript 표로 변환하는 빌드 단계를 만든다. `tests/run.luau`의 검사 162개를 프로젝트의 Lune 테스트에 편입한다(경로만 고친다).
+1. **넣기**: `runtime/*.luau`를 `src/shared/Sim/`으로 복사한다. 클립 JSON은 ModuleScript 표로 변환하는 빌드 단계를 만든다. `tests/run.luau`의 검사 186개를 프로젝트의 Lune 테스트에 편입한다(경로만 고친다).
 2. **고치지 않는다**: 걸음 곡선, 군중 규칙, 순찰·교통 로직을 다시 짜지 않는다. 버그를 찾으면 재현 테스트와 함께 사용자에게 알린다. Roblox 연결부(`RigAnimator`)만 Studio에서 확인하며 고친다.
 3. **`RigAnimator` 확인 (가장 먼저)**: 이 파일만 여기서 테스트하지 못했다. 보안 로봇에 `walk_heavy`를 틀고 Blender 미리보기(`preview_robot_walk_heavy.png`)와 같은 자세가 나오는지 본다. 팔다리가 엉뚱한 축으로 돌면 `RigAnimator.AXIS` 표를 고친다. 뼈는 관절 위치에 만든다. 뼈의 기준 방향은 `RigAnimator`가 모델에서 읽어 보정하므로 맞추지 않아도 된다. 그다음 사람(`human_man_a`)에 `walk`를 틀어 `human_walk_check.png`와 비교한다.
 4. **군중**: C2에서 만든 군중 이동을 `Crowd`로 바꾼다. 허브의 인도 그래프(`nodes`, `edges`), 소품 위치(`obstacles`), 활동 지점(`activities`)은 맵 정보(`WLD-150~153`)에서 만든다. 횡단보도는 `signal`로 신호등과 묶는다. 총성 이벤트는 `crowd:panic(x, z, 반경)`으로 넘긴다. 에이전트의 `anim`, `speed`, `heading`을 그대로 `RigAnimator`에 넘긴다.
@@ -219,7 +241,7 @@ git clone --depth 1 -b ccr-9e6cc8c3-bftdlm https://github.com/UNDECT/UNDECT.git 
 12. 웅크릴 때 손에 든 소품(공구함, 서류 가방, 우산)은 손에서 떼어 바닥에 떨어뜨린다.
 
 ## 4-2. NPC를 죽일 수 있게 하고, 손 레이저를 넣는다 (새 지시)
-**지금은 Kids 설정을 끄고 수위를 가장 높게 만든다.** 나중에 내가 낮춘다. 그래서 수위를 코드 여기저기에 박지 말고 `Vitals.GORE`(0~3) 한 값으로만 갈리게 한다. `GameConfig.Kids.Enabled`가 켜지면 0, 꺼지면 3이 되게 잇는다. 지금 기본값은 꺼짐(3)이다.
+**지금은 수위를 가장 높게 만든다.** 나중에 내가 낮춘다. 수위를 코드 여기저기에 박지 말고 `Vitals.GORE`(0~3) 한 값으로만 갈리게 하고, 이 값은 `GameConfig.Kids.Gore`에서 읽는다(지금 3). `Kids.Enabled`와 조작 편의 기능은 건드리지 않는다(0-1의 5번).
 
 1. **피해 경로를 하나로**: 총, 칼, 둔기, 수류탄, 사이버웨어 팔, 차에 치임(`kind = "vehicle"`)까지 NPC가 맞는 모든 곳이 `crowd:damage(agent, hit)`(폭발은 `crowd:explode`)를 거치게 한다. 직접 체력을 깎는 코드는 남기지 않는다. `hit.part`에 맞은 뼈 이름을, `hit.dirX/dirZ`에 공격이 날아가는 방향을, `hit.attacker`에 플레이어를 넣는다. 서버에서만 판정한다.
 2. **대상**: 거리 군중(맨얼굴 사람 10명, 가면 NPC 5종) 전부. 상인과 시술의도 죽을 수 있게 하되, 가게 기능이 막히지 않게 일정 시간 뒤 다른 사람으로 다시 채운다. 퀘스트에 필요한 NPC만 `invulnerable` 표시로 뺀다(목록을 보고하고 내 승인을 받는다). 보안 로봇·드론·포탑은 `Vitals.new({machine = true, deathAnim = ...})`로 만든다. 피 대신 불꽃·찌그러진 자국·기름이 나오고, 죽으면 `robot_shutdown` / `drone_crash` / `turret_shutdown`을 튼다.
@@ -349,11 +371,11 @@ git clone --depth 1 -b ccr-9e6cc8c3-bftdlm https://github.com/UNDECT/UNDECT.git 
 | 순서 | 할 일 | 볼 곳 |
 |---|---|---|
 | 0 | 진행 중인 C2를 끝낸다 | — |
-| 1 | 저장소에서 받아 넣는다. `runtime/` 테스트 162개를 프로젝트 Lune 테스트에 편입하고 전부 통과시킨다 | 1, 4-1 |
+| 1 | 저장소에서 받아 넣는다. `runtime/` 테스트 186개를 프로젝트 Lune 테스트에 편입하고 전부 통과시킨다 | 1, 4-1 |
 | 2 | `RigAnimator`를 Studio에서 확인한다: 보안 로봇에 `walk_heavy`, 사람(`human_man_a`)에 `walk`. 여기서 테스트하지 못한 유일한 파일이다 | 4-1의 3번 |
-| 3 | **보안 로봇 하나를 끝까지** 반영한다(굽기, 뼈, LOD, 업로드, 허브에 세우기) | 3, 4 |
+| 3 | **보안 로봇 하나를 끝까지** 반영한다(굽기, 뼈, LOD, 업로드, 허브에 세우기). `Security`를 수배 0단계로 돌려 순찰하고 알아채는 데까지 | 3, 4, 0-1의 4번 |
 | 4 | 쓸데없는 간판 지우기(C3) | 4의 거리 항목, `c3-onward.md` |
-| 5 | 사람 10명과 가면 NPC 5종을 넣고 군중을 `Crowd`로 바꾼다 | 4, 4-1 |
+| 5 | **서버 구조 설계를 먼저 보고하고 승인받는다.** 그다음 사람 10명과 가면 NPC 5종을 넣고 군중을 서버의 `Crowd`로 바꾼다 | 0-1의 1·6번, 4, 4-1 |
 | 6 | NPC 피해·사망. 수위 3과 0을 각각 확인한다 | 4-2 |
 | 7 | 차 5종, 교통(`Traffic`), 차 훔쳐 타기·운전·수배와 시민·보안 반응 | 4, 4-3 |
 | 8 | 드론, 포탑, 감시 카메라, 순찰차를 보안 대응에 잇는다 | 4, 4-3 |

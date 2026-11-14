@@ -16,7 +16,7 @@ RigAnimator.__index = RigAnimator
 
 -- P: Blender 축 -> Roblox 축. 행 = Roblox x, y, z.
 RigAnimator.AXIS = {{-1, 0, 0}, {0, 0, 1}, {0, 1, 0}}
-RigAnimator.STUDS_PER_METER = 1 / 0.28
+RigAnimator.STUDS_PER_METER = 3.143   -- 프로젝트의 사람 파이프라인과 같은 배율(키 1.75 m = 5.5스터드). 한 곳에서만 정한다
 
 local function convert(m, scale: number)
 	-- R_rbx = P · R_b · Pᵀ, t_rbx = P · t_b · scale

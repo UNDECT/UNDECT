@@ -12,6 +12,8 @@ local Laser = require("../Laser")
 local Driving = require("../Driving")
 local Carjack = require("../Carjack")
 local Wanted = require("../Wanted")
+local Security = require("../Security")
+local CrowdNet = require("../CrowdNet")
 
 local CLIPS = "../blender/out/anim/"
 local passed, failed = 0, 0
@@ -770,6 +772,133 @@ do
 	local st = tr:takeOver(npc)
 	for _ = 1, 60 do tr:step(1 / 30) end
 	check("a taken-over car leaves the lane simulation", npc.external and npc.z == z0 and st.z == z0 and st.heading == npc.heading)
+end
+
+-- 14. 보안 로봇 두뇌
+do
+	local seq = 0
+	local function rnd() seq = (seq * 16807 + 11) % 2147483647; return seq / 2147483647 end
+	local function run(bot, sec, target, level)
+		local all = {}
+		for _ = 1, math.floor(sec * 30 + 0.5) do for _, e in bot:update(1 / 30, target, level) do table.insert(all, e); all[e.type] = (all[e.type] or 0) + 1 end end
+		return all
+	end
+	local route = {{x = 0, z = 0}, {x = 0, z = 20}, {x = 10, z = 20}, {x = 10, z = 0}}
+	local bot = Security.new(route, {rand = rnd})
+	run(bot, 6, nil, 0)
+	check("security robot patrols its route", bot.state == "patrol" and bot.z > 3 and bot.anim == "walk_heavy", bot.z)
+	local guard = Security.new(nil, {x = 0, z = 0, heading = 0, rand = rnd})
+	check("vision: in front yes, behind no, behind a wall no, very close always", guard:sees({x = 0, z = 20, visible = true}) and not guard:sees({x = 0, z = -20, visible = true})
+		and not guard:sees({x = 0, z = 20, visible = false}) and guard:sees({x = 0, z = -3, visible = true}) and not guard:sees({x = 0, z = 60, visible = true}) and guard:sees({x = 0, z = 50, visible = true, inVehicle = true}))
+	local e = run(guard, 0.4, {x = 0, z = 30, visible = true}, 0)
+	local farAware = guard.awareness
+	check("awareness builds up instead of snapping", farAware > 0.05 and farAware < 1 and e.noticed == nil, farAware)
+	local sneaky, loud = Security.new(nil, {x = 0, z = 0, rand = rnd}), Security.new(nil, {x = 0, z = 0, rand = rnd})
+	run(sneaky, 0.25, {x = 0, z = 15, visible = true, crouched = true}, 0); run(loud, 0.25, {x = 0, z = 15, visible = true, armed = true}, 0)
+	check("crouching is noticed slower than waving a gun", sneaky.awareness < loud.awareness * 0.4, sneaky.awareness .. " / " .. loud.awareness)
+	e = run(guard, 4, {x = 0, z = 30, visible = true}, 0)
+	check("an innocent bystander is noticed but left alone", guard.awareness == 1 and e.noticed == 1 and e.warn == nil and e.fire == nil and guard.state == "patrol")
+	run(guard, 5, nil, 0)
+	check("awareness fades when the target is gone", guard.awareness < 0.01)
+	-- 수배 1: 정지 명령, 쏘지 않는다
+	local b1 = Security.new(nil, {x = 0, z = 0, rand = rnd})
+	e = run(b1, 8, {x = 0, z = 25, vx = 0, vz = 0, visible = true}, 1)
+	check("wanted level 1: closes in and orders a halt, never fires", b1.state == "halt" and (e.warn or 0) >= 2 and e.fire == nil and (e.seen or 0) >= 5 and b1.z > 10 and b1.anim == "robot_halt", b1.z)
+	-- 수배 3: 사격
+	local b3 = Security.new(nil, {x = 0, z = 0, rand = rnd})
+	local ev3 = run(b3, 10, {x = 0, z = 20, vx = 0, vz = 0, visible = true}, 3)
+	local hits = 0
+	for i = 1, #ev3 do local x = ev3[i]; if x.type == "fire" and x.hit then hits += 1 end end
+	check("wanted level 3: aims, then fires bursts and lands some", b3.state == "engage" and (ev3.fire or 0) >= 12 and hits >= 4 and hits < ev3.fire, (ev3.fire or 0) .. " shots " .. hits .. " hits")
+	local first = nil
+	local bq = Security.new(nil, {x = 0, z = 0, rand = rnd})
+	for i = 1, 60 do for _, x in bq:update(1 / 30, {x = 0, z = 20, visible = true}, 3) do if x.type == "fire" and not first then first = i / 30 end end end
+	check("there is a beat to react before the first shot", first ~= nil and first > 0.5, first)
+	local farShots, nearShots = 0, 0
+	local carEv = run(Security.new(nil, {x = 0, z = 0, rand = rnd}), 20, {x = 0, z = 24, vx = 14, vz = 0, visible = true, inVehicle = true}, 3)
+	local tires = 0
+	for i = 1, #carEv do local x = carEv[i]; if x.type == "fire" then farShots += 1; if x.accuracy < 0.4 then nearShots += 1 end; if x.at == "tires" then tires += 1 end end end
+	check("a fast car is hard to hit and the robot goes for the tires", farShots > 0 and nearShots == farShots and tires == farShots, farShots)
+	-- 놓치면 수색, 그다음 순찰 복귀
+	local bs = Security.new(route, {rand = rnd})
+	run(bs, 3, {x = 5, z = 12, visible = true}, 3)
+	local lostEv = run(bs, 1, {x = 5, z = 12, visible = false}, 3)
+	check("losing sight starts a search at the last seen spot", bs.state == "search" and lostEv.lost == 1)
+	local back = run(bs, 40, {x = 200, z = 200, visible = false}, 3)
+	check("after searching it returns to its patrol", bs.state == "patrol" and back.resume == 1)
+	-- 차가 덮쳐 오면 피한다
+	local bd = Security.new(nil, {x = 0.3, z = 12, heading = math.pi, rand = rnd})
+	local x0 = bd.x
+	local dv = run(bd, 0.4, {x = 0, z = 0, vx = 0, vz = 14, visible = true, inVehicle = true}, 2)
+	check("robot sidesteps a car driven at it", dv.dodge == 1 and math.abs(bd.x - x0) > 0.8, bd.x - x0)
+	-- 맞으면 바로 알아채고, 부서지면 꺼진다
+	local bh = Security.new(nil, {x = 0, z = 0, heading = 0, rand = rnd})
+	local r = bh:damageBy({damage = 40, kind = "bullet", zone = "torso", dirX = 0, dirZ = 1})
+	check("a shot in the back alerts it and turns it around", r.crime == "assault_security" and bh.awareness == 1 and math.abs(math.cos(bh.heading) + 1) < 1e-6 and not r.killed)
+	local shotsToKill = 1
+	while not r.killed and shotsToKill < 100 do r = bh:damageBy({damage = 40, kind = "bullet", zone = "torso", dirX = 0, dirZ = 1}); shotsToKill += 1 end
+	check("it takes sustained fire to destroy and then it shuts down", r.killed and r.crime == "kill_security" and shotsToKill >= 8 and bh.state == "down" and bh.anim == "robot_shutdown" and r.anim == "robot_shutdown", shotsToKill)
+	check("a destroyed robot does nothing", #bh:update(1, {x = 0, z = 5, visible = true}, 5) == 0)
+end
+
+-- 15. 서버 -> 클라이언트 전송
+do
+	local names = {}
+	for _, c in load("_index").clips do table.insert(names, c.name) end
+	table.sort(names)
+	local anims = CrowdNet.animTable(names)
+	check("anim table fits in one byte", #names <= 255 and anims.ids.walk ~= nil and anims.names[anims.ids.death_back] == "death_back", #names)
+	local cr = Crowd.new(world(), {seed = 21}); cr:spawn(80)
+	for _ = 1, 90 do cr:step(1 / 30) end
+	cr:damage(cr.agents[1], {damage = 999, kind = "bullet", zone = "torso", dirX = 1, dirZ = 0})
+	local focus = {x = cr.agents[1].x, z = cr.agents[1].z}
+	local buf = CrowdNet.pack(cr.agents, focus, 30, anims)
+	local list = CrowdNet.unpack(buf, anims)
+	local inRange = 0
+	for _, a in cr.agents do if (a.x - focus.x) ^ 2 + (a.z - focus.z) ^ 2 <= 900 then inRange += 1 end end
+	check("only nearby agents are sent, ten bytes each", #list == inRange and #list < 80 and buffer.len(buf) == 10 + 10 * #list, #list .. " of 80")
+	local worst, deadOk = 0, false
+	for _, it in list do
+		local a = cr.agents[it.id]
+		worst = math.max(worst, math.abs(a.x - it.x), math.abs(a.z - it.z), math.abs(((a.heading - it.heading + math.pi) % (2 * math.pi)) - math.pi) / 4)
+		if it.anim ~= a.anim then worst = 99 end
+		if it.id == 1 then deadOk = it.dead and string.sub(it.anim, 1, 6) == "death_" end
+	end
+	check("positions survive the round trip within 2 cm and 2 degrees", worst < 0.011, worst)
+	check("death state and clip survive the round trip", deadOk)
+	check("the cap keeps the nearest", #CrowdNet.unpack(CrowdNet.pack(cr.agents, focus, 500, anims, 12), anims) == 12)
+	-- 클라이언트 보간: 10 Hz로 받은 것을 60 Hz로 그려도 튀지 않는다
+	local sv = Crowd.new(world(), {seed = 22}); sv:spawn(30)
+	for _ = 1, 60 do sv:step(1 / 30) end
+	local ip = CrowdNet.Interp.new(0.15)
+	local t, lastPos, maxJump, shown = 0, {}, 0, 0
+	for frame = 1, 600 do
+		t += 1 / 60
+		if frame % 2 == 0 then sv:step(1 / 30) end
+		if frame % 6 == 0 then ip:push(CrowdNet.unpack(CrowdNet.pack(sv.agents, {x = 20, z = 10}, 200, anims), anims), t) end
+		if frame > 60 then
+			local view = ip:sample(t)
+			shown = 0
+			for id, v in view do
+				shown += 1
+				local p = lastPos[id]
+				if p then maxJump = math.max(maxJump, math.sqrt((v.x - p.x) ^ 2 + (v.z - p.z) ^ 2)) end
+				lastPos[id] = {x = v.x, z = v.z}
+			end
+		end
+	end
+	check("interpolated motion is smooth at 60 fps from 10 Hz snapshots", shown == 30 and maxJump < 0.12, maxJump)
+	local gone = CrowdNet.Interp.new(0.15)
+	gone:push({{id = 7, x = 0, z = 0, heading = 0, anim = "walk", animTime = 0}}, 0); gone:push({}, 1.0)
+	local n = 0
+	for _ in gone:sample(1.0) do n += 1 end
+	check("agents that stop arriving are dropped", n == 0)
+	-- 서버는 플레이어 여러 명을 기준으로 갱신 빈도를 정한다
+	local multi = Crowd.new(world(), {seed = 5}); multi:spawn(20)
+	multi:step(1 / 30, nil, {{x = 0, z = 0}, {x = 40, z = 30}})
+	local near = 0
+	for _, a in multi.agents do if a.lod == 0 then near += 1 end end
+	check("crowd level of detail follows the nearest of several players", near == 20, near)
 end
 
 print(string.format("%d passed, %d failed", passed, failed))

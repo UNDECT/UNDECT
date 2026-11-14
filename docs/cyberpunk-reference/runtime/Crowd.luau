@@ -207,7 +207,13 @@ function Crowd:step(dt: number, signals, focus)
 	for _, ag in self.agents do
 		local skip = 1
 		if focus then
-			local d = math.sqrt((ag.x - focus.x) ^ 2 + (ag.z - focus.z) ^ 2)
+			-- focus = 플레이어 한 명 {x, z} 또는 여러 명 {{x, z}, ...}(서버). 가장 가까운 플레이어 기준으로 갱신 빈도를 정한다
+			local d = math.huge
+			if focus[1] then
+				for _, f in focus do d = math.min(d, math.sqrt((ag.x - f.x) ^ 2 + (ag.z - f.z) ^ 2)) end
+			else
+				d = math.sqrt((ag.x - focus.x) ^ 2 + (ag.z - focus.z) ^ 2)
+			end
 			ag.lod = if d < self.lodNear then 0 elseif d < self.lodFar then 1 else 2
 			skip = if ag.lod == 0 then 1 elseif ag.lod == 1 then 2 else 4
 		end
