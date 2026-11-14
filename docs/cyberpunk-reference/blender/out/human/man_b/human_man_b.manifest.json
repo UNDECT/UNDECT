@@ -1101,16 +1101,16 @@
    ]
   }
  },
- "triangles": 38044,
+ "triangles": 39096,
  "triangles_by_mesh": {
-  "Human": 16768,
+  "Human": 16764,
   "Human.high-poly": 2040,
   "Human.eyebrow009": 192,
   "Human.eyelashes01": 368,
   "Human.teeth_base": 7120,
   "Human.short04": 1050,
   "Human.male_worksuit01": 6986,
-  "Human.shoes05": 3064,
+  "Human.toigo_ankle_boots_male": 4120,
   "ear_disc": 140,
   "ear_led": 44,
   "ear_bar": 44,
@@ -1121,14 +1121,14 @@
   "neck_pin.001": 28
  },
  "cyberware": [
-  "ear_disc",
-  "ear_led",
+  "neck_pin",
   "neck_port",
   "neck_led",
+  "ear_led",
+  "ear_bar",
   "ear_tip",
   "neck_pin.001",
-  "ear_bar",
-  "neck_pin"
+  "ear_disc"
  ],
  "glow": "glow_amber",
  "attach": {
@@ -1142,7 +1142,7 @@
   "middleage_african_male",
   "short04",
   "eyebrow009",
-  "shoes05",
+  "toigo_ankle_boots_male",
   "male_worksuit01",
   "high-poly",
   "eyelashes01",
@@ -1155,5 +1155,6 @@
    0.03
   ]
  },
- "hair_tint": null
+ "hair_tint": null,
+ "texture_safety": 2
 }

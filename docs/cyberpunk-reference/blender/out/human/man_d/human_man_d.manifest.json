@@ -1101,9 +1101,9 @@
    ]
   }
  },
- "triangles": 39244,
+ "triangles": 35788,
  "triangles_by_mesh": {
-  "Human": 14552,
+  "Human": 11096,
   "Human.high-poly": 2040,
   "Human.eyebrow004": 192,
   "Human.eyelashes01": 368,
@@ -1127,18 +1127,18 @@
   "neck_pin.001": 28
  },
  "cyberware": [
-  "ear_disc",
-  "neck_pin",
-  "cheek_line.003",
-  "ear_led",
   "cheek_line.001",
-  "cheek_line",
-  "neck_led",
-  "neck_pin.001",
-  "ear_tip",
+  "ear_disc",
+  "ear_led",
   "ear_bar",
+  "neck_pin.001",
+  "neck_led",
+  "neck_pin",
+  "cheek_line",
+  "cheek_line.003",
   "cheek_line.002",
-  "neck_port"
+  "neck_port",
+  "ear_tip"
  ],
  "glow": "glow_amber",
  "attach": {
@@ -1176,5 +1176,6 @@
   0.85,
   0.75,
   0.15
- ]
+ ],
+ "texture_safety": 2
 }

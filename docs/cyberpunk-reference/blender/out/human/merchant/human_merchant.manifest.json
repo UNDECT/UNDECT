@@ -1101,9 +1101,9 @@
    ]
   }
  },
- "triangles": 44350,
+ "triangles": 40094,
  "triangles_by_mesh": {
-  "Human": 22228,
+  "Human": 16916,
   "Human.high-poly": 2040,
   "Human.eyebrow007": 192,
   "Human.eyelashes01": 368,
@@ -1112,7 +1112,7 @@
   "Human.namuhekam_male_polo_shirt": 4106,
   "Human.toigo_wool_pants": 2674,
   "Human.jujube_newsboy_cap": 996,
-  "Human.shoes05": 3064,
+  "Human.toigo_ankle_boots_male": 4120,
   "ear_disc": 140,
   "ear_led": 44,
   "ear_bar": 44,
@@ -1125,16 +1125,16 @@
   "badge_glow": 12
  },
  "cyberware": [
-  "badge_glow",
-  "neck_pin.001",
-  "ear_tip",
+  "badge",
+  "ear_led",
   "ear_bar",
   "ear_disc",
-  "badge",
+  "neck_pin.001",
   "neck_led",
-  "neck_pin",
   "neck_port",
-  "ear_led"
+  "badge_glow",
+  "neck_pin",
+  "ear_tip"
  ],
  "glow": "glow_amber",
  "attach": {
@@ -1148,7 +1148,7 @@
   "old_asian_male",
   "short04",
   "eyebrow007",
-  "shoes05",
+  "toigo_ankle_boots_male",
   "namuhekam_male_polo_shirt",
   "toigo_wool_pants",
   "jujube_newsboy_cap",
@@ -1177,5 +1177,6 @@
   0.6,
   0.6,
   0.62
- ]
+ ],
+ "texture_safety": 2
 }

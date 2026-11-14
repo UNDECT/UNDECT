@@ -1101,9 +1101,9 @@
    ]
   }
  },
- "triangles": 39644,
+ "triangles": 39608,
  "triangles_by_mesh": {
-  "Human": 15276,
+  "Human": 15240,
   "Human.high-poly": 2040,
   "Human.eyebrow010": 192,
   "Human.eyelashes01": 368,
@@ -1117,10 +1117,10 @@
   "neck_pin.001": 28
  },
  "cyberware": [
-  "neck_port",
-  "neck_led",
+  "neck_pin.001",
   "neck_pin",
-  "neck_pin.001"
+  "neck_led",
+  "neck_port"
  ],
  "glow": "glow_red",
  "attach": {
@@ -1151,5 +1151,6 @@
   0.7,
   0.7,
   0.72
- ]
+ ],
+ "texture_safety": 2
 }

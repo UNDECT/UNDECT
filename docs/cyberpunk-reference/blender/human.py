@@ -143,7 +143,7 @@ def image_pixels(im):
 def new_image(name, a):
     im = bpy.data.images.new(name, a.shape[1], a.shape[0], alpha=True); im.pixels = a.ravel(); im.pack(); return im
 
-def hide_covered(base, reach=0.12, keep_rings=5):
+def hide_covered(base, reach=0.12, keep_rings=5, island=80, inside=0.06):
     """옷·신발·장갑에 가려진 몸을 지운다. 옷 에셋에 든 '가림 목록'이 없거나 모자란 옷이 있어서 직접 찾는다.
     몸의 각 점에서 바깥으로 reach(m)만큼 쏴서 옷에 닿으면 가려진 것이다. 소매 끝·목둘레처럼 안이 들여다보이는 곳은 keep_rings칸만큼 남긴다."""
     from mathutils.bvhtree import BVHTree
@@ -153,12 +153,31 @@ def hide_covered(base, reach=0.12, keep_rings=5):
     cloth = [o for o in bpy.context.scene.objects if o.type == "MESH" and o != base and not o.get("part") and o.name not in hair and not any(k in o.name for k in skip)]
     trees = [BVHTree.FromObject(o, dg) for o in cloth]
     me = base.data; n = len(me.vertices); covered = [False] * n
+    # 머리는 절대 지우지 않는다(턱 밑이나 입가에서 쏜 선이 옷깃에 닿아 얼굴에 구멍이 난 적이 있다)
+    hg = base.vertex_groups.get("head"); keep = [False] * n
+    if hg:
+        for v in me.vertices: keep[v.index] = any(g.group == hg.index and g.weight >= 0.2 for g in v.groups)
     for v in me.vertices:
+        if keep[v.index]: continue
         for t in trees:
-            hit = t.ray_cast(v.co - v.normal * 0.02, v.normal, reach + 0.02)   # 옷이 살에 파묻힌 곳도 잡도록 2 cm 안쪽에서 쏜다
+            hit = t.ray_cast(v.co - v.normal * inside, v.normal, reach + inside)   # 몸에 붙는 옷은 살 안쪽으로 파묻혀 있어서 inside(m)만큼 안에서 쏜다
             if hit[0] is not None: covered[v.index] = True; break
     nb = [[] for _ in range(n)]
     for e in me.edges: nb[e.vertices[0]].append(e.vertices[1]); nb[e.vertices[1]].append(e.vertices[0])
+    # 옷이 살을 살짝 파고든 곳은 '드러난 점'으로 잡혀 흩어진 섬이 된다. 작은 섬(island개 미만)은 가려진 것으로 친다.
+    # 이걸 하지 않으면 아래에서 섬마다 둘레를 남기는 바람에 몸통 살이 넓게 되살아난다
+    seen = [False] * n; sizes = []; fill = []
+    for i in range(n):
+        if covered[i] or seen[i]: continue
+        comp = [i]; seen[i] = True
+        for j in comp:
+            for k in nb[j]:
+                if not covered[k] and not seen[k]: seen[k] = True; comp.append(k)
+        touches = any(covered[k] for j in comp for k in nb[j])   # 손톱처럼 따로 떨어진 조각은 가려진 점과 닿지 않으니 건드리지 않는다
+        if touches: sizes.append(len(comp))
+        if touches and len(comp) < island and not any(keep[j] for j in comp): fill += comp
+    for j in fill: covered[j] = True
+    print("COVER head kept", sum(keep), "islands filled", len(fill))
     for _ in range(keep_rings):   # 가려지지 않은 점과 이웃한 점은 남긴다
         covered = [covered[i] and all(covered[j] for j in nb[i]) for i in range(n)]
     vg = base.vertex_groups.new(name="covered_by_clothes"); vg.add([i for i in range(n) if covered[i]], 1.0, "REPLACE")
