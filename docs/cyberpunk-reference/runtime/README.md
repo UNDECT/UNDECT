@@ -11,24 +11,29 @@
 | `Traffic.luau` | 지상·하늘 교통: 차선 따라 주행, 앞차 간격, 빨간 신호 정지, 바퀴 회전, 비행 차량 기울기와 추진기 각도 | ✅ |
 | `Vitals.luau` | NPC 체력·피격·사망: 부위 배수, 피해 종류, 맞은 방향, 사망 클립 고르기, 부상당해 기어가기, 수위(`Vitals.GORE` 0~3)별 이펙트 목록 | ✅ |
 | `Laser.luau` | 손 레이저 발사: 충전 → 빔(세기 상승, 관통, 거리 감쇠) → 과열 잠김 → 회복 | ✅ |
+| `Driving.luau` | 모는 차의 움직임: 가속·제동, 속도에 따라 줄어드는 조향, 접지 한계, 핸드브레이크 미끄러짐, 충돌, 차 체력(연기 → 불 → 폭발) | ✅ |
+| `Carjack.luau` | 차 훔쳐 타기: 그냥 타기, 잠금 해킹, 창 깨기, 운전자 끌어내기, 총으로 위협, 시동 따기, 경보기, 운전자 반응 | ✅ |
+| `Wanted.luau` | 수배 0~5단계와 보안 대응: 알려진 범죄만 반영, 단계별 부대, 수색·해제·체포, 차단선, 순찰차 운전 입력, 보안 로봇 판단 | ✅ |
 | `RigAnimator.luau` | Roblox 연결: 자세를 Bone/Motor6D의 `Transform`에 적용, 동작 전환 섞기. 사람은 `RigAnimator.new(model, manifest.joints)` | ⚠️ Studio에서 확인 필요 |
-| `tests/run.luau` | 테스트 98개 | `lune run tests/run.luau` (이 폴더에서 실행) |
+| `tests/run.luau` | 테스트 162개 | `lune run tests/run.luau` (이 폴더에서 실행) |
 
 ## 클립
-위치는 `../blender/out/anim/*.json`(125개)이고 목록은 `_index.json`에 있다. `rig` 값으로 어디에 쓰는 클립인지 구분한다.
+위치는 `../blender/out/anim/*.json`(157개)이고 목록은 `_index.json`에 있다. `rig` 값으로 어디에 쓰는 클립인지 구분한다.
 
 | rig | 개수 | 클립 | 적용 대상 |
 |---|---|---|---|
-| `humanoid` | 57 | **죽음**: `death_back`, `death_front`, `death_left`, `death_right`, `death_headshot`, `death_knees`, `death_blast`, `death_burn`, `death_shock`, `death_slash`, `death_sit`, `death_crawl` / **부상**: `fall_wounded`, `wounded_crawl` / **피격**: `hit_front`, `hit_back`, `hit_left`, `hit_right`, `hit_head`, `hit_leg`, `stagger` / 손 레이저: `aim_palm`, `fire_palm` / 이동: `walk`, `walk_slow`, `run`, `walk_heavy` / 대기: `idle`, `look_around`, `talk`, `phone` / 반응: `cower_enter`, `cower_loop`, `hit_react`, `knockdown`, `lie_loop`, `get_up`, `collapse` / 앉기: `sit_down`, `sit_loop`, `stand_up` / 무기 자세: `aim_pistol`, `aim_rifle`, `low_ready`, `fire_pistol_3p`, `fire_rifle_3p` / 근접: `melee_slash`, `melee_stab`, `melee_heavy`, `punch`, `throw` / 로봇: `robot_scan`, `robot_alert`, `robot_aim`, `robot_fire`, `robot_shutdown`, `robot_boot` | 사람, 가면 NPC, 보안 로봇 |
-| `fp` | 25 | `fp_laser_raise`, `fp_laser_fire`, `fp_laser_overheat`, `fp_laser_lower`, `fp_idle`, `fp_raise_light`, `fp_raise_heavy`, `fp_lower`, `fp_recoil_pistol/revolver/auto/lmg/shotgun/sniper`, `fp_reload`, `fp_ads_in`, `fp_ads_out`, `fp_slash`, `fp_stab`, `fp_punch`, `fp_heavy`, `fp_throw`, `fp_inspect`, `fp_sprint`, `fp_land` | 1인칭 팔과 무기 뭉치 |
+| `humanoid` | 77 | **차**: `car_door_open`, `car_enter`, `car_exit`, `drive_idle`, `drive_steer_L/R`, `car_smash_window`, `car_hack`, `car_hotwire`, `carjack_pull`, `carjack_victim` / **반응**: `hands_up`, `point`, `record_phone`, `phone_report`, `startle`, `dodge_left/right`, `shake_fist`, `robot_halt` / **죽음**: `death_back`, `death_front`, `death_left`, `death_right`, `death_headshot`, `death_knees`, `death_blast`, `death_burn`, `death_shock`, `death_slash`, `death_sit`, `death_crawl` / **부상**: `fall_wounded`, `wounded_crawl` / **피격**: `hit_front`, `hit_back`, `hit_left`, `hit_right`, `hit_head`, `hit_leg`, `stagger` / 손 레이저: `aim_palm`, `fire_palm` / 이동: `walk`, `walk_slow`, `run`, `walk_heavy` / 대기: `idle`, `look_around`, `talk`, `phone` / 반응: `cower_enter`, `cower_loop`, `hit_react`, `knockdown`, `lie_loop`, `get_up`, `collapse` / 앉기: `sit_down`, `sit_loop`, `stand_up` / 무기 자세: `aim_pistol`, `aim_rifle`, `low_ready`, `fire_pistol_3p`, `fire_rifle_3p` / 근접: `melee_slash`, `melee_stab`, `melee_heavy`, `punch`, `throw` / 로봇: `robot_scan`, `robot_alert`, `robot_aim`, `robot_fire`, `robot_shutdown`, `robot_boot` | 사람, 가면 NPC, 보안 로봇 |
+| `fp` | 30 | `fp_car_enter`, `fp_car_exit`, `fp_drive`, `fp_smash`, `fp_pull`, `fp_laser_raise`, `fp_laser_fire`, `fp_laser_overheat`, `fp_laser_lower`, `fp_idle`, `fp_raise_light`, `fp_raise_heavy`, `fp_lower`, `fp_recoil_pistol/revolver/auto/lmg/shotgun/sniper`, `fp_reload`, `fp_ads_in`, `fp_ads_out`, `fp_slash`, `fp_stab`, `fp_punch`, `fp_heavy`, `fp_throw`, `fp_inspect`, `fp_sprint`, `fp_land` | 1인칭 팔과 무기 뭉치 |
 | `weapon` | 15 | `pistol_fire`, `revolver_fire`, `auto_fire`, `lmg_fire`, `double_fire`, `shotgun_pump`, `bolt_cycle`, `mag_reload`, `lmg_reload`, `break_reload`, `charge`, `grenade_prime`, `baton_arc`, `hammer_thrust`, `knuckle_impact` | 무기의 움직이는 부품 |
 | `cyberarm` | 13 | `laser_deploy/fire/overheat/retract`, `blade_deploy/retract`, `power_charge/release`, `wire_deploy/retract`, `launcher_deploy/fire/retract` | 사이버웨어 팔 부품 |
 | `machine` | 11 | `drone_hover/alert/fire/crash`, `turret_scan/alert/fire/shutdown`, `camera_sweep/alert/disabled` | 드론, 포탑, 감시 카메라 |
+| `vehicle` | 7 | `car_door`, `car_door_close`, `car_window_break`, `car_alarm`, `car_engine_start`, `patrol_lightbar`, `car_brake` | 차의 문, 창, 발광 |
 | `clinic` | 4 | `chair_recline`, `chair_release`, `surgery_start`, `surgery_loop` | 시술 의자, 천장 로봇 팔 |
 
 - `humanoid` 클립은 뼈대와 무관한 "의미 관절"로 적혀 있다(`hip_L.flex`, `knee_L.bend`, `waist.yaw` …). 규칙은 `../blender/anim.py` 맨 위 주석을 본다. 관절 이름이 같으면 어떤 모델에도 쓸 수 있다.
 - `fp` 클립의 `view` 관절은 팔과 무기 뭉치 전체를 카메라 기준으로 옮기는 값이다: `x` 오른쪽, `y` 뒤(+)·앞(−), `z` 위(m), `pitch` 총구 위(+), `yaw` 왼쪽(+), `roll`(도). `value`는 0~1 진행률이다(조준 정도, 손에서 떠남 등). **걷기 흔들림은 없다.** 멈춰 있을 때의 숨쉬기 흔들림(`fp_idle`)만 있다.
-- `weapon`, `cyberarm`, `machine`, `clinic` 클립은 관절 이름이 부품(또는 manifest의 관절) 이름이다. `move_x/y/z`는 이동(m), `pitch/yaw/roll/open`은 회전(도), `spin`은 회전수, `value`는 발광 세기나 보임 여부(0~1)다. 이 클립들은 `AnimSampler.sample`로 값을 뽑아 게임 코드가 부품에 직접 적용한다(`RigAnimator`를 쓰지 않는다).
+- 타고 내리는 클립(`car_enter`, `car_exit`, `car_door_open`, `carjack_*`, `car_smash_window`, `car_hack`)의 뿌리는 **앉은 자리가 원점**이고 운전석(왼쪽 문) 기준이다. 문밖은 +X로 0.95 m다. 오른쪽 문은 좌우를 뒤집어 쓴다(`_L`·`_R`을 바꾸고 `x`, `yaw`, `roll` 부호를 뒤집는다).
+- `weapon`, `cyberarm`, `machine`, `vehicle`, `clinic` 클립은 관절 이름이 부품(또는 manifest의 관절) 이름이다. `move_x/y/z`는 이동(m), `pitch/yaw/roll/open`은 회전(도), `spin`은 회전수, `value`는 발광 세기나 보임 여부(0~1)다. 이 클립들은 `AnimSampler.sample`로 값을 뽑아 게임 코드가 부품에 직접 적용한다(`RigAnimator`를 쓰지 않는다).
 - 이벤트: `foot_L/R`, `shot`, `muzzle`, `eject`, `mag_out`, `mag_in`, `chamber`, `swing`, `hit`, `release`, `body_fall`, `seat`, `draw`, `alert`, `disabled`, `impact`, `open`, `lock` 등. 소리와 이펙트를 여기에 붙인다.
 - 30fps 키라서 반동처럼 아주 빠른 움직임은 첫 프레임(1/30초)에 정점이 온다.
 - 죽는 클립은 반복하지 않는다. 끝 자세가 시체 자세라서 마지막 프레임에서 멈춘 채로 둔다.
@@ -93,6 +98,42 @@ crowd:refill({x = px, z = pz}, 60)             -- 치워진 시체 수만큼 플
 - 걷는 사람은 시체를 돌아서 간다. 손에 든 물건·옷자락(`prop`, `umbrella`, `skirt`)에 맞은 것은 피해가 없다.
 - 기계(보안 로봇, 드론, 포탑)는 `Vitals.new({machine = true, deathAnim = "drone_crash"})`로 만든다. 피 대신 `spark_burst`, `dent_mark_body`, `oil_leak`, `machine_down`이 나오고, 기어가지 않으며, 죽으면 고장 동작(기본 `robot_shutdown`)을 튼다.
 - 이 모듈은 이펙트의 **이름**만 돌려준다. 파티클·데칼·소리는 게임 쪽에서 이름마다 붙인다. 신체 절단은 넣지 않았다.
+
+## 차 훔쳐 타기, 운전, 수배
+```lua
+-- 타기
+local v = Carjack.vehicle({kind = "parked"})                       -- 또는 "traffic"(NPC가 모는 차), "security"(순찰차)
+local options = Carjack.options(v, {hasDeck = true, armed = false}) -- {"hack", "smash"} 같은 목록
+local attempt = Carjack.begin(v, "smash", player)
+-- 매 프레임
+for _, e in attempt:update(dt, interrupted, math.random()) do
+	if e.type == "crime" then crowd:witness(e.crime, x, z, e.noise + 6, if e.crime == "carjacking" then 2 else 1) end
+	if e.type == "driver_out" then crowd:eject(x, z, heading, e.reaction, "carjacking") end
+	if e.type == "alarm_on" then ... end                             -- 보안이 60 m 안이면 wanted:report(crime, {alarm = true})
+end
+local clipName, progress = attempt:current()
+
+-- 몰기
+local car = Driving.new({x = x, z = z, heading = heading})
+for _, e in car:update(dt, {throttle = t, steer = s, handbrake = hb}) do ... end   -- skid_start, skid_stop, explode
+crowd:vehicle({x = car.x, z = car.z, vx = car.vx, vz = car.vz, attacker = player}) -- 시민이 피하거나 치인다
+traffic.obstacles = {{x = car.x, z = car.z, r = 2.4, v = car.speed}}              -- 뒤차가 선다
+local hitSpeed = car:impact(nx, nz)                                                -- 벽·차에 부딪혔을 때
+
+-- 수배
+for _, e in crowd:drain() do
+	if e.type == "report" then wanted:report(e.crime, {reported = true, x = e.x, z = e.z}) end
+	if e.type == "hit_by_vehicle" then wanted:report("hit_pedestrian", {seenBySecurity = securitySees, x = e.x, z = e.z}) end
+end
+for _, order in wanted:update(dt, {x = car.x, z = car.z, heading = car.heading, speed = car.speed, inVehicle = true, seen = securitySees}) do
+	-- spawn(unit, x, z) / roadblock(x, z, heading, spikes) / lost / search / found / clear / busted / lockdown
+end
+patrol:update(dt, Wanted.pursuitInput(patrol, car, "follow"))                      -- patrol = Driving.new(Wanted.PATROL_CAR)
+local order = Wanted.robotOrder(robot, {x = car.x, z = car.z, vx = car.vx, vz = car.vz, inVehicle = true}, wanted.level, seen)
+```
+- 수배는 범죄가 보안에 **알려졌을 때만** 오른다: 보안이 직접 봤거나(`seenBySecurity`), 시민이 4초짜리 신고 전화를 끝냈거나(`reported`), 경보기가 보안 근처에서 울렸을 때(`alarm`). 신고하는 사람을 놀라게 해 쫓으면 신고가 끊긴다.
+- 단계별 부대와 허용 대응은 `Wanted.RESPONSE`, 범죄별 점수는 `Wanted.CRIMES`, 타는 방법별 시간은 `Carjack.METHODS`, 차의 성질은 `Driving.DEFAULTS`에 있다. 수치는 거기서만 고친다.
+- 순찰차는 멀어지면 빨라지는 보정(`boost`, 최대 1.6배)을 쓴다. 이것이 없으면 급하게 꺾는 차를 다시 따라잡지 못한다(테스트로 확인).
 
 ## 손 레이저
 ```lua

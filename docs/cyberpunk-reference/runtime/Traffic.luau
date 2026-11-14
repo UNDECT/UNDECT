@@ -8,6 +8,7 @@ function Traffic.new(lanes, opts)
 	opts = opts or {}
 	local self = setmetatable({}, Traffic)
 	self.lanes = lanes; self.vehicles = {}
+	self.obstacles = {}       -- 차선 밖에서 온 장애물: 플레이어 차, 차단선, 길에 쓰러진 사람. 게임이 매 프레임 {x, z, r, v}로 채운다
 	self.accel = opts.accel or 2.2; self.brake = opts.brake or 3.5; self.gap = opts.gap or 2.5; self.headway = opts.headway or 1.2
 	for _, ln in lanes do
 		local n = #ln.points; ln.cum = {0}
@@ -53,8 +54,10 @@ end
 function Traffic:step(dt: number, signals)
 	local byLane = {}
 	for _, v in self.vehicles do
-		byLane[v.lane] = byLane[v.lane] or {}
-		table.insert(byLane[v.lane], v)
+		if not v.external then                    -- 플레이어가 가져간 차는 차선에서 빠진다
+			byLane[v.lane] = byLane[v.lane] or {}
+			table.insert(byLane[v.lane], v)
+		end
 	end
 	for li, list in byLane do
 		local ln = self.lanes[li]
@@ -80,7 +83,22 @@ function Traffic:step(dt: number, signals)
 					if toLine >= -0.5 and toLine < free then free = math.max(0, toLine); dv = v.v end
 				end
 			end
-			local a = self.accel * (1 - (v.v / v0) ^ 4)
+			-- 차선 밖 장애물(플레이어 차 등)이 앞길에 있으면 그 앞에서 선다
+			local hx, hz = math.sin(v.heading), math.cos(v.heading)
+			for _, ob in self.obstacles do
+				local ox, oz = ob.x - v.x, ob.z - v.z
+				local ahead = ox * hx + oz * hz
+				if ahead > 0 and ahead < 45 and math.abs(ox * hz - oz * hx) < 1.7 + (ob.r or 1.2) * 0.4 then
+					local d = ahead - (ob.r or 1.2) - v.length / 2
+					if d < free then free = math.max(0, d); dv = v.v - (ob.v or 0) end
+				end
+			end
+			-- 운전자 반응: 멈춤(손 들기), 버리고 도망, 급히 달아남
+			if v.hold and v.hold > 0 then v.hold -= dt; free = 0; dv = v.v end
+			if v.abandoned then free = 0; dv = v.v end
+			local boost = 1
+			if v.boost and v.boost > 0 then v.boost -= dt; boost = 1.8; v0 *= 1.7 end
+			local a = self.accel * boost * (1 - (v.v / v0) ^ 4)
 			if free < math.huge then
 				local want = self.gap + v.v * self.headway + v.v * dv / (2 * math.sqrt(self.accel * self.brake))
 				a -= self.accel * (math.max(0, want) / math.max(free, 0.05)) ^ 2
@@ -102,6 +120,22 @@ function Traffic:step(dt: number, signals)
 			v.tilt += (math.rad(75) * math.min(1, v.v / v0) - v.tilt) * math.min(1, dt * 2)
 		end
 	end
+end
+
+-- 플레이어가 이 차를 빼앗았다. 차선에서 빼고, 지금 위치와 속도를 돌려준다(Driving.new에 넘긴다).
+function Traffic:takeOver(v)
+	v.external = true; v.abandoned = false
+	return {x = v.x, z = v.z, heading = v.heading, speed = v.v}
+end
+
+-- NPC 운전자의 반응을 적용한다. reaction = Carjack.trafficReaction의 값.
+--   stop: 6초 동안 선다 / speed_off: 8초 동안 급가속해 달아난다 / bail: 차를 세우고 버린다(운전자는 Crowd:eject로 내보낸다) / honk, reverse: 선다
+function Traffic:react(v, reaction: string)
+	if reaction == "speed_off" then v.boost = 8; v.hold = 0
+	elseif reaction == "bail" then v.abandoned = true
+	elseif reaction == "stop" then v.hold = 6
+	else v.hold = 2 end
+	v.reaction = reaction
 end
 
 return Traffic

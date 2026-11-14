@@ -9,6 +9,9 @@ local Patrol = require("../Patrol")
 local Traffic = require("../Traffic")
 local Vitals = require("../Vitals")
 local Laser = require("../Laser")
+local Driving = require("../Driving")
+local Carjack = require("../Carjack")
+local Wanted = require("../Wanted")
 
 local CLIPS = "../blender/out/anim/"
 local passed, failed = 0, 0
@@ -96,7 +99,7 @@ do  -- 새 클립: 넘어지면 골반이 바닥 가까이 내려가고, 일어�
 	check("melee slash emits hit event", #ev == 1 and ev[1] == "hit", #ev)
 	local n = 0
 	for _, c in load("_index").clips do n += 1 end
-	check("clip index lists every clip", n == 125, n)
+	check("clip index lists every clip", n == 157, n)
 	local r = AnimSampler.sample(clips.fp_recoil_shotgun, 1 / 30)
 	check("first-person recoil kicks back and up", r.view.y > 0.03 and r.view.pitch > 4, r.view.y)
 end
@@ -519,6 +522,254 @@ do
 		cr:step(1 / 60, nil, nil); t += 1
 	end
 	check("laser kills a bystander with the burn death", ag.state == "dead" and ag.anim == "death_burn" and t < 120, t)
+end
+
+-- 10. 운전
+do
+	local function drive(car, sec, input) local evs = {}; for _ = 1, math.floor(sec * 60 + 0.5) do for _, e in car:update(1 / 60, input) do table.insert(evs, e) end end; return evs end
+	local car = Driving.new()
+	drive(car, 4, {throttle = 1})
+	check("car accelerates forward along its heading", car.speed > 18 and car.z > 30 and math.abs(car.x) < 1e-6, car.speed)
+	local top = Driving.new(); drive(top, 40, {throttle = 1})
+	check("car tops out at max speed", top.speed > 36 and top.speed <= 38.0001, top.speed)
+	local h0 = car.heading
+	drive(car, 1, {throttle = 0.3, steer = 1})
+	check("steering right turns right (heading decreases, moves toward -X)", car.heading < h0 - 0.2 and car.vx < 0, car.heading)
+	local slow, fast = Driving.new(), Driving.new()
+	drive(slow, 1.0, {throttle = 1}); drive(fast, 12, {throttle = 1})
+	local hs, hf = slow.heading, fast.heading
+	drive(slow, 0.5, {throttle = 0, steer = -1}); drive(fast, 0.5, {throttle = 1, steer = -1})
+	check("steering angle is limited at speed", math.abs(fast.steer) < math.abs(slow.steer) * 0.6, fast.steer)
+	local b = Driving.new(); drive(b, 5, {throttle = 1}); local v0 = b.speed
+	drive(b, 1, {throttle = -1})
+	check("brakes slow the car and set the brake flag", b.speed < v0 - 12 and b.braking)
+	drive(b, 6, {throttle = -1})
+	check("holding reverse backs up to the reverse limit", b.speed < -5 and b.speed >= -9.0001, b.speed)
+	local d = Driving.new(); drive(d, 5, {throttle = 1})
+	local ev = drive(d, 0.8, {throttle = 0.5, steer = 1, handbrake = true})
+	local slid = false
+	for _, e in ev do slid = slid or e == "skid_start" end
+	local g = Driving.new(); drive(g, 5, {throttle = 1}); drive(g, 0.8, {throttle = 0.5, steer = 1})
+	check("handbrake makes the car slide; normal cornering does not", slid and d.skid > 0.35 and g.skid < 0.3, d.skid .. " / " .. g.skid)
+	local w = Driving.new(); drive(w, 4, {throttle = 1}); local hit = w:impact(0, -1)
+	check("hitting a wall kills the speed into it", hit > 18 and w.vz < 0.3 * 0 + 6 and w.speed < 8, w.speed)
+	local carDmg, riderDmg = Driving.crashDamage(hit)
+	check("crash damage scales with impact speed", carDmg > 25 and riderDmg > 5 and Driving.crashDamage(3) == 0)
+	check("damage: smoking then burning then wrecked", w:damage(70) == "smoking" and w.state == "smoking" and w:damage(40) == "on_fire" and w.state == "burning")
+	local evs = drive(w, 4.2, {throttle = 1})
+	local boom = false
+	for _, e in evs do boom = boom or e == "explode" end
+	check("a burning car explodes after four seconds", boom and w.state == "wrecked" and w.engine == false)
+	local r = Driving.new(); drive(r, 5, {throttle = 1}); drive(r, 0.6, {throttle = 1, steer = 1})
+	check("body rolls away from the turn", r.roll < -0.02, r.roll)
+end
+
+-- 11. 차 훔치기
+do
+	local function run(att, sec, roll)
+		local names = {}
+		for _ = 1, math.floor(sec * 60 + 0.5) do for _, e in att:update(1 / 60, false, roll) do table.insert(names, e.type); names[e.type] = e end end
+		return names
+	end
+	local has = function(list, name) for _, e in list do if e == name then return true end end return false end
+	local parked = Carjack.vehicle({kind = "parked"})
+	check("a locked parked car can be smashed, or hacked with a deck", table.concat(Carjack.options(parked, {}), ",") == "smash" and table.concat(Carjack.options(parked, {hasDeck = true}), ",") == "hack,smash")
+	check("cannot simply open a locked car", Carjack.begin(parked, "enter", {}) == nil)
+	local att = Carjack.begin(parked, "smash", {})
+	local a1 = att:current()
+	local ev = run(att, 6)
+	check("smash: glass, alarm, crime, door, seat, hotwire, done", a1 == "car_smash_window" and has(ev, "glass_break") and has(ev, "alarm_on") and has(ev, "door_open") and has(ev, "seated") and has(ev, "engine_on") and has(ev, "done")
+		and ev.crime.crime == "vehicle_theft" and ev.crime.noise == 16 and parked.stolen and parked.engine and parked.windowBroken, table.concat(ev, ","))
+	check("alarm keeps ringing then stops", Carjack.alarm(parked, 1) == true and Carjack.alarm(parked, 60) == false)
+	local quiet = Carjack.vehicle({kind = "parked"})
+	ev = run(Carjack.begin(quiet, "hack", {hasDeck = true}), 4)
+	check("hack is silent: no alarm, no hotwire", has(ev, "unlocked") and has(ev, "done") and not has(ev, "alarm_on") and not has(ev, "glass_break") and not has(ev, "engine_on") and ev.crime.noise == 0 and quiet.engine)
+	local moving = Carjack.vehicle({kind = "traffic", speed = 11})
+	check("cannot pull a driver out of a fast car", #Carjack.options(moving, {armed = true}) == 0)
+	moving.speed = 1
+	check("a slow occupied car can be jacked; a gun adds the threat option", table.concat(Carjack.options(moving, {}), ",") == "pull_driver" and table.concat(Carjack.options(moving, {armed = true}), ",") == "pull_driver,threaten")
+	att = Carjack.begin(moving, "pull_driver", {})
+	ev = run(att, 3, 0.1)
+	check("carjacking throws the driver out and is a heavier crime", has(ev, "driver_out") and ev.driver_out.reaction == "flee" and ev.crime.crime == "carjacking" and moving.occupied == false and moving.stolen and has(ev, "done"))
+	check("driver reactions cover flee, freeze and fight", Carjack.driverReaction(moving, "pull_driver", 0.7) == "freeze" and Carjack.driverReaction(moving, "pull_driver", 0.95) == "fight"
+		and Carjack.driverReaction(Carjack.vehicle({kind = "security"}), "pull_driver", 0.1) == "hostile")
+	local c2 = Carjack.begin(Carjack.vehicle({kind = "parked"}), "smash", {})
+	c2:update(0.3); local cev = c2:update(0.1, true)
+	check("an interrupted attempt is canceled before the glass breaks", cev[1].type == "canceled" and c2.canceled and #c2:update(1) == 0)
+	check("a stolen empty car can simply be entered again", table.concat(Carjack.options(parked, {}), ",") == "enter")
+	local open1 = Carjack.vehicle({kind = "parked", locked = false})
+	local oe = run(Carjack.begin(open1, "enter", {}), 2)
+	check("taking an unlocked car is still theft, but silent and with no hotwire", oe.crime ~= nil and oe.crime.crime == "vehicle_theft" and oe.crime.noise == 0 and not has(oe, "engine_on") and not has(oe, "alarm_on") and open1.engine)
+	local again = run(Carjack.begin(open1, "enter", {}), 2)
+	check("getting back into a car you already stole is not a new crime", again.crime == nil and has(again, "done"))
+	for _, m in Carjack.METHODS do for _, st in m.steps do clips[st[3]] = clips[st[3]] or load(st[3]) end end
+	check("every theft step has its clip", clips.car_smash_window.rig == "humanoid" and load("car_hotwire").duration >= Carjack.HOTWIRE[2] and load("car_door").rig == "vehicle")
+	check("traffic drivers react to threats", Carjack.trafficReaction("aimed", 0.1) == "stop" and Carjack.trafficReaction("shot", 0.9) == "bail" and Carjack.trafficReaction("blocked", 0.1) == "honk")
+end
+
+-- 12. 수배와 보안 대응
+do
+	local w = Wanted.new()
+	check("an unseen crime does not raise the wanted level", #w:report("vehicle_theft", {x = 0, z = 0}) == 0 and w.level == 0 and w.points == 0)
+	local ev = w:report("vehicle_theft", {x = 5, z = 5, reported = true})
+	check("a citizen report raises it to level 1 and starts a search", w.level == 1 and w.state == "search" and ev[1].type == "level_up")
+	w:report("carjacking", {x = 5, z = 5, seenBySecurity = true})
+	check("a carjacking seen by security is level 2 and tracked", w.level == 2 and w.state == "wanted")
+	local spawned = {}
+	local function tick(sec, ctx)
+		local all = {}
+		for _ = 1, math.floor(sec * 10 + 0.5) do
+			for _, e in w:update(0.1, ctx) do table.insert(all, e); all[e.type] = e; if e.type == "spawn" then spawned[e.unit] = (spawned[e.unit] or 0) + 1 end end
+		end
+		return all
+	end
+	tick(10, {x = 0, z = 0, heading = 0, speed = 15, inVehicle = true, seen = true})
+	check("level 2 sends two robots, one patrol car and one drone, no roadblock", spawned.robot == 2 and spawned.car == 1 and spawned.drone == 1 and spawned.flyer == nil and Wanted.RESPONSE[2].lethal == false, (spawned.robot or 0) .. "/" .. (spawned.car or 0))
+	w:report("kill", {x = 0, z = 0, seenBySecurity = true})
+	local e3 = tick(10, {x = 0, z = 0, heading = 0, speed = 20, inVehicle = true, seen = true})
+	check("level 3 allows lethal force and sets a roadblock ahead on the route", w.level == 3 and Wanted.RESPONSE[3].lethal and e3.roadblock ~= nil and e3.roadblock.z > 59 and math.abs(e3.roadblock.x) < 1e-6, e3.roadblock and e3.roadblock.z)
+	local lost = tick(1, {x = 300, z = 0, heading = 0, speed = 20, inVehicle = true, seen = false})
+	check("breaking line of sight starts a search around the last seen spot", w.state == "search" and lost.lost ~= nil and lost.search.x == 0 and lost.search.z == 0)
+	local t0 = w.searchTimer; w:swappedVehicle(false)
+	check("swapping cars unseen halves the search", math.abs(w.searchTimer - t0 / 2) < 1e-9)
+	local cleared = tick(40, {x = 300, z = 0, heading = 0, speed = 0, inVehicle = false, seen = false})
+	check("staying hidden clears the wanted level", w.level == 0 and w.state == "clear" and cleared.clear ~= nil)
+	local s = Wanted.new(); s:report("vehicle_theft", {x = 0, z = 0, seenBySecurity = true})
+	local got = nil
+	for _ = 1, 40 do for _, e in s:update(0.1, {x = 0, z = 0, seen = true, stopped = true, unarmed = true}) do if e.type == "busted" then got = e end end end
+	check("stopping unarmed at low level ends in arrest", got ~= nil and s.level == 0)
+	local k = Wanted.new(); k:report("kill_security", {x = 0, z = 0, seenBySecurity = true}); local busted = false
+	for _ = 1, 60 do for _, e in k:update(0.1, {x = 0, z = 0, seen = true, stopped = true, unarmed = true}) do busted = busted or e.type == "busted" end end
+	check("no arrest once lethal force is authorised", k.level == 4 and not busted)
+	local five = Wanted.new()
+	for _ = 1, 4 do five:report("kill_security", {seenBySecurity = true, x = 0, z = 0}) end
+	local lock = false
+	for _, e in five:update(0.1, {x = 0, z = 0, heading = 0, speed = 0, seen = true}) do lock = lock or (e.type == "lockdown" and e.on) end
+	check("level 5 locks the district down", five.level == 5 and lock)
+	-- 보안 로봇의 판단
+	local o = Wanted.robotOrder({x = 0, z = 10}, {x = 0, z = 0, vx = 0, vz = 0, inVehicle = false}, 1, true)
+	check("level 1 robot orders a halt", o.action == "halt" and o.anim == "robot_halt")
+	o = Wanted.robotOrder({x = 0.4, z = 12}, {x = 0, z = 0, vx = 0, vz = 14, inVehicle = true}, 2, true)
+	check("robot dodges a car driven at it", o.action == "dodge" and (o.side == "left" or o.side == "right"))
+	o = Wanted.robotOrder({x = 9, z = 12}, {x = 0, z = 0, vx = 0, vz = 14, inVehicle = true}, 3, true)
+	check("level 3 robot shoots the tires of a passing car", o.action == "fire" and o.at == "tires")
+	check("robot reports when it loses sight", Wanted.robotOrder({x = 0, z = 0}, {x = 50, z = 0}, 3, false).action == "report")
+	-- 순찰차가 달아나는 차를 따라잡는다
+	local function chase(steerAt)
+		local thief, cop = Driving.new({x = 0, z = 0}), Driving.new(Wanted.PATROL_CAR); cop.x, cop.z = 6, -40
+		local minD, maxD = math.huge, 0
+		for i = 1, 60 * 40 do
+			thief:update(1 / 60, {throttle = 0.7, steer = steerAt(i)})
+			cop:update(1 / 60, Wanted.pursuitInput(cop, thief, "follow"))
+			local d = math.sqrt((cop.x - thief.x) ^ 2 + (cop.z - thief.z) ^ 2)
+			if i > 900 then minD = math.min(minD, d); maxD = math.max(maxD, d) end
+		end
+		return minD, maxD, math.sqrt((cop.x - thief.x) ^ 2 + (cop.z - thief.z) ^ 2)
+	end
+	local mn, mx, fin = chase(function(i) return 0.06 * math.sin(i / 120) end)
+	check("patrol car closes 40 m and holds station behind a fleeing car", mn > 5 and mx < 16 and fin < 14, mn .. ".." .. mx)
+	mn, mx, fin = chase(function(i) return if i > 900 and i < 1080 then 1 else 0 end)
+	check("patrol car recovers after the thief makes a hard turn", fin < 14 and mn > 4, fin)
+	mn, mx, fin = chase(function(i) return if i % 600 < 200 then 0.25 else -0.1 end)
+	check("patrol car is never shaken off by constant weaving", mx < 60, mx)
+	check("pursuit asks for a catch-up boost only when far", Wanted.pursuitInput(Driving.new(), {x = 0, z = 100, vx = 0, vz = 20, heading = 0}).boost > 1.5 and Wanted.pursuitInput(Driving.new(), {x = 0, z = 10, vx = 0, vz = 20, heading = 0}).boost == 1)
+end
+
+-- 13. 차와 범죄에 대한 시민 반응
+do
+	Vitals.GORE = 3
+	local street = {nodes = {{x = 0, z = 0}, {x = 0, z = 120}}, edges = {{a = 1, b = 2, width = 4}}}
+	local cr = Crowd.new(street, {seed = 8}); cr:spawn(40)
+	for _ = 1, 60 do cr:step(1 / 30) end
+	-- 인도를 따라 시속 약 50 km로 달린다
+	local carZ, dodged, hit, near = -10, 0, 0, 0
+	for _ = 1, 600 do
+		carZ += 14 / 60
+		local hits = cr:vehicle({x = 0.6, z = carZ, vx = 0, vz = 14, attacker = "player"})
+		hit += #hits
+		cr:step(1 / 60)
+		for _, e in cr:drain() do if e.type == "near_miss" then near += 1 end end
+	end
+	for _, a in cr.agents do if a.state == "flee" or a.state == "dodge" then dodged += 1 end end
+	check("people dive out of the way of a car on the sidewalk", near >= 5, near)
+	check("most of them make it", near > hit, near .. " dodged / " .. hit .. " hit")
+	local slowHit = Crowd.new(street, {seed = 2}); slowHit:spawn(1)
+	local p = slowHit.agents[1]; p.vitals.health = 100
+	local res = slowHit:vehicle({x = p.x, z = p.z - 0.5, vx = 0, vz = 4, attacker = "player"})
+	check("a slow bump hurts but does not kill", #res == 1 and not res[1].result.killed and p.vitals.health < 100 and p.vitals.health > 80, p.vitals.health)
+	local fastHit = Crowd.new(street, {seed = 2}); fastHit:spawn(1)
+	local q = fastHit.agents[1]
+	res = fastHit:vehicle({x = q.x, z = q.z - 0.5, vx = 0, vz = 20, attacker = "player"})
+	check("a fast hit kills and throws the body", #res == 1 and res[1].result.killed and q.anim == "death_blast")
+	-- 차 도둑을 본 시민: 구경, 촬영, 신고
+	local w1 = Crowd.new(street, {seed = 12}); w1:spawn(60)
+	for _ = 1, 30 do w1:step(1 / 30) end
+	local n = w1:witness("vehicle_theft", 0, 60, 30, 1)
+	check("petty theft: people watch, film or call it in, nobody flees", n.watch > 0 and n.report > 0 and n.flee == 0 and n.cower == 0, n.watch .. "/" .. n.report)
+	local reports = 0
+	for _ = 1, 150 do w1:step(1 / 30); for _, e in w1:drain() do if e.type == "report" and e.crime == "vehicle_theft" then reports += 1 end end end
+	check("a finished call becomes a report", reports == n.report, reports .. " of " .. n.report)
+	local w2 = Crowd.new(street, {seed = 12}); w2:spawn(60)
+	for _ = 1, 30 do w2:step(1 / 30) end
+	local n2 = w2:witness("vehicle_theft", 0, 60, 30, 1)
+	w2:panic(0, 60, 40)                                              -- 총을 쏴서 겁을 주면 신고가 끊긴다
+	local r2 = 0
+	for _ = 1, 150 do w2:step(1 / 30); for _, e in w2:drain() do if e.type == "report" then r2 += 1 end end end
+	check("scaring callers off stops their reports", n2.report > 0 and r2 < n2.report, r2 .. " of " .. n2.report)
+	local n3 = Crowd.new(street, {seed = 12}); n3:spawn(60)
+	for _ = 1, 30 do n3:step(1 / 30) end
+	local v = n3:witness("carjacking", 0, 60, 30, 2)
+	check("a violent carjacking makes people flee, cower, film or call", v.flee > 0 and v.report + v.record + v.cower > 0, v.flee)
+	do  -- 차 주인이 보고 있었다
+		local oc = Crowd.new(street, {seed = 5}); oc:spawn(3)
+		for _ = 1, 30 do oc:step(1 / 30) end
+		local owner = oc.agents[1]
+		check("owner shouts at the thief", oc:ownerReact(owner, "vehicle_theft", owner.x + 6, owner.z) and owner.anim == "shake_fist")
+		local rep = false
+		for _ = 1, 240 do oc:step(1 / 30); for _, e in oc:drain() do rep = rep or (e.type == "report" and e.id == owner.id) end end
+		check("then calls it in", rep)
+	end
+	-- 끌려 나온 운전자
+	local d1 = Crowd.new(street, {seed = 3}); d1:spawn(2)
+	local drv = d1:eject(1.5, 40, 0, "flee", "carjacking")
+	check("ejected driver tumbles out first", drv.state == "thrown" and drv.anim == "carjack_victim" and drv.x == 1.5 and drv.z == 40)
+	local sawFlee, reported = false, false
+	for _ = 1, 600 do
+		d1:step(1 / 30); sawFlee = sawFlee or drv.state == "flee"
+		for _, e in d1:drain() do reported = reported or (e.type == "report" and e.id == drv.id and e.crime == "carjacking") end
+	end
+	local far = math.sqrt((drv.x - 1.5) ^ 2 + (drv.z - 40) ^ 2)
+	check("the driver runs off", sawFlee and far > 8, far)
+	local reps = 0
+	for seed = 1, 20 do
+		local dc = Crowd.new(street, {seed = seed}); dc:spawn(1)
+		local dd = dc:eject(1.5, 40, 0, "flee", "carjacking")
+		for _ = 1, 600 do dc:step(1 / 30); for _, e in dc:drain() do if e.type == "report" and e.id == dd.id then reps += 1 end end end
+	end
+	check("most ejected drivers call it in once they are clear", reps >= 12 and reps <= 20, reps)
+	local d2 = Crowd.new(street, {seed = 3}); d2:spawn(1)
+	local f = d2:eject(1.5, 40, 0, "fight")
+	local attacks = false
+	for _ = 1, 90 do d2:step(1 / 30); for _, e in d2:drain() do attacks = attacks or e.type == "driver_attacks" end end
+	check("a driver who fights back is handed to combat AI", attacks and f.state == "handoff")
+	-- NPC 운전자
+	local tr = Traffic.new({{points = {{x = 0, z = 0}, {x = 0, z = 400}}, loop = false, speed = 11}})
+	local npc = tr:add(1, 10)
+	for _ = 1, 300 do tr:step(1 / 30) end
+	tr.obstacles = {{x = 0, z = npc.z + 25, r = 2.4, v = 0}}
+	for _ = 1, 300 do tr:step(1 / 30) end
+	check("traffic stops behind a car blocking its lane", npc.v < 0.3 and npc.z < tr.obstacles[1].z - 2.4 - npc.length / 2 + 0.2, npc.v)
+	tr.obstacles = {}
+	tr:react(npc, "speed_off")
+	for _ = 1, 150 do tr:step(1 / 30) end
+	check("a scared driver speeds off above the lane speed", npc.v > 13, npc.v)
+	tr:react(npc, "bail")
+	for _ = 1, 300 do tr:step(1 / 30) end
+	check("a driver who bails leaves the car stopped", npc.v < 0.2 and npc.abandoned)
+	local z0 = npc.z
+	local st = tr:takeOver(npc)
+	for _ = 1, 60 do tr:step(1 / 30) end
+	check("a taken-over car leaves the lane simulation", npc.external and npc.z == z0 and st.z == z0 and st.heading == npc.heading)
 end
 
 print(string.format("%d passed, %d failed", passed, failed))

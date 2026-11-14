@@ -239,6 +239,33 @@ function Crowd:step(dt: number, signals, focus)
 				if ag.timer <= 0 then                         -- 맞고 나면 도망친다
 					ag.state = "flee"; ag.anim = "run"; ag.timer = 8 + 4 * self.rand(); ag.fleeSpeed = 3.4 + 1.0 * self.rand()
 				end
+			elseif ag.state == "dodge" then                   -- 차를 피해 몸을 날린 뒤에는 그 차에서 멀어진다
+				ag.timer -= h
+				if ag.timer <= 0 then ag.state = "flee"; ag.anim = "run"; ag.timer = 4 + 3 * self.rand(); ag.fleeSpeed = 3.6 + 0.8 * self.rand() end
+			elseif ag.state == "startle" or ag.state == "watch" then
+				ag.timer -= h
+				if ag.timer <= 0 then ag.state = "walk"; ag.anim = "walk" end
+			elseif ag.state == "report" then                  -- 전화로 신고한다. 끝나기 전에 놀라 달아나면 신고는 없던 일이 된다
+				ag.timer -= h
+				if ag.timer <= 0 then
+					table.insert(self.events, {type = "report", id = ag.id, crime = ag.reportCrime, x = ag.reportX, z = ag.reportZ})
+					ag.state = "walk"; ag.anim = "walk"; ag.reportCrime = nil
+				end
+			elseif ag.state == "thrown" then                  -- 차에서 끌려 나와 나뒹군 운전자
+				ag.timer -= h
+				if ag.timer <= 0 then
+					local r = ag.reaction
+					if r == "freeze" then
+						ag.state = "cower"; ag.anim = "hands_up"; ag.timer = 5 + 2 * self.rand(); ag.after = "report"
+					elseif r == "fight" or r == "hostile" then
+						ag.state = "handoff"; ag.anim = "idle"      -- 전투 AI에 넘긴다. Crowd는 더 움직이지 않는다
+						table.insert(self.events, {type = "driver_attacks", id = ag.id, x = ag.x, z = ag.z, hostile = r == "hostile"})
+					else
+						ag.state = "flee"; ag.anim = "run"; ag.timer = 6 + 3 * self.rand(); ag.fleeSpeed = 4.2 + 0.8 * self.rand(); ag.after = "report"
+					end
+				end
+			elseif ag.state == "handoff" then
+				-- 아무것도 하지 않는다
 			elseif ag.state == "falling" then
 				ag.timer -= h
 				if ag.timer <= 0 then ag.state = "downed"; ag.anim = "wounded_crawl"; ag.animTime = 0 end
@@ -251,7 +278,10 @@ function Crowd:step(dt: number, signals, focus)
 				ag.phase = (ag.phase + step / (if fleeing then STRIDE.flee else STRIDE.walk)) % 1
 				if fleeing then
 					ag.timer -= h
-					if ag.timer <= 0 then ag.state = "walk"; ag.anim = "walk"; ag.tx = nil end
+					if ag.timer <= 0 then
+						ag.state = "walk"; ag.anim = "walk"; ag.tx = nil
+						if ag.after == "report" then self:startReport(ag, if ag.owner then 0.95 elseif ag.driver then 0.8 else 0.4) end
+					end
 				end
 				if dist < 0.7 then
 					local acts = self.actAt[ag.to]
@@ -276,7 +306,10 @@ function Crowd:step(dt: number, signals, focus)
 				end
 			elseif ag.state == "cower" then
 				ag.timer -= h
-				if ag.timer <= 0 then ag.state = "walk"; ag.anim = "walk" end
+				if ag.timer <= 0 then
+					ag.state = "walk"; ag.anim = "walk"
+					if ag.after == "report" then self:startReport(ag, if ag.owner then 0.95 elseif ag.driver then 0.5 else 0.3) end
+				end
 			end
 		end
 	end
@@ -291,7 +324,7 @@ function Crowd:panic(x: number, z: number, radius: number)
 		if d <= radius and ag.state == "flee" then
 			-- 이미 도망치는 사람은 다시 주사위를 굴리지 않는다(연사·빔에 모두 웅크려 버리는 것을 막는다). 시간만 늘린다
 			ag.timer = math.max(ag.timer, 6); ag.tx, ag.tz = x, z
-		elseif d <= radius and ag.state ~= "cower" and ag.state ~= "dead" and ag.state ~= "downed" and ag.state ~= "falling" and ag.state ~= "stagger" then
+		elseif d <= radius and ag.state ~= "cower" and ag.state ~= "dead" and ag.state ~= "downed" and ag.state ~= "falling" and ag.state ~= "stagger" and ag.state ~= "thrown" and ag.state ~= "handoff" and ag.state ~= "dodge" then
 			n += 1
 			if self.rand() < 0.3 then
 				ag.state = "cower"; ag.anim = "cower_loop"; ag.speed = 0; ag.timer = 4 + 4 * self.rand()
@@ -402,6 +435,129 @@ function Crowd:countAlive(): number
 	local n = 0
 	for _, ag in self.agents do if ag.state ~= "dead" then n += 1 end end
 	return n
+end
+
+-- ------------------------------------------------------------------ 차와 범죄에 대한 반응
+local CALM = {walk = true, idle = true, wait = true, watch = true, startle = true}
+
+-- 신고를 시작한다(chance 확률로). 4초 동안 전화하고, 끝나면 report 사건이 나온다.
+function Crowd:startReport(ag, chance: number)
+	ag.after = nil
+	if not ag.reportCrime or self.rand() >= chance then ag.reportCrime = nil; return false end
+	ag.state = "report"; ag.anim = "phone_report"; ag.speed = 0; ag.timer = 4.0; ag.pending = nil
+	return true
+end
+
+-- 달리는 차를 알린다(차마다 매 프레임). 차 앞길에 있는 사람은 몸을 날려 피하고, 못 피하면 치인다.
+-- car = {x, z, vx, vz, halfWidth = 1.0, halfLength = 2.4, attacker = 플레이어}. 치인 사람 목록 {agent, result, speed}를 돌려준다.
+function Crowd:vehicle(car)
+	local hits = {}
+	local speed = math.sqrt(car.vx * car.vx + car.vz * car.vz)
+	if speed < 0.5 then return hits end
+	local dx, dz = car.vx / speed, car.vz / speed
+	local hw, hl = car.halfWidth or 1.0, car.halfLength or 2.4
+	for _, ag in self.agents do
+		if ag.state ~= "dead" and ag.state ~= "handoff" then
+			local ox, oz = ag.x - car.x, ag.z - car.z
+			local ahead = ox * dx + oz * dz
+			local lat = ox * (-dz) + oz * dx                          -- + = 차 진행 방향의 오른쪽
+			if math.abs(ahead) < hl + 0.3 and math.abs(lat) < hw + 0.25 then
+				if speed > 2.5 and (ag.hitCool or 0) <= self.frame then
+					ag.hitCool = self.frame + 30
+					local res = self:damage(ag, {damage = speed * speed * 0.45, kind = "vehicle", zone = "torso", dirX = dx, dirZ = dz, attacker = car.attacker})
+					table.insert(hits, {agent = ag, result = res, speed = speed})
+					table.insert(self.events, {type = "hit_by_vehicle", id = ag.id, x = ag.x, z = ag.z, speed = speed, killed = res and res.killed, attacker = car.attacker})
+				end
+			elseif CALM[ag.state] or ag.state == "flee" or ag.state == "report" then
+				local tti = (ahead - hl) / speed                       -- 차 앞머리가 닿기까지 남은 시간
+				if speed > 3 and ahead > 0 and tti < 1.1 and math.abs(lat) < hw + 1.1 then
+					if tti > 0.22 then                                 -- 0.22초보다 가까우면 반응할 틈이 없다
+						local side = if lat >= 0 then 1 else -1       -- 길에서 벗어나는 쪽
+						local mx, mz = -dz * side, dx * side
+						local toRight = mx * (-math.cos(ag.heading)) + mz * math.sin(ag.heading)   -- 그 방향이 이 사람의 오른쪽인가
+						ag.state = "dodge"; ag.anim = if toRight > 0 then "dodge_right" else "dodge_left"; ag.lastAnim = ag.anim; ag.animTime = 0
+						ag.speed = 0; ag.timer = 0.7; ag.pending = nil; ag.reportCrime = nil
+						ag.pushX, ag.pushZ = mx * (hw + 1.3 - math.abs(lat)), mz * (hw + 1.3 - math.abs(lat))
+						ag.tx, ag.tz = car.x, car.z
+						table.insert(self.events, {type = "near_miss", id = ag.id, x = ag.x, z = ag.z, speed = speed, attacker = car.attacker})
+					end
+				elseif speed > 7 and CALM[ag.state] and ag.state ~= "startle" and ox * ox + oz * oz < 64 and (ag.startleCool or 0) <= self.frame then
+					ag.startleCool = self.frame + 240
+					ag.state = "startle"; ag.anim = "startle"; ag.lastAnim = ag.anim; ag.animTime = 0; ag.speed = 0; ag.timer = 0.8
+					ag.heading = math.atan2(-ox, -oz)                  -- 차 쪽을 돌아본다
+				end
+			end
+		end
+	end
+	return hits
+end
+
+-- 범죄를 본 시민의 반응. severity 1 = 세워 둔 차 털기·경보, 2 = 운전자를 끌어내는 강탈, 3 이상 = 무기·살인(기존 panic).
+-- 돌려주는 값: 반응별 사람 수 {watch, record, report, flee, cower}
+function Crowd:witness(crime: string, x: number, z: number, radius: number, severity: number)
+	local n = {watch = 0, record = 0, report = 0, flee = 0, cower = 0}
+	if severity >= 3 then n.flee = self:panic(x, z, radius); return n end
+	for _, ag in self.agents do
+		local d = math.sqrt((ag.x - x) ^ 2 + (ag.z - z) ^ 2)
+		if d <= radius and CALM[ag.state] and ag.state ~= "watch" then
+			local r = self.rand()
+			local act
+			if severity <= 1 then
+				act = if r < 0.40 then "watch" elseif r < 0.55 then "report" elseif r < 0.65 then "record" else nil
+			else
+				act = if r < 0.34 then "flee" elseif r < 0.58 then "report" elseif r < 0.80 then "record" else "cower"
+				if act == "report" and d < 7 then act = "flee" end      -- 코앞에서는 전화하지 않고 달아난다
+			end
+			if act == "watch" or act == "record" then
+				ag.state = "watch"; ag.anim = if act == "record" then "record_phone" elseif self.rand() < 0.5 then "point" else "look_around"
+				ag.speed = 0; ag.timer = 3 + 3 * self.rand(); ag.heading = math.atan2(x - ag.x, z - ag.z); ag.pending = nil
+				n[act] += 1
+			elseif act == "report" then
+				ag.reportCrime, ag.reportX, ag.reportZ = crime, x, z
+				ag.heading = math.atan2(x - ag.x, z - ag.z)
+				if self:startReport(ag, 1) then n.report += 1 end
+			elseif act == "flee" then
+				ag.state = "flee"; ag.anim = "run"; ag.timer = 6 + 4 * self.rand(); ag.fleeSpeed = 4.0 + self.rand(); ag.tx, ag.tz = x, z; ag.pending = nil
+				ag.reportCrime, ag.reportX, ag.reportZ = crime, x, z; ag.after = "report"   -- 멀리 달아난 뒤 신고할 수도 있다
+				n.flee += 1
+			elseif act == "cower" then
+				ag.state = "cower"; ag.anim = "cower_loop"; ag.speed = 0; ag.timer = 4 + 4 * self.rand(); n.cower += 1
+			end
+		end
+	end
+	return n
+end
+
+-- 세워 둔 차의 주인이 근처에 있다가 자기 차가 털리는 것을 봤다: 주먹을 흔들며 소리치고(1.6초) 거의 반드시 신고한다.
+function Crowd:ownerReact(ag, crime: string, x: number, z: number)
+	if not CALM[ag.state] and ag.state ~= "watch" then return false end
+	ag.state = "cower"; ag.anim = "shake_fist"; ag.lastAnim = ag.anim; ag.animTime = 0; ag.speed = 0; ag.timer = 1.6; ag.pending = nil
+	ag.heading = math.atan2(x - ag.x, z - ag.z)
+	ag.reportCrime, ag.reportX, ag.reportZ = crime, x, z; ag.after = "report"; ag.owner = true
+	table.insert(self.events, {type = "owner_shouts", id = ag.id, x = ag.x, z = ag.z})
+	return true
+end
+
+-- 차에서 끌려 나온 운전자를 군중에 넣는다. reaction = Carjack.driverReaction의 값(flee | freeze | fight | hostile).
+function Crowd:eject(x: number, z: number, heading: number, reaction: string, crime: string?)
+	local ag = {id = #self.agents + 1, x = 0, z = 0, heading = 0}
+	place(self, ag)
+	-- 가장 가까운 인도 구간을 걷던 사람으로 만든다(달아날 때 그 길을 쓴다)
+	local best, bd = 1, math.huge
+	for ei, e in self.world.edges do
+		for _, ni in {e.a, e.b} do
+			local nd = self.world.nodes[ni]
+			local d = (nd.x - x) ^ 2 + (nd.z - z) ^ 2
+			if d < bd then bd = d; best = ei; ag.to = ni; ag.from = if ni == e.a then e.b else e.a end
+		end
+	end
+	ag.edge = best; ag.lane = pickLane(self, self.world.edges[best])
+	ag.x, ag.z, ag.heading = x, z, heading
+	ag.state = "thrown"; ag.anim = "carjack_victim"; ag.lastAnim = ag.anim; ag.animTime = 0; ag.speed = 0; ag.timer = 1.5
+	ag.reaction = reaction; ag.tx, ag.tz = x, z; ag.driver = true
+	ag.reportCrime, ag.reportX, ag.reportZ = crime or "carjacking", x, z
+	table.insert(self.agents, ag)
+	return ag
 end
 
 return Crowd

@@ -331,6 +331,103 @@ def fp_laser_overheat(u):
 def fp_laser_lower(u):
     k = 1 - smooth(0, 1, u); return {("view", "y"): -0.10 * k, ("view", "z"): 0.05 * k, ("view", "x"): -0.03 * k, ("view", "pitch"): 6 * k, ("view", "roll"): -8 * k, ("hand", "pitch"): -78 * k, ("finger", "curl"): 8 - 4 * k, ("view", "value"): k}
 
+# ------------------------------------------------------------------ 차 타기·훔치기, 시민과 보안의 반응 (사람)
+# 타고 내리는 클립의 뿌리(root)는 '좌석에 앉은 자리'가 원점이다. 운전석(왼쪽 문) 기준이라 문밖은 +X(왼쪽) 0.95 m다.
+# 조수석·오른쪽 문은 좌우를 뒤집어 쓴다(_L과 _R을 바꾸고 x, yaw, roll의 부호를 뒤집는다).
+DRIVE = {("root", "z"): -0.47, ("hip_L", "flex"): 80, ("hip_R", "flex"): 80, ("knee_L", "bend"): 58, ("knee_R", "bend"): 52, ("ankle_R", "dorsi"): -14, ("waist", "pitch"): -6, ("neck", "pitch"): 4,
+         ("shoulder_L", "flex"): 52, ("shoulder_R", "flex"): 52, ("shoulder_L", "abduct"): -2, ("shoulder_R", "abduct"): -2, ("elbow_L", "bend"): 40, ("elbow_R", "bend"): 40}
+OUTSIDE = {("root", "x"): 0.95, ("root", "yaw"): -90}          # 문 앞에 서서 차를 보는 자세
+def drive_idle(u):
+    b = sin(2 * pi * u); return plus(DRIVE, {("neck", "yaw"): 6 * sin(2 * pi * u + 0.6), ("waist", "roll"): 0.8 * b, ("elbow_L", "bend"): 1.5 * b, ("elbow_R", "bend"): -1.5 * b})
+def drive_steer(s):
+    """s = +1 왼쪽으로 꺾음. 손이 운전대를 따라 돈다."""
+    return lambda u: plus(DRIVE, {("shoulder_L", "flex"): -16 * s, ("shoulder_R", "flex"): 16 * s, ("elbow_L", "bend"): 22 * s, ("elbow_R", "bend"): -18 * s, ("shoulder_L", "abduct"): 6 * s, ("shoulder_R", "abduct"): -6 * s,
+                                  ("waist", "roll"): -5 * s, ("neck", "yaw"): 14 * s, ("waist", "yaw"): 4 * s})
+def car_door_open(u):
+    reach = plus(OUTSIDE, {("shoulder_R", "flex"): 62, ("elbow_R", "bend"): 14, ("waist", "pitch"): 8, ("neck", "pitch"): 6})
+    pull = plus(OUTSIDE, {("shoulder_R", "flex"): 36, ("elbow_R", "bend"): 66, ("shoulder_R", "abduct"): 26, ("root", "y"): 0.12, ("waist", "yaw"): -14})
+    return seq(u, (0.0, OUTSIDE), (0.45, reach), (1.0, pull))
+def car_enter(u):
+    duck = plus(OUTSIDE, {("root", "x"): -0.45, ("root", "yaw"): 50, ("root", "z"): -0.22, ("waist", "pitch"): 34, ("neck", "pitch"): 16, ("hip_R", "flex"): 70, ("knee_R", "bend"): 70,
+                          ("hip_L", "flex"): 20, ("knee_L", "bend"): 30, ("shoulder_R", "flex"): 50, ("elbow_R", "bend"): 30})
+    return seq(u, (0.0, plus(OUTSIDE, {("shoulder_R", "flex"): 36, ("elbow_R", "bend"): 66, ("shoulder_R", "abduct"): 26})), (0.45, duck), (0.85, DRIVE), (1.0, DRIVE))
+def car_exit(u):
+    duck = plus(OUTSIDE, {("root", "x"): -0.45, ("root", "yaw"): 50, ("root", "z"): -0.22, ("waist", "pitch"): 34, ("neck", "pitch"): 10, ("hip_L", "flex"): 60, ("knee_L", "bend"): 60, ("hip_R", "flex"): 40, ("knee_R", "bend"): 50,
+                          ("shoulder_L", "flex"): 40, ("elbow_L", "bend"): 30})
+    return seq(u, (0.0, DRIVE), (0.45, duck), (0.9, OUTSIDE), (1.0, OUTSIDE))
+def car_smash_window(u):
+    wind = plus(OUTSIDE, {("waist", "yaw"): -40, ("shoulder_R", "abduct"): 70, ("shoulder_R", "flex"): 20, ("elbow_R", "bend"): 124, ("root", "y"): 0.10, ("knee_L", "bend"): 14})
+    hit = plus(OUTSIDE, {("waist", "yaw"): 34, ("shoulder_R", "abduct"): 40, ("shoulder_R", "flex"): 70, ("elbow_R", "bend"): 96, ("root", "y"): -0.14, ("waist", "pitch"): 10, ("knee_L", "bend"): 22, ("hip_L", "flex"): 16})
+    return seq(u, (0.0, OUTSIDE), (0.40, wind), (0.62, hit), (0.80, hit), (1.0, plus(OUTSIDE, {("shoulder_R", "flex"): 50, ("elbow_R", "bend"): 40})))
+def car_hack(u):
+    b = sin(2 * pi * u * 3)
+    return plus(OUTSIDE, {("shoulder_L", "flex"): 46 + 2 * b, ("elbow_L", "bend"): 74 + 3 * b, ("shoulder_R", "flex"): 30, ("elbow_R", "bend"): 96 - 3 * b, ("neck", "pitch"): 20, ("waist", "pitch"): 12,
+                          ("neck", "yaw"): 30 * smooth(0, 1, (u - 0.55) / 0.1) * (1 - smooth(0, 1, (u - 0.75) / 0.1))})   # 한 번 주위를 살핀다
+def car_hotwire(u):
+    b = sin(2 * pi * u * 5); k = smooth(0, 1, u / 0.12) * (1 - smooth(0, 1, (u - 0.9) / 0.1))
+    return plus(DRIVE, {("waist", "pitch"): 40 * k, ("neck", "pitch"): 18 * k, ("shoulder_L", "flex"): -8 * k, ("shoulder_R", "flex"): -6 * k, ("elbow_L", "bend"): (44 + 5 * b) * k, ("elbow_R", "bend"): (40 - 5 * b) * k,
+                        ("waist", "yaw"): 8 * k, ("root", "y"): -0.06 * k})
+def carjack_pull(u):
+    reach = plus(OUTSIDE, {("shoulder_L", "flex"): 72, ("shoulder_R", "flex"): 76, ("elbow_L", "bend"): 16, ("elbow_R", "bend"): 12, ("waist", "pitch"): 22, ("root", "x"): -0.18, ("knee_L", "bend"): 20, ("knee_R", "bend"): 14})
+    yank = plus(OUTSIDE, {("shoulder_L", "flex"): 30, ("shoulder_R", "flex"): 34, ("elbow_L", "bend"): 86, ("elbow_R", "bend"): 80, ("waist", "pitch"): -8, ("waist", "yaw"): 54, ("root", "y"): 0.30, ("root", "x"): 0.10,
+                          ("knee_L", "bend"): 30, ("knee_R", "bend"): 22, ("hip_R", "flex"): -10})
+    fling = plus(OUTSIDE, {("shoulder_L", "flex"): 20, ("shoulder_R", "flex"): 40, ("shoulder_R", "abduct"): 50, ("elbow_L", "bend"): 30, ("elbow_R", "bend"): 20, ("waist", "yaw"): 80, ("root", "y"): 0.26})
+    return seq(u, (0.0, OUTSIDE), (0.30, reach), (0.62, yank), (0.82, fling), (1.0, OUTSIDE))
+def carjack_victim(u):
+    grabbed = plus(DRIVE, {("root", "x"): 0.30, ("waist", "roll"): 26, ("waist", "pitch"): 14, ("neck", "yaw"): 40, ("shoulder_L", "abduct"): 50, ("shoulder_R", "flex"): 30, ("elbow_L", "bend"): 30})
+    out = {("root", "x"): 1.30, ("root", "y"): 0.25, ("root", "z"): -0.30, ("root", "yaw"): -120, ("root", "roll"): 30, ("hip_L", "flex"): 50, ("hip_R", "flex"): 20, ("knee_L", "bend"): 70, ("knee_R", "bend"): 40,
+           ("shoulder_L", "abduct"): 70, ("shoulder_R", "abduct"): 60, ("elbow_L", "bend"): 40, ("elbow_R", "bend"): 50, ("waist", "pitch"): 30}
+    down = {("root", "x"): 1.95, ("root", "y"): 0.55, ("root", "z"): -0.46, ("root", "yaw"): -160, ("hip_L", "flex"): 30, ("hip_R", "flex"): 70, ("knee_L", "bend"): 108, ("knee_R", "bend"): 100, ("waist", "pitch"): 40,
+            ("shoulder_L", "flex"): 62, ("shoulder_R", "flex"): 58, ("elbow_L", "bend"): 20, ("elbow_R", "bend"): 24, ("neck", "pitch"): -20}
+    return seq(u, (0.0, DRIVE), (0.26, grabbed), (0.56, out), (0.86, down), (1.0, down))
+def hands_up(u):
+    t = sin(2 * pi * u * 5)
+    return {("shoulder_L", "flex"): 150 + 1.5 * t, ("shoulder_R", "flex"): 152 - 1.5 * t, ("shoulder_L", "abduct"): 34, ("shoulder_R", "abduct"): 34, ("elbow_L", "bend"): 72 + 2 * t, ("elbow_R", "bend"): 70 - 2 * t,
+            ("waist", "pitch"): -4, ("neck", "pitch"): -6 + t, ("knee_L", "bend"): 10, ("knee_R", "bend"): 12, ("root", "z"): -0.01}
+def point(u):
+    k = smooth(0, 1, u / 0.18) * (1 - smooth(0, 1, (u - 0.85) / 0.15)); b = sin(2 * pi * u * 2.5)
+    return {("shoulder_R", "flex"): (84 + 3 * b) * k, ("elbow_R", "bend"): 6 * k, ("waist", "yaw"): 10 * k, ("neck", "yaw"): -6 * k, ("shoulder_L", "flex"): 10 * k, ("elbow_L", "bend"): 40 * k, ("waist", "pitch"): 4 * k}
+def record_phone(u):
+    b = sin(2 * pi * u)
+    return {("shoulder_R", "flex"): 78 + 2 * b, ("elbow_R", "bend"): 62 - 3 * b, ("shoulder_R", "abduct"): -8, ("shoulder_L", "flex"): 52, ("elbow_L", "bend"): 84, ("shoulder_L", "abduct"): -14,
+            ("neck", "pitch"): 2, ("waist", "yaw"): 3 * b, ("root", "roll"): 1.0 * b, ("knee_L", "bend"): 4}
+def phone_report(u):
+    b = sin(2 * pi * u * 2); g = sin(2 * pi * u * 3 + 1.0)
+    return {("shoulder_R", "flex"): 34, ("elbow_R", "bend"): 122 + 3 * b, ("shoulder_R", "abduct"): 6, ("neck", "pitch"): 6, ("neck", "yaw"): 26 * sin(2 * pi * u), ("waist", "yaw"): 10 * sin(2 * pi * u),
+            ("shoulder_L", "flex"): 50 + 22 * g, ("elbow_L", "bend"): 30 + 16 * g, ("shoulder_L", "abduct"): 16, ("root", "roll"): 1.5 * b, ("knee_L", "bend"): 6 + 3 * b, ("knee_R", "bend"): 4}
+def startle(u):
+    k = sin(pi * min(1.0, u * 2.2)) * (1 - 0.6 * u)
+    return {("root", "y"): 0.16 * smooth(0, 1, u / 0.4), ("waist", "pitch"): -12 * k, ("neck", "pitch"): -8 * k, ("shoulder_L", "flex"): 40 * k, ("shoulder_R", "flex"): 44 * k, ("shoulder_L", "abduct"): 26 * k, ("shoulder_R", "abduct"): 24 * k,
+            ("elbow_L", "bend"): 96 * k, ("elbow_R", "bend"): 100 * k, ("knee_L", "bend"): 20 * k, ("knee_R", "bend"): 14 * k, ("hip_R", "flex"): -14 * k, ("root", "z"): -0.03 * k}
+def dodge(s):
+    """s = +1 왼쪽으로 몸을 날린다. 옆으로 가는 거리는 Crowd가 옮긴다(클립에는 없다)."""
+    def f(u):
+        leap = {("root", "roll"): 26 * s, ("root", "z"): 0.06, ("waist", "roll"): 16 * s, ("shoulder_L", "abduct"): 60, ("shoulder_R", "abduct"): 60, ("elbow_L", "bend"): 50, ("elbow_R", "bend"): 50,
+                ("hip_L", "flex"): 30 if s > 0 else 8, ("hip_R", "flex"): 8 if s > 0 else 30, ("knee_L", "bend"): 60, ("knee_R", "bend"): 60, ("neck", "yaw"): -30 * s}
+        land = {("root", "z"): -0.24, ("root", "roll"): 8 * s, ("waist", "pitch"): 30, ("hip_L", "flex"): 60, ("hip_R", "flex"): 56, ("knee_L", "bend"): 86, ("knee_R", "bend"): 80, ("shoulder_L", "flex"): 40, ("shoulder_R", "flex"): 40,
+                ("elbow_L", "bend"): 40, ("elbow_R", "bend"): 40, ("neck", "yaw"): -40 * s, ("neck", "pitch"): -10}
+        return seq(u, (0.34, leap), (0.72, land), (1.0, plus(land, {("root", "z"): 0.14, ("waist", "pitch"): -14})))
+    return f
+def shake_fist(u):
+    k = smooth(0, 1, u / 0.15) * (1 - smooth(0, 1, (u - 0.85) / 0.15)); b = sin(2 * pi * u * 4)
+    return {("shoulder_R", "flex"): (120 + 10 * b) * k, ("elbow_R", "bend"): (84 + 14 * b) * k, ("shoulder_R", "abduct"): 20 * k, ("waist", "pitch"): 8 * k, ("neck", "pitch"): -6 * k, ("root", "y"): -0.05 * k,
+            ("shoulder_L", "flex"): -10 * k, ("elbow_L", "bend"): 30 * k, ("hip_L", "flex"): 10 * k, ("knee_L", "bend"): 10 * k}
+HALT = {("shoulder_L", "flex"): 98, ("elbow_L", "bend"): 6, ("shoulder_L", "abduct"): -4, ("shoulder_R", "flex"): 20, ("elbow_R", "bend"): 70, ("waist", "pitch"): 2, ("knee_L", "bend"): 10, ("knee_R", "bend"): 10,
+        ("hip_L", "flex"): 8, ("hip_R", "flex"): -4, ("root", "z"): -0.01}
+def robot_halt(u): return seq(u, (0.30, HALT), (1.0, plus(HALT, {("shoulder_L", "flex"): 3 * sin(2 * pi * u * 2)})))
+
+def fp_car_enter(u):
+    return seq(u, (0.45, {("view", "z"): -0.26, ("view", "x"): -0.40, ("view", "pitch"): -20, ("view", "roll"): -12, ("view", "yaw"): 40}), (0.85, {("view", "z"): -0.47, ("view", "x"): -0.95, ("view", "yaw"): 90, ("view", "value"): 1.0}),
+               (1.0, {("view", "z"): -0.47, ("view", "x"): -0.95, ("view", "yaw"): 90, ("view", "value"): 1.0}))
+def fp_drive(u):
+    a = sin(2 * pi * u); return {("view", "z"): 0.0015 * a, ("view", "pitch"): 0.2 * a, ("view", "value"): 1.0}
+def fp_smash(u):
+    return seq(u, (0.40, {("view", "x"): 0.10, ("view", "y"): 0.14, ("view", "yaw"): -26, ("view", "roll"): -10}), (0.62, {("view", "x"): -0.16, ("view", "y"): -0.22, ("view", "yaw"): 24, ("view", "roll"): 12}),
+               (0.80, {("view", "x"): -0.14, ("view", "y"): -0.18, ("view", "yaw"): 20, ("view", "roll"): 10}), (1.0, {}))
+def fp_pull(u):
+    return seq(u, (0.30, {("view", "y"): -0.26, ("view", "z"): -0.06, ("view", "pitch"): -8}), (0.62, {("view", "y"): 0.22, ("view", "x"): 0.10, ("view", "yaw"): -44, ("view", "roll"): -10, ("view", "z"): 0.02}),
+               (0.82, {("view", "y"): 0.16, ("view", "yaw"): -66, ("view", "roll"): -6}), (1.0, {}))
+
 def all_clips():
     c = []
     c.append(clip("walk", 1.06, True, lambda u: gait(u, 22, -6, 14, 60), 1.35, [(0.0, "foot_L"), (0.53, "foot_R")]))
@@ -383,6 +480,15 @@ def all_clips():
     for kind in ("front", "back", "left", "right", "head", "leg"): h("hit_" + kind, 0.5, hit_dir(kind), [(0.0, "hit")])
     h("stagger", 0.9, stagger, [(0.0, "hit"), (0.3, "foot_R"), (0.6, "foot_L")])
     h("aim_palm", 2.4, hold(AIM_PALM, 0.6), loop=True); h("fire_palm", 0.4, fire_palm, [(0.0, "beam")], True)
+    # 차 타기·훔치기와 반응
+    h("car_door_open", 0.45, car_door_open, [(0.2, "handle"), (0.3, "door_open")]); h("car_enter", 0.9, car_enter, [(0.75, "seat"), (0.85, "door_close")]); h("car_exit", 0.8, car_exit, [(0.1, "door_open"), (0.7, "foot_L")])
+    h("drive_idle", 4.0, drive_idle, loop=True); h("drive_steer_L", 1.0, drive_steer(1), loop=True); h("drive_steer_R", 1.0, drive_steer(-1), loop=True)
+    h("car_smash_window", 0.7, car_smash_window, [(0.30, "swing"), (0.43, "glass_break")]); h("car_hack", 2.2, car_hack, [(0.2, "deck_connect"), (2.1, "unlock")])
+    h("car_hotwire", 3.2, car_hotwire, [(0.5, "panel_open"), (1.2, "spark"), (2.1, "spark"), (3.0, "engine_on")])
+    h("carjack_pull", 1.1, carjack_pull, [(0.33, "grab"), (0.75, "throw")]); h("carjack_victim", 1.5, carjack_victim, [(0.4, "scream"), (1.25, "body_fall")])
+    h("hands_up", 2.0, hands_up, loop=True); h("point", 2.4, point); h("record_phone", 3.0, record_phone, loop=True); h("phone_report", 4.0, phone_report, [(0.3, "dial"), (3.6, "hang_up")], loop=True)
+    h("startle", 0.8, startle, [(0.0, "gasp")]); h("dodge_left", 0.7, dodge(1), [(0.0, "gasp"), (0.5, "foot_L")]); h("dodge_right", 0.7, dodge(-1), [(0.0, "gasp"), (0.5, "foot_R")])
+    h("shake_fist", 1.6, shake_fist, [(0.2, "shout")]); h("robot_halt", 1.2, robot_halt, [(0.3, "warn")])
     # 1인칭
     f = lambda n, d, fn, ev=(), loop=False: c.append(clip(n, d, loop, fn, events=ev, rig="fp"))
     f("fp_idle", 4.0, fp_idle, loop=True); f("fp_raise_light", 0.30, fp_raise, [(0.0, "draw")]); f("fp_raise_heavy", 0.60, fp_raise, [(0.0, "draw")]); f("fp_lower", 0.25, fp_lower)
@@ -392,6 +498,8 @@ def all_clips():
     f("fp_reload", 1.6, fp_reload, [(0.05, "mag_out"), (1.0, "mag_in"), (1.35, "chamber")]); f("fp_ads_in", 0.18, fp_ads); f("fp_ads_out", 0.16, lambda u: fp_ads(1 - u))
     f("fp_slash", 0.62, fp_slash, [(0.14, "swing"), (0.27, "hit")]); f("fp_stab", 0.52, fp_stab, [(0.12, "swing"), (0.22, "hit")]); f("fp_punch", 0.42, fp_punch, [(0.08, "swing"), (0.17, "hit")])
     f("fp_laser_raise", 0.35, fp_laser_raise, [(0.0, "charge")]); f("fp_laser_fire", 0.5, fp_laser_fire, [(0.0, "beam")], True); f("fp_laser_overheat", 1.2, fp_laser_overheat, [(0.0, "overheat")]); f("fp_laser_lower", 0.25, fp_laser_lower)
+    f("fp_car_enter", 0.9, fp_car_enter, [(0.75, "seat")]); f("fp_car_exit", 0.8, lambda u: fp_car_enter(1 - u)); f("fp_drive", 4.0, fp_drive, loop=True)
+    f("fp_smash", 0.7, fp_smash, [(0.30, "swing"), (0.43, "glass_break")]); f("fp_pull", 1.1, fp_pull, [(0.33, "grab"), (0.75, "throw")])
     f("fp_heavy", 1.05, fp_heavy, [(0.40, "swing"), (0.60, "hit")]); f("fp_throw", 0.9, fp_throw, [(0.48, "release")]); f("fp_inspect", 3.0, fp_inspect); f("fp_sprint", 1.0, fp_sprint, loop=True); f("fp_land", 0.35, fp_land)
     # 사이버웨어 팔 (rig = cyberarm): joint = 부품 이름. open = 문 여는 각(도), move_x = 앞으로 미는 거리(m), move_z = 올리는 거리(m), value = 발광 0~1
     a = lambda n, d, fn, ev=(): c.append(clip(n, d, False, fn, events=ev, rig="cyberarm"))
@@ -423,6 +531,15 @@ def all_clips():
     m("camera_sweep", 8.0, lambda u: {("pan", "yaw"): 60 * sin(2 * pi * u), ("tilt", "pitch"): -18, ("eye", "value"): 0.6}, loop=True)
     m("camera_alert", 0.3, lambda u: {("tilt", "pitch"): -18, ("eye", "value"): 0.6 + 0.4 * sin(2 * pi * u * 3) ** 2}, [(0.0, "alert")])
     m("camera_disabled", 0.8, lambda u: {("tilt", "pitch"): -18 - 30 * smooth(0, 1, u), ("eye", "value"): 0.6 * (1 - smooth(0, 1, u * 1.5))}, [(0.0, "disabled")])
+    # 차 부품 (rig = vehicle): joint = 부품 이름. open = 문 여는 각(도), value = 0~1
+    vh = lambda n, d, fn, ev=(), loop=False: c.append(clip(n, d, loop, fn, events=ev, rig="vehicle"))
+    vh("car_door", 0.45, lambda u: {("door", "open"): 62 * (smooth(0, 1, u / 0.8) + 0.04 * sin(pi * min(1.0, u / 0.8)))}, [(0.0, "latch"), (0.4, "door_stop")])
+    vh("car_door_close", 0.35, lambda u: {("door", "open"): 62 * (1 - smooth(0, 1, u / 0.9))}, [(0.30, "door_slam")])
+    vh("car_window_break", 0.25, lambda u: {("window", "value"): 0.0 if u > 0.08 else 1.0, ("door", "open"): 0.0}, [(0.02, "glass_break")])
+    vh("car_alarm", 1.0, lambda u: {("headlamp", "value"): 1.0 if u % 0.5 < 0.25 else 0.1, ("light_bar_r", "value"): 1.0 if u % 0.5 < 0.25 else 0.1, ("dash_glow", "value"): 1.0 if u % 0.5 < 0.25 else 0.3}, [(0.0, "horn"), (0.5, "horn")], True)
+    vh("car_engine_start", 0.8, lambda u: {("dash_glow", "value"): min(1.0, smooth(0, 1, u / 0.5) + 0.3 * sin(2 * pi * u * 9) * (1 - u)), ("headlamp", "value"): smooth(0, 1, (u - 0.5) / 0.3)}, [(0.0, "starter"), (0.45, "engine_on")])
+    vh("patrol_lightbar", 0.8, lambda u: {("lightbar_L", "value"): 1.0 if u < 0.5 else 0.05, ("lightbar_R", "value"): 0.05 if u < 0.5 else 1.0}, [(0.0, "siren")], True)
+    vh("car_brake", 0.2, lambda u: {("light_bar_r", "value"): 0.5 + 0.5 * smooth(0, 1, u * 2)})
     # 시술소 (rig = clinic)
     k = lambda n, d, fn, ev=(), loop=False: c.append(clip(n, d, loop, fn, events=ev, rig="clinic"))
     k("chair_recline", 1.6, lambda u: {("recline", "pitch"): -22 * smooth(0, 1, u), ("legrest", "pitch"): -18 * smooth(0, 1, u), ("lift", "move_z"): 0.06 * smooth(0, 1, u / 0.6), ("status_glow", "value"): 0.4 + 0.6 * smooth(0, 1, u)}, [(0.0, "motor"), (1.5, "lock")])
@@ -438,7 +555,7 @@ def golden(clips):
     """Luau 포팅 검증용: 클립과 시각 -> 기대 값."""
     out = []
     for cl in clips:
-        if cl["name"] not in ("walk", "run", "cower_enter", "robot_fire", "mag_reload", "knockdown", "fp_reload", "launcher_deploy", "turret_scan", "death_back", "death_burn", "laser_overheat"): continue
+        if cl["name"] not in ("walk", "run", "cower_enter", "robot_fire", "mag_reload", "knockdown", "fp_reload", "launcher_deploy", "turret_scan", "death_back", "death_burn", "laser_overheat", "car_enter", "carjack_victim", "car_door"): continue
         for t in (0.0, 0.017, 0.2, cl["duration"] * 0.5, cl["duration"] * 0.93, cl["duration"] * 1.7):
             out.append({"clip": cl["name"], "t": round(t, 5), "pose": sample(cl, t)})
     return out

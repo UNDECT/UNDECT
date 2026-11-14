@@ -988,6 +988,288 @@
    ]
   },
   {
+   "name": "car_door_open",
+   "rig": "humanoid",
+   "duration": 0.45,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.2,
+     "handle"
+    ],
+    [
+     0.3,
+     "door_open"
+    ]
+   ]
+  },
+  {
+   "name": "car_enter",
+   "rig": "humanoid",
+   "duration": 0.9,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.75,
+     "seat"
+    ],
+    [
+     0.85,
+     "door_close"
+    ]
+   ]
+  },
+  {
+   "name": "car_exit",
+   "rig": "humanoid",
+   "duration": 0.8,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.1,
+     "door_open"
+    ],
+    [
+     0.7,
+     "foot_L"
+    ]
+   ]
+  },
+  {
+   "name": "drive_idle",
+   "rig": "humanoid",
+   "duration": 4.0,
+   "loop": true,
+   "speed": 0.0,
+   "events": []
+  },
+  {
+   "name": "drive_steer_L",
+   "rig": "humanoid",
+   "duration": 1.0,
+   "loop": true,
+   "speed": 0.0,
+   "events": []
+  },
+  {
+   "name": "drive_steer_R",
+   "rig": "humanoid",
+   "duration": 1.0,
+   "loop": true,
+   "speed": 0.0,
+   "events": []
+  },
+  {
+   "name": "car_smash_window",
+   "rig": "humanoid",
+   "duration": 0.7,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.3,
+     "swing"
+    ],
+    [
+     0.43,
+     "glass_break"
+    ]
+   ]
+  },
+  {
+   "name": "car_hack",
+   "rig": "humanoid",
+   "duration": 2.2,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.2,
+     "deck_connect"
+    ],
+    [
+     2.1,
+     "unlock"
+    ]
+   ]
+  },
+  {
+   "name": "car_hotwire",
+   "rig": "humanoid",
+   "duration": 3.2,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.5,
+     "panel_open"
+    ],
+    [
+     1.2,
+     "spark"
+    ],
+    [
+     2.1,
+     "spark"
+    ],
+    [
+     3.0,
+     "engine_on"
+    ]
+   ]
+  },
+  {
+   "name": "carjack_pull",
+   "rig": "humanoid",
+   "duration": 1.1,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.33,
+     "grab"
+    ],
+    [
+     0.75,
+     "throw"
+    ]
+   ]
+  },
+  {
+   "name": "carjack_victim",
+   "rig": "humanoid",
+   "duration": 1.5,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.4,
+     "scream"
+    ],
+    [
+     1.25,
+     "body_fall"
+    ]
+   ]
+  },
+  {
+   "name": "hands_up",
+   "rig": "humanoid",
+   "duration": 2.0,
+   "loop": true,
+   "speed": 0.0,
+   "events": []
+  },
+  {
+   "name": "point",
+   "rig": "humanoid",
+   "duration": 2.4,
+   "loop": false,
+   "speed": 0.0,
+   "events": []
+  },
+  {
+   "name": "record_phone",
+   "rig": "humanoid",
+   "duration": 3.0,
+   "loop": true,
+   "speed": 0.0,
+   "events": []
+  },
+  {
+   "name": "phone_report",
+   "rig": "humanoid",
+   "duration": 4.0,
+   "loop": true,
+   "speed": 0.0,
+   "events": [
+    [
+     0.3,
+     "dial"
+    ],
+    [
+     3.6,
+     "hang_up"
+    ]
+   ]
+  },
+  {
+   "name": "startle",
+   "rig": "humanoid",
+   "duration": 0.8,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "gasp"
+    ]
+   ]
+  },
+  {
+   "name": "dodge_left",
+   "rig": "humanoid",
+   "duration": 0.7,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "gasp"
+    ],
+    [
+     0.5,
+     "foot_L"
+    ]
+   ]
+  },
+  {
+   "name": "dodge_right",
+   "rig": "humanoid",
+   "duration": 0.7,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "gasp"
+    ],
+    [
+     0.5,
+     "foot_R"
+    ]
+   ]
+  },
+  {
+   "name": "shake_fist",
+   "rig": "humanoid",
+   "duration": 1.6,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.2,
+     "shout"
+    ]
+   ]
+  },
+  {
+   "name": "robot_halt",
+   "rig": "humanoid",
+   "duration": 1.2,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.3,
+     "warn"
+    ]
+   ]
+  },
+  {
    "name": "fp_idle",
    "rig": "fp",
    "duration": 4.0,
@@ -1241,6 +1523,69 @@
    "loop": false,
    "speed": 0.0,
    "events": []
+  },
+  {
+   "name": "fp_car_enter",
+   "rig": "fp",
+   "duration": 0.9,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.75,
+     "seat"
+    ]
+   ]
+  },
+  {
+   "name": "fp_car_exit",
+   "rig": "fp",
+   "duration": 0.8,
+   "loop": false,
+   "speed": 0.0,
+   "events": []
+  },
+  {
+   "name": "fp_drive",
+   "rig": "fp",
+   "duration": 4.0,
+   "loop": true,
+   "speed": 0.0,
+   "events": []
+  },
+  {
+   "name": "fp_smash",
+   "rig": "fp",
+   "duration": 0.7,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.3,
+     "swing"
+    ],
+    [
+     0.43,
+     "glass_break"
+    ]
+   ]
+  },
+  {
+   "name": "fp_pull",
+   "rig": "fp",
+   "duration": 1.1,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.33,
+     "grab"
+    ],
+    [
+     0.75,
+     "throw"
+    ]
+   ]
   },
   {
    "name": "fp_heavy",
@@ -1664,6 +2009,104 @@
      "disabled"
     ]
    ]
+  },
+  {
+   "name": "car_door",
+   "rig": "vehicle",
+   "duration": 0.45,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "latch"
+    ],
+    [
+     0.4,
+     "door_stop"
+    ]
+   ]
+  },
+  {
+   "name": "car_door_close",
+   "rig": "vehicle",
+   "duration": 0.35,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.3,
+     "door_slam"
+    ]
+   ]
+  },
+  {
+   "name": "car_window_break",
+   "rig": "vehicle",
+   "duration": 0.25,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.02,
+     "glass_break"
+    ]
+   ]
+  },
+  {
+   "name": "car_alarm",
+   "rig": "vehicle",
+   "duration": 1.0,
+   "loop": true,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "horn"
+    ],
+    [
+     0.5,
+     "horn"
+    ]
+   ]
+  },
+  {
+   "name": "car_engine_start",
+   "rig": "vehicle",
+   "duration": 0.8,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "starter"
+    ],
+    [
+     0.45,
+     "engine_on"
+    ]
+   ]
+  },
+  {
+   "name": "patrol_lightbar",
+   "rig": "vehicle",
+   "duration": 0.8,
+   "loop": true,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "siren"
+    ]
+   ]
+  },
+  {
+   "name": "car_brake",
+   "rig": "vehicle",
+   "duration": 0.2,
+   "loop": false,
+   "speed": 0.0,
+   "events": []
   },
   {
    "name": "chair_recline",

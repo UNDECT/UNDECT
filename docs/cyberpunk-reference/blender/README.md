@@ -6,7 +6,7 @@
 ```
 pip install bpy            # Blender 5.x 파이썬 모듈 (Python 3.13)
 python security_robot.py out/security_robot all
-python car.py out/car all            # 변형: python car.py out/car render cab
+python car.py out/car all            # 변형: python car.py out/car render cab  (cab, corp, teal, patrol). 문 4개와 실내가 있다
 python street.py out/street scene    # 밤거리 장면
 python street.py out/street modules  # 거리 소품 10종 내보내기
 python weapons.py out/weapons render  # 무기 17종
@@ -19,7 +19,7 @@ python clinic.py out/clinic scene      # 시술소 장면 (시술의 포함)
 python cyber_arms.py out/cyber_arms render   # 사이버웨어 팔 4종 (접힌 상태 + 펼친 상태)
 python street.py out/street scene_day  # 낮 거리
 python districts.py out/street all     # 구역 3종: slum, corp, rich
-python anim.py out/anim clips          # 애니메이션 클립 125개
+python anim.py out/anim clips          # 애니메이션 클립 157개
 ```
 - 품질: 환경 변수 `KIT_SAMPLES`(기본 80).
 - 결과: 폴더마다 `.glb`, `.blend`, `.manifest.json`, 렌더 사진.
@@ -29,7 +29,7 @@ python anim.py out/anim clips          # 애니메이션 클립 125개
 |---|---|
 | `kit.py` | 공용 도구: 재질(금속, 도장, 콘크리트, 젖은 아스팔트, 창 불빛), 기본 형상, 부품·관절 기록, 스튜디오 조명, 렌더, 내보내기 |
 | `security_robot.py` | 보안 로봇. 키 약 1.95 m, 부품 15개, 관절 14개 |
-| `car.py` | 각진 쐐기형 세단. 색 변형 4종(택시 포함), 바퀴 4개가 따로 돈다 |
+| `car.py` | 각진 쐐기형 세단. 변형 5종(택시, 보안 순찰차 포함). 바퀴 4개, 문 4개, 운전대가 따로 움직이고 실내(좌석, 계기판)가 있다 |
 | `street.py` | 거리 소품 10종, 건물 생성기, 초대형 건물, 고가 선로, 밤거리·낮거리 장면 |
 | `weapons.py` | 총 10종(권총, 리볼버, 기관단총, 돌격소총, 경기관총, 정밀 소총, 저격총, 산탄총 3종), 근접 5종(장검, 단검, 곤봉, 망치, 주먹 무기), 수류탄 2종 |
 | `flying_car.py` | 추진기 4개짜리 비행 차량. 변형 3종 |
