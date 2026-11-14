@@ -195,7 +195,7 @@ git clone --depth 1 -b ccr-9e6cc8c3-bftdlm https://github.com/UNDECT/UNDECT.git 
 ## 4-1. 애니메이션과 이동도 받아서 쓴다 (새로 만들지 않는다)
 `docs/cyberpunk-reference/runtime/`에 Luau 모듈과 테스트가, `blender/out/anim/`에 클립 125개와 손 모양 9개가 있다. `runtime/README.md`를 먼저 읽는다.
 
-1. **넣기**: `runtime/*.luau`를 `src/shared/Fable/`(이름은 프로젝트 규칙에 맞게)로 복사한다. 클립 JSON은 ModuleScript 표로 변환하는 빌드 단계를 만든다. `tests/run.luau`의 검사 80개를 프로젝트의 Lune 테스트에 편입한다(경로만 고친다).
+1. **넣기**: `runtime/*.luau`를 `src/shared/Fable/`(이름은 프로젝트 규칙에 맞게)로 복사한다. 클립 JSON은 ModuleScript 표로 변환하는 빌드 단계를 만든다. `tests/run.luau`의 검사 98개를 프로젝트의 Lune 테스트에 편입한다(경로만 고친다).
 2. **고치지 않는다**: 걸음 곡선, 군중 규칙, 순찰·교통 로직을 다시 짜지 않는다. 버그를 찾으면 재현 테스트와 함께 사용자에게 알린다. Roblox 연결부(`RigAnimator`)만 Studio에서 확인하며 고친다.
 3. **`RigAnimator` 확인 (가장 먼저)**: 이 파일만 여기서 테스트하지 못했다. 보안 로봇에 `walk_heavy`를 틀고 Blender 미리보기(`preview_robot_walk_heavy.png`)와 같은 자세가 나오는지 본다. 팔다리가 엉뚱한 축으로 돌면 `RigAnimator.AXIS` 표를 고친다. 뼈는 관절 위치에 만든다. 뼈의 기준 방향은 `RigAnimator`가 모델에서 읽어 보정하므로 맞추지 않아도 된다. 그다음 사람(`human_man_a`)에 `walk`를 틀어 `human_walk_check.png`와 비교한다.
 4. **군중**: C2에서 만든 군중 이동을 `Crowd`로 바꾼다. 허브의 인도 그래프(`nodes`, `edges`), 소품 위치(`obstacles`), 활동 지점(`activities`)은 맵 정보(`WLD-150~153`)에서 만든다. 횡단보도는 `signal`로 신호등과 묶는다. 총성 이벤트는 `crowd:panic(x, z, 반경)`으로 넘긴다. 에이전트의 `anim`, `speed`, `heading`을 그대로 `RigAnimator`에 넘긴다.
@@ -211,9 +211,10 @@ git clone --depth 1 -b ccr-9e6cc8c3-bftdlm https://github.com/UNDECT/UNDECT.git 
 ## 4-2. NPC를 죽일 수 있게 하고, 손 레이저를 넣는다 (새 지시)
 **지금은 Kids 설정을 끄고 수위를 가장 높게 만든다.** 나중에 내가 낮춘다. 그래서 수위를 코드 여기저기에 박지 말고 `Vitals.GORE`(0~3) 한 값으로만 갈리게 한다. `GameConfig.Kids.Enabled`가 켜지면 0, 꺼지면 3이 되게 잇는다. 지금 기본값은 꺼짐(3)이다.
 
-1. **피해 경로를 하나로**: 총, 칼, 둔기, 수류탄, 사이버웨어 팔, 차에 치임까지 NPC가 맞는 모든 곳이 `crowd:damage(agent, hit)`(폭발은 `crowd:explode`)를 거치게 한다. 직접 체력을 깎는 코드는 남기지 않는다. `hit.part`에 맞은 뼈 이름을, `hit.dirX/dirZ`에 공격이 날아가는 방향을, `hit.attacker`에 플레이어를 넣는다. 서버에서만 판정한다.
-2. **대상**: 거리 군중(맨얼굴 사람 10명, 가면 NPC 5종) 전부. 상인과 시술의도 죽을 수 있게 하되, 가게 기능이 막히지 않게 일정 시간 뒤 다른 사람으로 다시 채운다. 퀘스트에 필요한 NPC만 `invulnerable` 표시로 뺀다(목록을 보고하고 내 승인을 받는다). 보안 로봇·드론·포탑은 같은 `Vitals`를 쓰되 죽으면 `robot_shutdown` / `drone_crash` / `turret_shutdown`을 틀고 불꽃과 연기를 낸다.
-3. **동작**: `res.anim`을 그대로 튼다. 죽는 클립 12종, 부상 2종, 피격 7종이 있다(`runtime/README.md`, 미리보기 `anim/preview_human_deaths.png`). 죽는 클립은 반복하지 않고 끝 프레임에서 멈춘다. 클립이 끝나면 그 자세로 굳히거나(가벼움), 랙돌로 넘겨 바닥에 맞춘다(계단·경사에서 필요). 손에 든 소품은 떨어뜨린다.
+1. **피해 경로를 하나로**: 총, 칼, 둔기, 수류탄, 사이버웨어 팔, 차에 치임(`kind = "vehicle"`)까지 NPC가 맞는 모든 곳이 `crowd:damage(agent, hit)`(폭발은 `crowd:explode`)를 거치게 한다. 직접 체력을 깎는 코드는 남기지 않는다. `hit.part`에 맞은 뼈 이름을, `hit.dirX/dirZ`에 공격이 날아가는 방향을, `hit.attacker`에 플레이어를 넣는다. 서버에서만 판정한다.
+2. **대상**: 거리 군중(맨얼굴 사람 10명, 가면 NPC 5종) 전부. 상인과 시술의도 죽을 수 있게 하되, 가게 기능이 막히지 않게 일정 시간 뒤 다른 사람으로 다시 채운다. 퀘스트에 필요한 NPC만 `invulnerable` 표시로 뺀다(목록을 보고하고 내 승인을 받는다). 보안 로봇·드론·포탑은 `Vitals.new({machine = true, deathAnim = ...})`로 만든다. 피 대신 불꽃·찌그러진 자국·기름이 나오고, 죽으면 `robot_shutdown` / `drone_crash` / `turret_shutdown`을 튼다.
+3. **좌표 약속을 지킨다**: `Crowd`·`Vitals`의 `x, z`는 Roblox의 `X, Z`에 그대로 넣고, 모델은 `CFrame.Angles(0, heading + math.pi, 0)`로 세운다. 축을 뒤집으면 쓰러지는 방향과 좌우 피격이 전부 반대로 나온다(`runtime/README.md`의 좌표 항목). 밀려남과 폭발 방향은 `Crowd`가 처리하므로 따로 위치를 옮기지 않는다.
+3-1. **동작**: `res.anim`을 그대로 튼다. 죽는 클립 12종, 부상 2종, 피격 7종이 있다(`runtime/README.md`, 미리보기 `anim/preview_human_deaths.png`). 죽는 클립은 반복하지 않고 끝 프레임에서 멈춘다. 클립이 끝나면 그 자세로 굳히거나(가벼움), 랙돌로 넘겨 바닥에 맞춘다(계단·경사에서 필요). 손에 든 소품은 떨어뜨린다.
 4. **이펙트**: `res.effects`의 이름마다 아래를 붙인다. 이름이 없으면 내지 않는다(수위가 내려가면 저절로 빠진다).
 
 | 이름 | 만들 것 |
@@ -225,9 +226,10 @@ git clone --depth 1 -b ccr-9e6cc8c3-bftdlm https://github.com/UNDECT/UNDECT.git 
 | `wound_mark_body`, `slash_mark_body`, `burn_mark_body` | 맞은 위치의 옷·피부에 총상·베인 자국·그을린 자국 데칼 |
 | `burn_glow`, `smoke_wisp`, `char_body`, `smoke_corpse` | 레이저·불: 맞은 곳이 0.4초 달아오르고 연기가 난다. 죽으면 몸 전체가 2초에 걸쳐 검게 그을리고 20초 동안 연기가 난다 |
 | `arc_sparks`, `scorch_ground`, `clothes_scorch` | 감전 불꽃, 폭발 그을음, 옷 그을림 |
+| `spark_burst`, `dent_mark_body`, `oil_leak`, `machine_down` | 기계 전용: 불꽃, 찌그러진 자국, 바닥 기름 얼룩, 고장 연기와 꺼지는 발광 |
 | `corpse_stay`, `corpse_fade`, `dissolve` | 시체 남김 / 12초 뒤 흐려져 사라짐 / 수위 0의 소멸 연출 |
 
-5. **시체**: 수위 2 이상에서는 남는다. 성능을 위해 동시에 40구까지만 두고 넘으면 가장 오래되고 먼 것부터 `corpse_fade`로 치운다. 시체는 충돌을 끄고 군중이 밟고 지나가지 않게 가볍게 피한다. 다시 쏘면 자국은 남는다.
+5. **시체**: 수위 2 이상에서는 남는다. 성능을 위해 동시에 40구까지만 두고 넘으면 가장 오래되고 먼 것부터 `corpse_fade`로 치운다. 시체는 충돌을 끈다. 군중이 시체를 돌아가는 것은 `Crowd`가 한다. 다시 쏘면 자국은 남는다.
 6. **주변 반응**: `crowd:damage`가 알아서 주변 사람을 도망치게 하거나 웅크리게 한다. `crowd:drain()`의 `witnessed`(목격자 수)와 `death`를 수배·경찰 출동(스펙 `SEC`)에 잇는다. 목격자가 없으면 수배가 오르지 않는다. 소리(비명, 쓰러지는 소리)는 클립의 `hit`, `body_fall`, `knees` 이벤트에 붙인다.
 7. **채우기**: `corpse_gone` 뒤 `crowd:refill(플레이어 위치, 60)`으로 화면 밖에서 다시 채운다. 대량 사살로 거리가 비지 않게 하되, 사건이 난 블록은 2~3분 동안 한산하게 둔다.
 8. **손 레이저**: `Laser.new()` 하나를 플레이어의 사이버웨어 슬롯에 둔다. 매 프레임 `beam_out`에서 조준 방향으로 레이캐스트를 여러 번 이어 쏴(관통) 맞은 것들을 가까운 순서로 `laser:update`에 넘기고, 돌려받은 `damage`를 1번의 경로로 넣는다. 빔이 닿은 벽·바닥에는 달아오른 점과 그을린 선 데칼을 남긴다. 열(`out.heat`)은 HUD에 막대로 보인다. 수치는 `Laser.DEFAULTS`에서만 고친다.

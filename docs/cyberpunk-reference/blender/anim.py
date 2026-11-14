@@ -239,7 +239,7 @@ PRONE = {("root", "pitch"): 86, ("root", "z"): -0.80, ("root", "y"): -0.46, ("hi
          ("shoulder_L", "flex"): 150, ("shoulder_R", "flex"): 60, ("shoulder_L", "abduct"): 34, ("shoulder_R", "abduct"): 40, ("elbow_L", "bend"): 62, ("elbow_R", "bend"): 96, ("neck", "yaw"): 52, ("neck", "pitch"): -10}
 def side(s):
     """옆으로 누운 자세. s = +1 왼쪽으로, -1 오른쪽으로 쓰러진다."""
-    return {("root", "roll"): 84 * s, ("root", "z"): -0.76, ("root", "x"): -0.40 * s, ("root", "yaw"): 30 * s, ("hip_L", "flex"): 36, ("hip_R", "flex"): 22, ("knee_L", "bend"): 58, ("knee_R", "bend"): 36,
+    return {("root", "roll"): 84 * s, ("root", "z"): -0.76, ("root", "x"): 0.45 * s, ("root", "yaw"): 30 * s, ("hip_L", "flex"): 36, ("hip_R", "flex"): 22, ("knee_L", "bend"): 58, ("knee_R", "bend"): 36,
             ("shoulder_L", "flex"): 46, ("shoulder_R", "flex"): 30, ("elbow_L", "bend"): 64, ("elbow_R", "bend"): 50, ("waist", "pitch"): 16, ("neck", "pitch"): 14, ("neck", "yaw"): -10 * s}
 KNEEL = {("root", "z"): -0.46, ("root", "y"): -0.04, ("hip_L", "flex"): 6, ("hip_R", "flex"): 10, ("knee_L", "bend"): 104, ("knee_R", "bend"): 108, ("waist", "pitch"): 10, ("neck", "pitch"): 22,
          ("shoulder_L", "flex"): 4, ("shoulder_R", "flex"): 6, ("elbow_L", "bend"): 10, ("elbow_R", "bend"): 12}
@@ -255,7 +255,7 @@ def death_front(u):
     return seq(u, (0.12, {("waist", "pitch"): 16, ("neck", "pitch"): -10, ("root", "y"): -0.05}), (0.46, buckle), (0.82, PRONE), (1.0, PRONE))
 def death_side(s):
     def f(u):
-        spin = {("root", "yaw"): 48 * s, ("waist", "yaw"): 30 * s, ("waist", "roll"): -14 * s, ("root", "x"): -0.10 * s, ("root", "z"): -0.10, ("knee_L", "bend"): 30, ("knee_R", "bend"): 36,
+        spin = {("root", "yaw"): 48 * s, ("waist", "yaw"): 30 * s, ("waist", "roll"): -14 * s, ("root", "x"): 0.12 * s, ("root", "z"): -0.10, ("knee_L", "bend"): 30, ("knee_R", "bend"): 36,
                 ("shoulder_L", "abduct"): 40, ("shoulder_R", "abduct"): 40, ("elbow_L", "bend"): 40, ("elbow_R", "bend"): 40, ("neck", "yaw"): 20 * s, ("hip_L", "flex"): 20, ("hip_R", "flex"): 14}
         return seq(u, (0.40, spin), (0.82, side(s)), (1.0, side(s)))
     return f

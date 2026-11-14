@@ -22,13 +22,15 @@ Vitals.TYPE = {
 	laser = {stagger = 0.15, knock = 0.0, fear = 18, burn = true},
 	fire = {stagger = 0.2, knock = 0.0, fear = 15, burn = true},
 	electric = {stagger = 1.0, knock = 0.0, fear = 12},
-	explosive = {stagger = 1.0, knock = 2.0, fear = 45},
+	explosive = {stagger = 1.0, knock = 0.6, fear = 45},     -- 날아가는 거리는 death_blast 클립에 들어 있다
+	vehicle = {stagger = 1.0, knock = 1.2, fear = 20},       -- 차에 치임
 	fall = {stagger = 1.0, knock = 0.0, fear = 0},
 }
 
 -- 뼈·부품 이름 -> 부위. 사람(human_*), 가면 NPC, 로봇의 이름을 다 받는다.
 function Vitals.zoneOf(name: string): string
 	local n = string.lower(name)
+	if string.find(n, "prop", 1, true) or string.find(n, "umbrella", 1, true) or string.find(n, "skirt", 1, true) then return "none" end   -- 손에 든 물건, 옷자락은 맞아도 다치지 않는다
 	if string.find(n, "head", 1, true) or string.find(n, "eye", 1, true) or string.find(n, "visor", 1, true) then return "head" end
 	if string.find(n, "neck", 1, true) then return "neck" end
 	if string.find(n, "arm", 1, true) or string.find(n, "hand", 1, true) or string.find(n, "clavicle", 1, true) or string.find(n, "finger", 1, true)
@@ -37,25 +39,28 @@ function Vitals.zoneOf(name: string): string
 	return "torso"
 end
 
--- opts: health(기본 100), armor(0~1, 피해를 줄이는 비율), seated(앉아 있음)
+-- opts: health(기본 100), armor(0~1, 피해를 줄이는 비율), seated(앉아 있음),
+--       machine(로봇·드론·포탑: 피 대신 불꽃과 기름, 기어가지 않음), deathAnim(기계의 고장 동작. 기본 "robot_shutdown")
 function Vitals.new(opts)
 	opts = opts or {}
 	local h = opts.health or 100
 	return {health = h, maxHealth = h, armor = opts.armor or 0, state = "alive", seated = opts.seated or false,
+		machine = opts.machine or false, deathAnim = opts.deathAnim,
 		bleed = 0, burn = 0, downTimer = 0, wounds = {}, cause = nil, killer = nil}
 end
 
--- 맞은 방향: 공격이 날아온 진행 방향(dirX, dirZ)과 맞는 사람이 보는 방향(facing, 라디안, atan2(dx, dz))으로
+-- 맞은 방향: 공격이 날아가는 방향(dirX, dirZ)과 맞는 사람이 보는 방향(facing, 라디안, atan2(dx, dz))으로
 -- "앞에서 맞음"(front) / "뒤에서"(back) / "왼쪽에서"(left) / "오른쪽에서"(right)를 가린다.
+-- x, z는 Roblox의 X, Z와 같다. Roblox에서 (fx, fz)를 보는 사람의 오른쪽은 (-fz, fx)다.
 function Vitals.side(dirX: number, dirZ: number, facing: number): string
 	local fx, fz = math.sin(facing), math.cos(facing)
 	local len = math.sqrt(dirX * dirX + dirZ * dirZ)
 	if len < 1e-6 then return "front" end
 	local dx, dz = dirX / len, dirZ / len
 	local along = dx * fx + dz * fz           -- +1이면 등 뒤에서 앞으로 날아옴
-	local across = dx * fz - dz * fx          -- +면 맞는 사람의 왼쪽에서 오른쪽으로
-	if math.abs(along) >= math.abs(across) then return if along < 0 then "front" else "back" end
-	return if across > 0 then "left" else "right"
+	local toRight = -dx * fz + dz * fx        -- +면 맞는 사람의 오른쪽으로 날아간다 = 왼쪽에서 왔다
+	if math.abs(along) >= math.abs(toRight) then return if along < 0 then "front" else "back" end
+	return if toRight > 0 then "left" else "right"
 end
 
 local DEATH_BY_SIDE = {front = "death_back", back = "death_front", left = "death_right", right = "death_left"}
@@ -64,7 +69,7 @@ local DEATH_BY_SIDE = {front = "death_back", back = "death_front", left = "death
 function Vitals.deathClip(kind: string, zone: string, side: string, v, roll: number): string
 	if v and v.state == "downed" then return "death_crawl" end
 	if v and v.seated then return "death_sit" end
-	if kind == "explosive" then return "death_blast" end
+	if kind == "explosive" or kind == "vehicle" then return "death_blast" end
 	if kind == "laser" or kind == "fire" then return "death_burn" end
 	if kind == "electric" then return "death_shock" end
 	if kind == "blade" then return if roll < 0.6 then "death_slash" else DEATH_BY_SIDE[side] end
@@ -75,7 +80,7 @@ function Vitals.deathClip(kind: string, zone: string, side: string, v, roll: num
 end
 
 local function hitClip(zone: string, side: string, kind: string, strong: boolean): string
-	if strong then return "stagger" end
+	if strong then return if side == "back" then "hit_back" else "stagger" end   -- stagger는 뒤로 물러나는 동작이라 등 뒤에서 맞았을 때는 쓰지 않는다
 	if zone == "head" or zone == "neck" then return "hit_head" end
 	if zone == "leg" then return "hit_leg" end
 	return "hit_" .. side
@@ -98,7 +103,7 @@ function Vitals.effects(kind: string, zone: string, killed: boolean, gore: numbe
 	if g >= 2 then
 		if t.burn then
 			table.insert(out, "burn_glow")              -- 맞은 곳이 잠깐 달아오른다
-		elseif kind ~= "electric" and kind ~= "fall" then
+		elseif kind ~= "electric" and kind ~= "fall" and kind ~= "blunt" then
 			table.insert(out, "blood_spray"); table.insert(out, "blood_drops_ground")
 		end
 		if killed then table.insert(out, "corpse_stay") end
@@ -122,6 +127,16 @@ function Vitals.effects(kind: string, zone: string, killed: boolean, gore: numbe
 	return out
 end
 
+-- 기계가 맞았을 때의 이펙트. 수위와 상관없이 같다(피가 아니다).
+function Vitals.machineEffects(kind: string, killed: boolean)
+	local out = {"hit_flash", "spark_burst"}
+	if kind == "laser" or kind == "fire" then table.insert(out, "burn_glow"); table.insert(out, "smoke_wisp") end
+	if kind == "electric" then table.insert(out, "arc_sparks") end
+	if kind == "bullet" or kind == "shotgun" or kind == "explosive" then table.insert(out, "dent_mark_body") end
+	if killed then table.insert(out, "oil_leak"); table.insert(out, "smoke_corpse"); table.insert(out, "machine_down") end
+	return out
+end
+
 -- hit = {damage, kind, zone | part(뼈 이름), dirX, dirZ, facing, attacker, roll(0~1 난수, 없으면 0.5), roll2}
 -- 돌려주는 값: {dealt, killed, downed, state, anim, side, zone, knock, fear, effects}
 function Vitals.hit(v, hit)
@@ -131,8 +146,9 @@ function Vitals.hit(v, hit)
 	local side = Vitals.side(hit.dirX or 0, hit.dirZ or 0, hit.facing or 0)
 	local roll, roll2 = hit.roll or 0.5, hit.roll2 or 0.5
 	local res = {dealt = 0, killed = false, downed = false, state = v.state, anim = nil, side = side, zone = zone, knock = 0, fear = t.fear, effects = {}}
+	if zone == "none" then res.fear = 0; return res end
 	if v.state == "dead" then
-		res.effects = Vitals.effects(kind, zone, false)          -- 시체에 맞아도 자국은 남는다
+		res.effects = if v.machine then Vitals.machineEffects(kind, false) else Vitals.effects(kind, zone, false)   -- 시체에 맞아도 자국은 남는다
 		return res
 	end
 	local armor = if kind == "laser" or kind == "fire" or kind == "electric" or kind == "fall" then v.armor * 0.5 else v.armor
@@ -141,16 +157,18 @@ function Vitals.hit(v, hit)
 	res.dealt = dmg
 	v.health -= dmg
 	table.insert(v.wounds, {zone = zone, kind = kind, side = side})
-	if t.burn then v.burn = math.min(4, v.burn + dmg * 0.02) end
-	if Vitals.GORE >= 2 and not t.burn and kind ~= "electric" and kind ~= "fall" then v.bleed = math.min(6, v.bleed + dmg * 0.03) end
+	if t.burn and not v.machine then v.burn = math.min(4, v.burn + dmg * 0.02) end
+	if Vitals.GORE >= 2 and not v.machine and not t.burn and kind ~= "electric" and kind ~= "fall" then v.bleed = math.min(6, v.bleed + dmg * 0.03) end
 	if v.health <= 0 then
 		-- 팔다리에 맞아 죽을 피해를 입으면(수위 3) 일부는 바로 죽지 않고 쓰러져 기어간다
 		local limb = zone == "arm" or zone == "leg"
-		if Vitals.GORE >= 3 and v.state == "alive" and limb and not v.seated and kind ~= "explosive" and kind ~= "electric" and roll2 < 0.4 then
+		if Vitals.GORE >= 3 and not v.machine and v.state == "alive" and limb and not v.seated and kind ~= "explosive" and kind ~= "vehicle" and kind ~= "electric" and roll2 < 0.4 then
 			v.state = "downed"; v.health = 1; v.downTimer = 8 + 10 * roll; v.bleed = math.max(v.bleed, 2)
 			res.downed = true; res.anim = "fall_wounded"
 		else
-			res.anim = if Vitals.GORE <= 0 then "collapse" else Vitals.deathClip(kind, zone, side, v, roll)   -- 수위 0: 주저앉은 뒤 사라진다
+			res.anim = if v.machine then (v.deathAnim or "robot_shutdown")
+				elseif Vitals.GORE <= 0 then "collapse"                                               -- 수위 0: 주저앉은 뒤 사라진다
+				else Vitals.deathClip(kind, zone, side, v, roll)
 			v.state = "dead"; v.health = 0; v.cause = kind; v.killer = hit.attacker
 			res.killed = true; res.knock = t.knock
 		end
@@ -159,7 +177,7 @@ function Vitals.hit(v, hit)
 		if v.state == "alive" then res.anim = hitClip(zone, side, kind, strong); res.knock = if strong then t.knock * 0.5 else 0 end
 	end
 	res.state = v.state
-	res.effects = Vitals.effects(kind, zone, res.killed)
+	res.effects = if v.machine then Vitals.machineEffects(kind, res.killed) else Vitals.effects(kind, zone, res.killed)
 	return res
 end
 
@@ -179,7 +197,7 @@ function Vitals.update(v, dt: number)
 		end
 	elseif v.health <= 0 then
 		v.state = "dead"; v.health = 0; v.cause = "burn"
-		return {killed = true, anim = "death_burn", effects = Vitals.effects("fire", "torso", true)}
+		return {killed = true, anim = if Vitals.GORE <= 0 then "collapse" else "death_burn", effects = Vitals.effects("fire", "torso", true)}
 	end
 	return nil
 end

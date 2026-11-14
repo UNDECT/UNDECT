@@ -69,6 +69,8 @@ function RigAnimator.new(model: Instance, joints: any?, frame: CFrame?)
 		self.joints = found
 	end
 	for name, inst in self.joints do self.rest[name] = restRotation(inst, base) end
+	-- 클립의 뿌리 이동(주저앉기, 눕기)은 골반 높이 0.95 m 기준이다. 키가 다른 모델은 골반 높이 비율만큼 줄이거나 늘린다
+	self.rootScale = if joints and joints.root and joints.root.pos then joints.root.pos[3] / 0.95 else 1
 	self.pose = {}; self.poseB = {}; self.mixed = {}
 	self.time = 0; self.clip = nil; self.prev = nil; self.prevTime = 0; self.fade = 0; self.fadeLen = 0.2
 	return self
@@ -104,7 +106,10 @@ function RigAnimator:update(dt: number, moveSpeed: number?)
 	for name, joint in self.joints do
 		local dofs = pose[name]
 		local m = RigSolver.localRotation(name, dofs, self.parentNeutral[name], self.neutral[name], self.axis[name])
-		if name == "root" and dofs then m[10], m[11], m[12] = dofs.x or 0, dofs.y or 0, dofs.z or 0 end
+		if name == "root" and dofs then
+			local k = self.rootScale
+			m[10], m[11], m[12] = (dofs.x or 0) * k, (dofs.y or 0) * k, (dofs.z or 0) * k
+		end
 		-- 모델 기준 회전을 뼈 자신의 축으로 옮긴다: restᵀ · M · rest
 		local rest = self.rest[name]
 		joint.Transform = rest:Inverse() * convert(m, RigAnimator.STUDS_PER_METER) * rest

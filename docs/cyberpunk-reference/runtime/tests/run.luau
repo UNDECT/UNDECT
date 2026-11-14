@@ -318,8 +318,16 @@ end
 do
 	check("zones from bone names", Vitals.zoneOf("head") == "head" and Vitals.zoneOf("neck_01") == "neck" and Vitals.zoneOf("lowerarm_r") == "arm" and Vitals.zoneOf("calf_l") == "leg"
 		and Vitals.zoneOf("spine_02") == "torso" and Vitals.zoneOf("index_02_l") == "arm" and Vitals.zoneOf("shin_R") == "leg")
-	-- 맞은 방향: 사람이 +Z를 보고(facing 0) 총알이 -Z로 날아오면 앞에서 맞은 것이다
-	check("hit side", Vitals.side(0, -1, 0) == "front" and Vitals.side(0, 1, 0) == "back" and Vitals.side(1, 0, 0) == "left" and Vitals.side(-1, 0, 0) == "right")
+	-- 맞은 방향: 사람이 +Z를 보고(facing 0) 총알이 -Z로 날아오면 앞에서 맞은 것이다.
+	-- Roblox에서 +Z를 보는 사람의 오른쪽은 -X다. 그래서 +X로 날아가는 총알은 오른쪽에서 온 것이다
+	check("hit side", Vitals.side(0, -1, 0) == "front" and Vitals.side(0, 1, 0) == "back" and Vitals.side(1, 0, 0) == "right" and Vitals.side(-1, 0, 0) == "left")
+	for _, f in {0, 1.1, -2.3, 3.0} do   -- 어느 쪽을 보든: 자기 오른쪽 벡터 (-fz, fx) 방향으로 날아가는 것은 왼쪽에서 온 것
+		local fx, fz = math.sin(f), math.cos(f)
+		check("hit side holds for any facing", Vitals.side(-fz, fx, f) == "left" and Vitals.side(fz, -fx, f) == "right" and Vitals.side(-fx, -fz, f) == "front" and Vitals.side(fx, fz, f) == "back", f)
+	end
+	check("side decides which way the body falls", ({Vitals.hit(Vitals.new({health = 1}), {damage = 99, kind = "bullet", zone = "torso", dirX = -1, dirZ = 0, facing = 0, roll = 0.9})})[1].anim == "death_right")
+	check("props and cloth do not take damage", Vitals.zoneOf("prop") == "none" and Vitals.hit(Vitals.new(), {damage = 999, kind = "bullet", part = "umbrella_prop"}).dealt == 0)
+	check("vehicle hit throws the body", ({Vitals.hit(Vitals.new({health = 1}), {damage = 99, kind = "vehicle", zone = "torso"})})[1].anim == "death_blast")
 	local saved = Vitals.GORE
 	Vitals.GORE = 3
 	local v = Vitals.new({health = 100})
@@ -354,6 +362,13 @@ do
 	lr = Vitals.hit(Vitals.new({health = 10}), {damage = 50, kind = "bullet", zone = "leg", roll2 = 0.1})
 	check("gore 0 never leaves a crawling victim", lr.killed and not lr.downed)
 	Vitals.GORE = saved
+	do  -- 기계(보안 로봇·드론·포탑): 피가 아니라 불꽃과 기름, 기어가지 않고, 고장 동작으로 끝난다
+		local m = Vitals.new({health = 10, machine = true})
+		local mr = Vitals.hit(m, {damage = 500, kind = "bullet", zone = "leg", roll2 = 0.0})
+		check("machines spark instead of bleeding", mr.killed and not mr.downed and mr.anim == "robot_shutdown" and has(mr.effects, "spark_burst") and has(mr.effects, "oil_leak")
+			and not has(mr.effects, "blood_spray") and not has(mr.effects, "blood_pool") and m.bleed == 0)
+		check("machine death clip can be set", ({Vitals.hit(Vitals.new({health = 1, machine = true, deathAnim = "drone_crash"}), {damage = 9, kind = "laser"})})[1].anim == "drone_crash")
+	end
 	local av = Vitals.new({health = 100, armor = 0.5})
 	check("armor halves bullets but lasers cut through more", Vitals.hit(av, {damage = 20, kind = "bullet", zone = "torso"}).dealt == 10 and Vitals.hit(av, {damage = 20, kind = "laser", zone = "torso"}).dealt == 15)
 end
@@ -366,15 +381,21 @@ do
 	local victim = cr.agents[1]
 	local res = cr:damage(victim, {damage = 500, kind = "bullet", zone = "torso", dirX = 1, dirZ = 0, attacker = "player"})
 	check("crowd agent dies", res.killed and victim.state == "dead" and victim.speed == 0 and string.sub(victim.anim, 1, 6) == "death_", victim.anim)
-	local px, pz = victim.x, victim.z
 	local fled = 0
 	for _, ag in cr.agents do if ag.state == "flee" or ag.state == "cower" then fled += 1 end end
 	local ev = cr:drain()
 	local gotDeath, gotWitness = false, false
 	for _, e in ev do gotDeath = gotDeath or (e.type == "death" and e.id == 1 and e.attacker == "player"); gotWitness = gotWitness or e.type == "witnessed" end
 	check("death is recorded and bystanders react", gotDeath and gotWitness and fled > 0 and #cr:drain() == 0, fled)
+	local bx, bz, maxStep = victim.x, victim.z, 0
+	for _ = 1, 30 do
+		cr:step(1 / 30, nil, nil)
+		maxStep = math.max(maxStep, math.sqrt((victim.x - bx) ^ 2 + (victim.z - bz) ^ 2)); bx, bz = victim.x, victim.z
+	end
+	check("knockback is spread over frames, never a jump", maxStep < 0.08, maxStep)
+	local px, pz = victim.x, victim.z
 	for _ = 1, 300 do cr:step(1 / 30, nil, nil) end
-	check("corpse stays where it fell", victim.x == px and victim.z == pz and victim.state == "dead" and not victim.gone and cr:countAlive() == 39)
+	check("corpse stays where it fell", math.abs(victim.x - px) < 0.01 and math.abs(victim.z - pz) < 0.01 and victim.state == "dead" and not victim.gone and cr:countAlive() == 39)
 	local hurt = cr.agents[2]
 	local hp = hurt.vitals.health
 	res = cr:damage(hurt, {damage = 5, kind = "bullet", zone = "arm", dirX = 0, dirZ = 1})
@@ -383,6 +404,63 @@ do
 	check("staggered agent runs away", hurt.state == "flee" and hurt.anim == "run", hurt.state)
 	local blast = cr:explode(cr.agents[3].x, cr.agents[3].z, 6, 400, "player")
 	check("explosion kills at the center", #blast >= 1 and cr.agents[3].state == "dead" and cr.agents[3].anim == "death_blast")
+	do  -- 폭발이 등 뒤에서 터져도 터진 반대쪽으로 날아간다: 죽은 사람이 터진 곳을 보게 돌려 놓는다(클립은 보는 방향의 뒤로 날아간다)
+		local cb = Crowd.new(world(), {seed = 4}); cb:spawn(1)
+		local b = cb.agents[1]; b.heading = 0
+		local sx, sz = b.x, b.z
+		cb:explode(b.x, b.z - 2, 6, 900, "player")
+		local faceX, faceZ = math.sin(b.heading), math.cos(b.heading)
+		check("blast victim is thrown away from the blast", b.anim == "death_blast" and faceZ < -0.99 and math.abs(faceX) < 0.01 and b.x == sx and b.z == sz, b.heading)
+	end
+	do  -- 빔을 2초 동안 한 사람에게 쏜다: 사건이 쏟아지지 않고, 동작이 멈추지 않고, 주변이 전부 웅크리지 않는다
+		local cl = Crowd.new(world(), {seed = 2}); cl:spawn(60)
+		for _ = 1, 30 do cl:step(1 / 30) end
+		local t = cl.agents[1]; t.vitals.health = 1e6; t.vitals.maxHealth = 1e6
+		local hurtEvents, maxAnim = 0, 0
+		for _ = 1, 120 do
+			cl:damage(t, {damage = 4, kind = "laser", zone = "arm", dirX = 1, dirZ = 0})
+			cl:step(1 / 60)
+			maxAnim = math.max(maxAnim, if t.state == "stagger" then t.animTime else 0)
+			for _, e in cl:drain() do if e.type == "hurt" then hurtEvents += 1 end end
+		end
+		local flee, cower = 0, 0
+		for _, a in cl.agents do if a.state == "flee" then flee += 1 elseif a.state == "cower" then cower += 1 end end
+		check("continuous beam does not flood hurt events", hurtEvents <= 6, hurtEvents)
+		check("stagger animation keeps playing under the beam", maxAnim > 0.3, maxAnim)
+		check("bystanders keep fleeing instead of all cowering", flee > cower, flee .. " flee / " .. cower .. " cower")
+	end
+	do  -- 걷는 사람은 시체를 밟지 않고 돌아간다
+		local wk = Crowd.new({nodes = {{x = 0, z = 0}, {x = 60, z = 0}}, edges = {{a = 1, b = 2, width = 4}}}, {seed = 3}); wk:spawn(25)
+		for _ = 1, 60 do wk:step(1 / 30) end
+		local dead = wk.agents[1]
+		wk:damage(dead, {damage = 9999, kind = "electric", zone = "torso"})      -- 주변이 도망치지 않게 겁 반경이 작은 종류
+		for _, a in wk.agents do if a ~= dead and a.state ~= "dead" then a.state = "walk"; a.anim = "walk" end end
+		for _ = 1, 30 do wk:step(1 / 30) end
+		local closest = math.huge
+		for _ = 1, 1500 do
+			wk:step(1 / 30)
+			for _, a in wk.agents do
+				if a ~= dead and a.state == "walk" then closest = math.min(closest, math.sqrt((a.x - dead.x) ^ 2 + (a.z - dead.z) ^ 2)) end
+			end
+		end
+		check("walkers step around a corpse", closest > 0.45, closest)
+	end
+	do  -- 다시 채울 자리가 없으면 치워진 상태 그대로 둔다
+		local c3 = Crowd.new(world(), {seed = 6}); c3:spawn(3)
+		c3:damage(c3.agents[1], {damage = 999, kind = "bullet", zone = "torso"}); c3.agents[1].gone = true
+		check("failed refill leaves the agent removed", c3:refill({x = 20, z = 15}, 1000) == 0 and c3.agents[1].gone and c3.agents[1].state == "dead" and c3:countAlive() == 2)
+		check("refill works once there is room", c3:refill({x = 20, z = 15}, 5) == 1 and c3:countAlive() == 3)
+	end
+	do  -- 사람은 Roblox 기준 오른쪽으로 비켜 걷는다: +X로 걸으면 오른쪽은 +Z다
+		local wk = Crowd.new({nodes = {{x = 0, z = 0}, {x = 200, z = 0}}, edges = {{a = 1, b = 2, width = 4}}}, {seed = 1}); wk:spawn(30)
+		for _ = 1, 600 do wk:step(1 / 30) end
+		local okSide, n = 0, 0
+		for _, a in wk.agents do
+			local goingPlusX = wk.world.nodes[a.to].x > wk.world.nodes[a.from].x
+			if a.x > 20 and a.x < 180 then n += 1; if (goingPlusX and a.z > 0) or (not goingPlusX and a.z < 0) then okSide += 1 end end
+		end
+		check("pedestrians keep to their right", n > 5 and okSide >= n * 0.8, okSide .. "/" .. n)
+	end
 	-- 수위 0: 시체가 곧 치워지고 먼 곳에 다시 채워진다
 	Vitals.GORE = 0
 	local c0 = Crowd.new(world(), {seed = 9}); c0:spawn(10)

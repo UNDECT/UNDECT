@@ -12,7 +12,7 @@
 | `Vitals.luau` | NPC 체력·피격·사망: 부위 배수, 피해 종류, 맞은 방향, 사망 클립 고르기, 부상당해 기어가기, 수위(`Vitals.GORE` 0~3)별 이펙트 목록 | ✅ |
 | `Laser.luau` | 손 레이저 발사: 충전 → 빔(세기 상승, 관통, 거리 감쇠) → 과열 잠김 → 회복 | ✅ |
 | `RigAnimator.luau` | Roblox 연결: 자세를 Bone/Motor6D의 `Transform`에 적용, 동작 전환 섞기. 사람은 `RigAnimator.new(model, manifest.joints)` | ⚠️ Studio에서 확인 필요 |
-| `tests/run.luau` | 테스트 80개 | `lune run tests/run.luau` (이 폴더에서 실행) |
+| `tests/run.luau` | 테스트 98개 | `lune run tests/run.luau` (이 폴더에서 실행) |
 
 ## 클립
 위치는 `../blender/out/anim/*.json`(125개)이고 목록은 `_index.json`에 있다. `rig` 값으로 어디에 쓰는 클립인지 구분한다.
@@ -77,7 +77,7 @@ for _, e in crowd:drain() do ... end           -- death, downed, hurt, witnessed
 crowd:refill({x = px, z = pz}, 60)             -- 치워진 시체 수만큼 플레이어에게서 60 m 밖에 새로 채운다
 ```
 - 에이전트 상태가 늘었다: `stagger`(맞고 비틀거림 → 곧 `flee`), `falling` → `downed`(기어감, `wounded_crawl`) → `dead`. `ag.anim`과 `ag.animTime`(그 클립을 튼 지 몇 초)을 그대로 `RigAnimator`에 넘긴다. `dead`면 클립을 반복하지 않고 끝 프레임에 멈춘다.
-- 피해 종류(`kind`): `bullet`, `shotgun`, `blade`, `blunt`, `laser`, `fire`, `electric`, `explosive`, `fall`. 부위는 `zone`을 주거나 맞은 뼈 이름을 `part`로 준다(`Vitals.zoneOf`가 머리·목·몸통·팔·다리로 바꾼다). 배수는 머리 3.0, 목 2.2, 몸통 1.0, 팔 0.6, 다리 0.7.
+- 피해 종류(`kind`): `bullet`, `shotgun`, `blade`, `blunt`, `laser`, `fire`, `electric`, `explosive`, `vehicle`(차에 치임), `fall`. 부위는 `zone`을 주거나 맞은 뼈 이름을 `part`로 준다(`Vitals.zoneOf`가 머리·목·몸통·팔·다리로 바꾼다). 배수는 머리 3.0, 목 2.2, 몸통 1.0, 팔 0.6, 다리 0.7.
 - 사망 클립은 원인과 방향으로 고른다: 폭발 `death_blast`, 레이저·불 `death_burn`, 감전 `death_shock`, 칼 `death_slash`, 머리·목 `death_headshot`, 앉아 있으면 `death_sit`, 그 밖에는 앞에서 맞으면 `death_back`, 뒤에서 맞으면 `death_front`, 옆에서 맞으면 반대쪽으로 `death_left/right`, 가끔 `death_knees`.
 - **수위는 `Vitals.GORE` 한 곳에서 바꾼다.** 지금은 3이다.
 
@@ -88,6 +88,10 @@ crowd:refill({x = px, z = pz}, 60)             -- 치워진 시체 수만큼 플
 | 2 | 위 + `blood_spray`, `blood_drops_ground` (레이저는 `burn_glow`, `smoke_wisp`) | `blood_pool`, `corpse_stay` | 남음 |
 | 3 | 위 + `wound_mark_body`, `blood_wall_behind`, 칼은 `slash_mark_body`·`blood_arc`, 레이저는 `burn_mark_body` | `blood_pool_grow`, 머리는 `blood_mist`, 레이저는 `char_body`·`smoke_corpse` | 남음. 팔다리에 치명상을 입으면 40%는 바로 죽지 않고 기어가다 죽는다 |
 
+- 빔처럼 매 프레임 `crowd:damage`를 불러도 된다. 비틀거림은 한 번만 시작하고 `hurt` 사건도 그때 한 번만 남는다. 이미 도망치는 사람은 다시 놀라게 해도 웅크림으로 바뀌지 않는다.
+- 밀려나는 거리는 0.3초쯤에 걸쳐 나눠 옮긴다(순간 이동 없음). 폭발로 죽으면 터진 곳을 보게 돌려 놓아서 `death_blast`가 터진 반대쪽으로 날아간다. 죽는 클립에 든 뿌리 이동은 그대로 두고 에이전트 위치는 옮기지 않는다.
+- 걷는 사람은 시체를 돌아서 간다. 손에 든 물건·옷자락(`prop`, `umbrella`, `skirt`)에 맞은 것은 피해가 없다.
+- 기계(보안 로봇, 드론, 포탑)는 `Vitals.new({machine = true, deathAnim = "drone_crash"})`로 만든다. 피 대신 `spark_burst`, `dent_mark_body`, `oil_leak`, `machine_down`이 나오고, 기어가지 않으며, 죽으면 고장 동작(기본 `robot_shutdown`)을 튼다.
 - 이 모듈은 이펙트의 **이름**만 돌려준다. 파티클·데칼·소리는 게임 쪽에서 이름마다 붙인다. 신체 절단은 넣지 않았다.
 
 ## 손 레이저
@@ -104,5 +108,8 @@ local armClip, viewClip = Laser.clips(out.state)            -- 상태가 바뀔 
 
 ## 좌표
 - 클립과 `RigSolver`는 에셋 원본 좌표를 쓴다: 단위 m, 앞 = -Y, 위 = +Z.
-- `Crowd`, `Patrol`, `Traffic`은 평면 좌표 `x, z`와 `heading`(라디안, `atan2(dx, dz)`)을 쓴다. 단위는 m 기준이다. 스터드로 쓰려면 위치·속도·반경에 같은 배율을 곱한다.
+- `Crowd`, `Patrol`, `Traffic`, `Vitals`는 평면 좌표 `x, z`와 `heading`(라디안, `atan2(dx, dz)`)을 쓴다. 단위는 m 기준이다. 스터드로 쓰려면 위치·속도·반경에 같은 배율을 곱한다.
+- **`x, z`는 Roblox의 `X, Z`에 그대로 대응시킨다(뒤집지 않는다).** `heading` 0은 +Z를 본다. 모델은 `CFrame.new(pos) * CFrame.Angles(0, heading + math.pi, 0)`로 세운다(모델의 앞이 -Z이기 때문이다). 이 대응에서 사람의 오른쪽은 `(-fz, fx)`이고, 좌우 판정·우측 보행·쓰러지는 방향이 전부 이 약속을 따른다. 축을 뒤집어 넘기면 좌우가 전부 반대로 나온다.
+- `heading`이 커지는 쪽이 왼쪽으로 도는 것이다. `Traffic`의 `bank`는 +가 오른쪽으로 기우는 것이다.
+- 클립의 뿌리 이동(주저앉기, 눕기, 날아가기)은 골반 높이 0.95 m 기준이다. `RigAnimator`가 모델의 골반 높이 비율로 맞춘다(`rootScale`).
 - Roblox 축으로 바꾸는 표는 `RigAnimator.AXIS` 한 곳에만 있다. 가져온 모델의 축이 다르면 이 표만 고친다.
