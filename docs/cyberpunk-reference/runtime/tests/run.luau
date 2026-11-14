@@ -7,6 +7,8 @@ local RigSolver = require("../RigSolver")
 local Crowd = require("../Crowd")
 local Patrol = require("../Patrol")
 local Traffic = require("../Traffic")
+local Vitals = require("../Vitals")
+local Laser = require("../Laser")
 
 local CLIPS = "../blender/out/anim/"
 local passed, failed = 0, 0
@@ -27,7 +29,7 @@ for _, g in load("_golden_samples") do
 	end
 end
 check("sampler matches golden values", worst < 1e-4, worst)
-for _, n in {"get_up", "melee_slash", "fp_recoil_shotgun", "knockdown"} do clips[n] = clips[n] or load(n) end
+for _, n in {"get_up", "melee_slash", "fp_recoil_shotgun", "knockdown", "death_front", "death_headshot", "death_blast", "wounded_crawl", "aim_palm"} do clips[n] = clips[n] or load(n) end
 
 -- 2. 이벤트: 걷기 2.2초 동안 발 디딤 4번, 순서는 R L R L
 local ev = AnimSampler.events(clips.walk, 0, 2.2)
@@ -94,7 +96,7 @@ do  -- 새 클립: 넘어지면 골반이 바닥 가까이 내려가고, 일어�
 	check("melee slash emits hit event", #ev == 1 and ev[1] == "hit", #ev)
 	local n = 0
 	for _, c in load("_index").clips do n += 1 end
-	check("clip index lists every clip", n == 94, n)
+	check("clip index lists every clip", n == 125, n)
 	local r = AnimSampler.sample(clips.fp_recoil_shotgun, 1 / 30)
 	check("first-person recoil kicks back and up", r.view.y > 0.03 and r.view.pitch > 4, r.view.y)
 end
@@ -310,6 +312,135 @@ do
 	for _ = 1, 30 * 60 do ts:step(1 / 30); maxBank = math.max(maxBank, math.abs(av.bank)); maxY = math.max(maxY, av.y); minY = math.min(minY, av.y) end
 	check("flying car follows altitude", minY >= 59.9 and maxY <= 80.1 and maxY - minY > 15, minY .. ".." .. maxY)
 	check("flying car banks in turns and tilts pods at speed", maxBank > 0.1 and av.tilt > math.rad(60), maxBank .. " tilt=" .. av.tilt)
+end
+
+-- 7. 피해와 사망
+do
+	check("zones from bone names", Vitals.zoneOf("head") == "head" and Vitals.zoneOf("neck_01") == "neck" and Vitals.zoneOf("lowerarm_r") == "arm" and Vitals.zoneOf("calf_l") == "leg"
+		and Vitals.zoneOf("spine_02") == "torso" and Vitals.zoneOf("index_02_l") == "arm" and Vitals.zoneOf("shin_R") == "leg")
+	-- 맞은 방향: 사람이 +Z를 보고(facing 0) 총알이 -Z로 날아오면 앞에서 맞은 것이다
+	check("hit side", Vitals.side(0, -1, 0) == "front" and Vitals.side(0, 1, 0) == "back" and Vitals.side(1, 0, 0) == "left" and Vitals.side(-1, 0, 0) == "right")
+	local saved = Vitals.GORE
+	Vitals.GORE = 3
+	local v = Vitals.new({health = 100})
+	local r = Vitals.hit(v, {damage = 30, kind = "bullet", zone = "torso", dirX = 0, dirZ = -1, facing = 0})
+	check("body shot hurts but does not kill", r.dealt == 30 and not r.killed and v.health == 70 and r.anim == "hit_front", r.anim)
+	r = Vitals.hit(v, {damage = 30, kind = "bullet", zone = "head", dirX = 0, dirZ = -1, facing = 0})
+	check("headshot multiplies and kills", r.dealt == 90 and r.killed and v.state == "dead" and r.anim == "death_headshot", r.anim)
+	r = Vitals.hit(v, {damage = 30, kind = "bullet", zone = "torso"})
+	check("dead stays dead", not r.killed and r.dealt == 0 and v.state == "dead")
+	local function kill(kind, zone, dz, roll, opts)
+		local vv = Vitals.new(opts or {health = 10})
+		return Vitals.hit(vv, {damage = 500, kind = kind, zone = zone, dirX = 0, dirZ = dz, facing = 0, roll = roll or 0.9, roll2 = 0.9}), vv
+	end
+	check("death clip follows cause and direction", kill("bullet", "torso", -1).anim == "death_back" and kill("bullet", "torso", 1).anim == "death_front"
+		and kill("laser", "torso", -1).anim == "death_burn" and kill("explosive", "torso", -1).anim == "death_blast" and kill("electric", "torso", -1).anim == "death_shock"
+		and kill("blade", "torso", -1, 0.1).anim == "death_slash" and kill("bullet", "torso", -1, 0.05).anim == "death_knees" and kill("bullet", "torso", -1, 0.9, {health = 10, seated = true}).anim == "death_sit")
+	local has = function(list, name) for _, e in list do if e == name then return true end end return false end
+	local fx = kill("bullet", "head", -1).effects
+	check("max gore gives blood, wounds and a lasting corpse", has(fx, "blood_spray") and has(fx, "blood_pool_grow") and has(fx, "wound_mark_body") and has(fx, "blood_wall_behind") and has(fx, "corpse_stay") and has(fx, "blood_mist"))
+	fx = kill("laser", "torso", -1).effects
+	check("laser burns instead of bleeding", has(fx, "burn_glow") and has(fx, "char_body") and not has(fx, "blood_spray") and not has(fx, "blood_pool"))
+	local lr, lv = Vitals.hit(Vitals.new({health = 10}), {damage = 50, kind = "bullet", zone = "leg", dirX = 0, dirZ = -1, facing = 0, roll = 0.5, roll2 = 0.1}), nil
+	check("lethal limb hit can leave the victim crawling", lr.downed and not lr.killed and lr.anim == "fall_wounded")
+	lv = Vitals.new({health = 10}); Vitals.hit(lv, {damage = 50, kind = "bullet", zone = "leg", roll2 = 0.1})
+	local died
+	for _ = 1, 400 do died = died or Vitals.update(lv, 0.1) end
+	check("crawling victim bleeds out", lv.state == "dead" and died and died.anim == "death_crawl")
+	Vitals.GORE = 0
+	fx = kill("bullet", "head", -1).effects
+	check("gore 0 has no blood and dissolves", has(fx, "dissolve") and not has(fx, "blood_spray") and not has(fx, "corpse_stay") and #fx == 2, #fx)
+	check("gore 0 uses the gentle collapse clip", kill("bullet", "head", -1).anim == "collapse" and kill("explosive", "torso", -1).anim == "collapse")
+	lr = Vitals.hit(Vitals.new({health = 10}), {damage = 50, kind = "bullet", zone = "leg", roll2 = 0.1})
+	check("gore 0 never leaves a crawling victim", lr.killed and not lr.downed)
+	Vitals.GORE = saved
+	local av = Vitals.new({health = 100, armor = 0.5})
+	check("armor halves bullets but lasers cut through more", Vitals.hit(av, {damage = 20, kind = "bullet", zone = "torso"}).dealt == 10 and Vitals.hit(av, {damage = 20, kind = "laser", zone = "torso"}).dealt == 15)
+end
+
+-- 8. 군중 속 사망
+do
+	Vitals.GORE = 3
+	local cr = Crowd.new(world(), {seed = 5}); cr:spawn(40)
+	for _ = 1, 60 do cr:step(1 / 30, nil, nil) end
+	local victim = cr.agents[1]
+	local res = cr:damage(victim, {damage = 500, kind = "bullet", zone = "torso", dirX = 1, dirZ = 0, attacker = "player"})
+	check("crowd agent dies", res.killed and victim.state == "dead" and victim.speed == 0 and string.sub(victim.anim, 1, 6) == "death_", victim.anim)
+	local px, pz = victim.x, victim.z
+	local fled = 0
+	for _, ag in cr.agents do if ag.state == "flee" or ag.state == "cower" then fled += 1 end end
+	local ev = cr:drain()
+	local gotDeath, gotWitness = false, false
+	for _, e in ev do gotDeath = gotDeath or (e.type == "death" and e.id == 1 and e.attacker == "player"); gotWitness = gotWitness or e.type == "witnessed" end
+	check("death is recorded and bystanders react", gotDeath and gotWitness and fled > 0 and #cr:drain() == 0, fled)
+	for _ = 1, 300 do cr:step(1 / 30, nil, nil) end
+	check("corpse stays where it fell", victim.x == px and victim.z == pz and victim.state == "dead" and not victim.gone and cr:countAlive() == 39)
+	local hurt = cr.agents[2]
+	local hp = hurt.vitals.health
+	res = cr:damage(hurt, {damage = 5, kind = "bullet", zone = "arm", dirX = 0, dirZ = 1})
+	check("wounded agent staggers then flees", not res.killed and hurt.state == "stagger" and hurt.vitals.health < hp)
+	for _ = 1, 40 do cr:step(1 / 30, nil, nil) end
+	check("staggered agent runs away", hurt.state == "flee" and hurt.anim == "run", hurt.state)
+	local blast = cr:explode(cr.agents[3].x, cr.agents[3].z, 6, 400, "player")
+	check("explosion kills at the center", #blast >= 1 and cr.agents[3].state == "dead" and cr.agents[3].anim == "death_blast")
+	-- 수위 0: 시체가 곧 치워지고 먼 곳에 다시 채워진다
+	Vitals.GORE = 0
+	local c0 = Crowd.new(world(), {seed = 9}); c0:spawn(10)
+	c0:damage(c0.agents[1], {damage = 500, kind = "bullet", zone = "torso", dirX = 1, dirZ = 0})
+	for _ = 1, 90 do c0:step(1 / 30, nil, nil) end
+	check("gore 0 removes the body", c0.agents[1].gone == true)
+	local filled = c0:refill({x = c0.agents[1].x, z = c0.agents[1].z}, 5)
+	check("refill brings the population back", filled == 1 and c0:countAlive() == 10 and c0.agents[1].state == "walk" and c0.agents[1].vitals.state == "alive")
+	Vitals.GORE = 3
+end
+
+-- 9. 손 레이저
+do
+	local lz = Laser.new()
+	local names = {}
+	local function run(sec, held, hits)
+		local total, last = 0, nil
+		for _ = 1, math.floor(sec * 60 + 0.5) do
+			last = lz:update(1 / 60, held, hits)
+			for _, e in last.events do table.insert(names, e) end
+			for _, d in last.damage do total += d.amount end
+		end
+		return total, last
+	end
+	local hits = {{target = "a", distance = 10, zone = "torso"}, {target = "b", distance = 12, zone = "torso"}, {target = "c", distance = 14, zone = "torso"}, {target = "wall", distance = 20, solid = true}}
+	local dmg, last = run(0.3, true, hits)
+	check("laser charges before the beam", dmg == 0 and last.state == "charging" and not last.beam)
+	dmg, last = run(1.0, true, hits)
+	check("laser beam damages and pierces one target", last.beam and dmg > 150 and #last.damage == 2 and last.damage[2].amount == last.damage[1].amount * 0.5 and last.length == 12, dmg)
+	check("beam ramps to full power", last.power == 1)
+	local _, l2 = run(0.05, true, {{target = "wall", distance = 7, solid = true}, {target = "a", distance = 10}})
+	check("walls stop the beam", #l2.damage == 0 and l2.length == 7 and l2.endSolid)
+	run(2.5, true, hits)
+	check("laser overheats after sustained fire", lz.state == "overheated")
+	dmg = run(1.0, true, hits)
+	check("overheated laser cannot fire", dmg == 0 and lz.state == "overheated")
+	run(1.5, false, hits)
+	check("laser recovers after the lock", lz.state == "idle" and lz.heat == 0)
+	local seen = table.concat(names, ",")
+	check("laser events in order", string.find(seen, "charge,beam_on", 1, true) ~= nil and string.find(seen, "beam_off,overheat", 1, true) ~= nil and string.find(seen, "ready", 1, true) ~= nil, seen)
+	local far = Laser.new()
+	for _ = 1, 60 do far:update(1 / 60, true, {}) end
+	local near = far:update(1 / 60, true, {{target = "n", distance = 5}}).damage[1].amount
+	local distant = far:update(1 / 60, true, {{target = "f", distance = 59}}).damage[1].amount
+	check("damage falls off with distance", distant < near * 0.6 and #far:update(1 / 60, true, {{target = "x", distance = 80}}).damage == 0)
+	local a, b = Laser.clips("firing")
+	check("laser clip names exist", a == "laser_fire" and b == "fp_laser_fire" and load(a).loop and load(b).rig == "fp")
+	-- 레이저로 군중을 쏘면 타 죽는다
+	local cr = Crowd.new(world(), {seed = 3}); cr:spawn(5)
+	local gun = Laser.new()
+	local ag = cr.agents[1]
+	local t = 0
+	while ag.state ~= "dead" and t < 600 do
+		local o = gun:update(1 / 60, true, {{target = ag, distance = 8, zone = "torso"}})
+		for _, d in o.damage do cr:damage(d.target, {damage = d.amount, kind = d.kind, zone = d.zone, dirX = 0, dirZ = 1}) end
+		cr:step(1 / 60, nil, nil); t += 1
+	end
+	check("laser kills a bystander with the burn death", ag.state == "dead" and ag.anim == "death_burn" and t < 120, t)
 end
 
 print(string.format("%d passed, %d failed", passed, failed))

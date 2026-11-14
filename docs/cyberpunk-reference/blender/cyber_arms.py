@@ -1,4 +1,4 @@
-"""사이버웨어 팔 3종 (자체 디자인): 파워암, 나노와이어, 런처. 블레이드 팔은 samples/cyber-arm에 있다.
+"""사이버웨어 팔 4종 (자체 디자인): 파워암, 나노와이어, 런처, 손 레이저. 블레이드 팔은 samples/cyber-arm에 있다.
 실행: python cyber_arms.py <출력폴더> [render] [이름...]
 좌표는 블레이드 팔과 같다: X = 팔꿈치 -> 손끝, Y = 엄지 쪽, Z = 손등 쪽. 단위 m. 팔꿈치가 원점, 손목이 x = 0.27.
 내보내는 모델은 접힌(기본) 상태다. 펼친 상태는 사진으로 보여 주고, 움직임은 manifest의 pivots와 deploy에 적는다.
@@ -23,10 +23,12 @@ def materials():
     kit.mat_paint("a_black", (0.03, 0.032, 0.036), (0.5, 0.5, 0.5), rough=(0.30, 0.50), wear=1.4, scale=1.6)
     kit.mat_paint("a_olive", (0.11, 0.14, 0.085), rough=(0.42, 0.60), wear=1.6, scale=1.6)
     kit.mat_simple("a_wire", (0.02, 0.0, 0.01), 0.0, 0.3, (1.0, 0.10, 0.55), 9.0)
+    kit.mat_metal("a_copper", (0.62, 0.30, 0.14), 0.20, 0.42)
+    kit.mat_simple("beam_core", (0, 0, 0), 0.0, 0.3, (0.90, 1.0, 1.0), 40.0); kit.mat_simple("beam_sheath", (0, 0, 0), 0.0, 0.3, (0.10, 0.75, 1.0), 6.0, alpha=0.35)
 
-def hand(scale, skin, joint, glow, curls=(8, 10, 8), thumb=(20, 20), tips=False):
-    """손: 손바닥 + 손가락 4개(3마디) + 엄지(2마디). curls = 마디별 굽힘 각."""
-    h = "hand"; k = scale
+def hand(scale, skin, joint, glow, curls=(8, 10, 8), thumb=(20, 20), tips=False, bend=0.0, spread=0.0):
+    """손: 손바닥 + 손가락 4개(3마디) + 엄지(2마디). curls = 마디별 굽힘 각. bend = 손목을 손등 쪽으로 젖히는 각, spread = 손가락 벌림(사진용)."""
+    h = "hand"; k = scale; before = set(kit.COL.objects)
     finish("wrist_ball", sphere(0.026 * k, 1.0, 1.15, 0.9), "gunmetal", 0, 1, T(WRIST, 0, 0), h)
     finish("wrist_ring", torus(0.030 * k, 0.006 * k, 28, 8, "x"), joint, 0, 1, T(WRIST - 0.004, 0, 0) @ S(1, 1.12, 0.92), h)
     finish("palm", box(0.086 * k, 0.086 * k, 0.026 * k), skin, 0.006 * k, 3, T(WRIST + 0.060 * k, 0, 0), h)
@@ -36,7 +38,7 @@ def hand(scale, skin, joint, glow, curls=(8, 10, 8), thumb=(20, 20), tips=False)
     pivot("wrist", (WRIST, 0, 0), (0, 1, 0), "forearm", h, (-70, 70))
     lens = ((0.040, 0.026, 0.020), (0.044, 0.029, 0.021), (0.041, 0.027, 0.020), (0.033, 0.022, 0.018))
     for i, y in enumerate((0.033, 0.011, -0.011, -0.033)):
-        Mx = T(WRIST + 0.104 * k, y * k, 0.001); par = h
+        Mx = T(WRIST + 0.104 * k, y * k, 0.001) @ RZ(spread * (1.5 - i)); par = h
         for j, L in enumerate(lens[i]):
             L *= k; Mx = Mx @ RY(curls[j]); p = f"finger{i + 1}_{'abc'[j]}"; w = (0.0185 - j * 0.0015) * k
             finish("knuckle", cyl(w * 0.56, w * 0.56, w * 1.04, 14, "y"), joint, 0.001, 1, Mx, p)
@@ -50,6 +52,10 @@ def hand(scale, skin, joint, glow, curls=(8, 10, 8), thumb=(20, 20), tips=False)
         finish("knuckle", cyl(w * 0.56, w * 0.56, w * 1.04, 14, "y"), joint, 0.001, 1, Mx, p)
         finish("phalanx", box(L - 0.006 * k, w, w * 0.92), skin, 0.003 * k, 2, Mx @ T(L / 2 + 0.002 * k, 0, 0), p)
         pivot(p, tuple(Mx.translation), tuple((Mx.to_3x3() @ Vector((0, 1, 0)))), par, p, (0, 80)); par = p; Mx = Mx @ T(L, 0, 0)
+    if bend:
+        Mw = T(WRIST, 0, 0) @ RY(-bend) @ T(-WRIST, 0, 0)
+        for o in set(kit.COL.objects) - before:
+            if o.type == "MESH": o.matrix_world = Mw @ o.matrix_world
 
 def elbow(r, mat):
     f = "forearm"
@@ -156,14 +162,65 @@ def launcher(deployed=False):
     hand(1.05, "a_olive", "gunmetal", "glow_red", (58, 70, 50) if deployed else (8, 10, 8), (36, 30) if deployed else (18, 18))
     return {"deploy": [{"part": "hatch_L / hatch_R", "open_deg": 72, "time": 0.15}, {"part": "tube", "lift_z": 0.030, "pitch_deg": -6, "time": 0.15}, {"part": "glow", "emissive": "0.3 -> 1", "time": 0.1}]}
 
-ARMS = {"power": power, "nanowire": nanowire, "launcher": launcher}
+# ------------------------------------------------------------------ 손 레이저
+def laser(deployed=False):
+    """손 레이저: 아래팔의 축전지에서 손바닥 발사구로 빔을 쏜다. 펼치면 손목을 젖혀 손바닥이 앞을 보고, 조리개가 열리고, 과열되면 방열판이 열린다."""
+    f = "forearm"; prof = lambda x: (0.044 - 0.040 * x, 0.040 - 0.034 * x); g = "glow_cyan"
+    elbow(0.035, "a_black")
+    finish("core", tube(prof, 0.010, WRIST - 0.008, -0.009), "fiber", 0, 1, part=f)
+    finish("ventral", shell(prof, 0.024, 0.240, 204, 336, -0.001, 0.008), "a_black", 0.003, 2, part=f)
+    for s_, a in ((1, 0), (-1, 180)):
+        finish("side_plate", shell(prof, 0.024, 0.246, a - 26, a + 26, 0.002, 0.007, 12, 6), "gunmetal", 0.002, 2, part=f)
+        finish("side_line", shell(prof, 0.050, 0.226, a - 2, a + 2, 0.0095, 0.001, 12, 2), g, 0, 1, part="cell_glow")
+    # 축전지 4개 (손등 쪽)
+    finish("cell_bed", shell(prof, 0.030, 0.236, 40, 140, -0.004, 0.006, 10, 8), "a_black", 0.002, 2, part=f)
+    for k in range(4):
+        x = 0.062 + k * 0.045; rz = prof(x)[1]
+        finish("cell", cyl(0.0150, 0.0150, 0.036, 20, "x"), "a_copper", 0.002, 2, T(x, 0, rz + 0.012), f)
+        finish("cell_cap", cyl(0.0165, 0.0165, 0.006, 20, "x"), "gunmetal", 0.001, 1, T(x - 0.020, 0, rz + 0.012), f)
+        finish("cell_window", cyl(0.0154, 0.0154, 0.012, 20, "x"), g, 0, 1, T(x + 0.004, 0, rz + 0.012), "cell_glow")
+        for s_ in (-1, 1): finish("cell_clamp", box(0.010, 0.006, 0.026), "titan", 0.001, 1, T(x, 0.018 * s_, rz + 0.008), f)
+    # 방열판 (양옆 위): 과열되면 바깥 모서리를 축으로 열린다
+    ang = 55 if deployed else 0
+    for s_, a0, a1, name in ((1, 22, 58, "vent_L"), (-1, 122, 158, "vent_R")):
+        edge = a0 if s_ > 0 else a1; Mh, p = about_edge(prof, edge, 0.004, -ang * s_)
+        finish("vent", shell(prof, 0.050, 0.220, a0 + 0.6, a1 - 0.6, 0.003, 0.006, 10, 6), "gunmetal", 0.002, 2, Mh, name)
+        for k in range(8): finish("vent_fin", shell(prof, 0.058 + k * 0.020, 0.066 + k * 0.020, a0 + 4, a1 - 4, 0.0092, 0.003, 2, 6), "a_copper", 0, 1, Mh, name)
+        finish("vent_inner", shell(prof, 0.054, 0.216, a0 + 3, a1 - 3, -0.003, 0.002, 8, 4), "glow_amber" if deployed else "black", 0, 1, part="heat_glow")
+        pivot(name, tuple(p + Vector((0.135, 0, 0))), (1, 0, 0), f, name, (0, 55))
+    # 도선: 축전지 -> 손목
+    for s_ in (-1, 1): cable("conduit", [(0.215, 0.012 * s_, prof(0.215)[1] + 0.014), (0.246, 0.016 * s_, 0.030), (WRIST + 0.010, 0.014 * s_, 0.022)], 0.0040, "a_copper", f)
+    finish("wrist_coil", torus(0.031, 0.0045, 28, 8, "x"), "a_copper", 0, 1, T(WRIST - 0.016, 0, 0) @ S(1, 1.12, 0.92), f)
+    k = 1.04; before = set(kit.COL.objects)
+    hand(k, "a_black", "gunmetal", g, (4, 6, 4) if deployed else (8, 10, 8), (8, 6) if deployed else (18, 18), tips=True, bend=78 if deployed else 0, spread=7 if deployed else 0)
+    # 손바닥 발사구
+    e = Vector((WRIST + 0.060 * k, 0, -0.0165 * k)); Mw = T(WRIST, 0, 0) @ RY(-78) @ T(-WRIST, 0, 0) if deployed else Matrix.Identity(4)
+    finish("emitter_ring", cyl(0.0250, 0.0230, 0.006, 28, "z"), "a_copper", 0.001, 1, Mw @ T(e.x, e.y, e.z - 0.001), "hand")
+    finish("emitter_lens", cyl(0.0170, 0.0170, 0.004, 24, "z"), "glow_white" if deployed else "glass", 0, 1, Mw @ T(e.x, e.y, e.z - 0.003), "emitter")
+    for q in range(6):   # 조리개 날 6장
+        finish("iris", prism([(0.006 if deployed else 0.000, -0.0045), (0.019, -0.0095), (0.019, 0.0095), (0.006 if deployed else 0.000, 0.0045)], 0.0016, "y"), "gunmetal", 0, 1,
+               Mw @ T(e.x, e.y, e.z - 0.0052) @ RZ(q * 60) @ RX(90), "iris")
+    for q in range(3): finish("focus_pin", cyl(0.0022, 0.0022, 0.010, 8, "z"), "chrome", 0, 1, Mw @ T(e.x, e.y, e.z - 0.006) @ RZ(q * 120 + 30) @ T(0.0225, 0, 0), "hand")
+    pivot("beam_out", tuple(Mw @ Vector((e.x, e.y, e.z - 0.008))), tuple((Mw.to_3x3() @ Vector((0, 0, -1)))), "hand", "fx")
+    if deployed:   # 빔(사진용). 게임에서는 beam_out부터 Beam으로 그린다
+        o = Mw @ Vector((e.x, e.y, e.z - 0.008)); d = (Mw.to_3x3() @ Vector((0, 0, -1))).normalized(); L = 1.6; Mb = T(*(o + d * (L / 2))) @ frame(d, (0, 0, 1))
+        finish("beam_core", cyl(0.0028, 0.0028, L, 12, "x"), "beam_core", 0, 1, Mb, "beam"); finish("beam_sheath", cyl(0.0060, 0.0060, L, 16, "x"), "beam_sheath", 0, 1, Mb, "beam")
+        finish("beam_flare", sphere(0.011), "beam_core", 0, 1, T(*(o + d * 0.004)), "beam")
+        for q in range(3): finish("beam_ring", torus(0.020 + 0.008 * q, 0.0012, 24, 4, "x"), "beam_sheath", 0, 1, T(*(o + d * (0.03 + 0.05 * q))) @ frame(d, (0, 0, 1)), "beam")
+        kit.area("beam_light", tuple(o + d * 0.10 + Vector((0, 0, 0.10))), tuple(o), 0.10, 4, (0.3, 0.9, 1.0))
+    return {"deploy": [{"part": "hand", "wrist_back_deg": 78, "time": 0.12}, {"part": "finger*", "do": "편다, 조금 벌린다", "time": 0.12}, {"part": "iris", "open": "0 -> 1", "time": 0.10},
+                       {"part": "cell_glow", "emissive": "0.3 -> 1", "time": 0.35}],
+            "overheat": [{"part": "vent_L / vent_R", "open_deg": 55, "time": 0.2}, {"part": "heat_glow", "emissive": "0 -> 1 -> 0", "time": 2.0}],
+            "beam": "빔은 모델에 없다. 게임에서 beam_out 붙임점부터 Beam 2겹(흰 심 지름 7 mm, 청록 겉 17 mm)으로 그린다. 맞은 곳에 불꽃과 그을음을 낸다."}
+
+ARMS = {"power": power, "nanowire": nanowire, "launcher": launcher, "laser": laser}
 
 def build(name, deployed=False):
     kit.reset(); materials(); return ARMS[name](deployed)
 
-def shoot(path):
+def shoot(path, wide=False):
     kit.studio((0.22, 0, 0), 0.34, floor_z=-0.11, top=0.7, key=0.9)
-    kit.shot(path, (0.90, -0.74, 0.46), (0.250, -0.03, -0.01), 70, res=tuple(int(v) for v in os.environ.get("ARM_RES", "1400,900").split(",")))
+    kit.shot(path, (1.12, -0.98, 0.56) if wide else (0.90, -0.74, 0.46), (0.300, -0.03, 0.035) if wide else (0.250, -0.03, -0.01), 70, res=tuple(int(v) for v in os.environ.get("ARM_RES", "1400,900").split(",")))
     for o in [o for o in kit.COL.objects if o.type == "LIGHT" or o.name == "stage_floor"]: bpy.data.objects.remove(o)
 
 if __name__ == "__main__":
@@ -171,7 +228,7 @@ if __name__ == "__main__":
     for name in ARMS:
         if ONLY and name not in ONLY: continue
         if RENDER:
-            build(name, True); shoot(os.path.join(OUT, f"arm_{name}_deployed.png"))
+            build(name, True); shoot(os.path.join(OUT, f"arm_{name}_deployed.png"), name == "laser")
         extra = build(name, False)
         if RENDER: shoot(os.path.join(OUT, f"arm_{name}.png"))
         kit.export(os.path.join(OUT, name), "arm_" + name, extra)

@@ -16,10 +16,10 @@ python human.py out/human render       # 맨얼굴 사람 10명 + 1인칭 팔 2�
 python machines.py out/machines render # 드론, 포탑, 감시 카메라
 python clinic.py out/clinic modules    # 시술 의자, 천장 로봇 팔, 도구 수레
 python clinic.py out/clinic scene      # 시술소 장면 (시술의 포함)
-python cyber_arms.py out/cyber_arms render   # 사이버웨어 팔 3종 (접힌 상태 + 펼친 상태)
+python cyber_arms.py out/cyber_arms render   # 사이버웨어 팔 4종 (접힌 상태 + 펼친 상태)
 python street.py out/street scene_day  # 낮 거리
 python districts.py out/street all     # 구역 3종: slum, corp, rich
-python anim.py out/anim clips          # 애니메이션 클립 94개
+python anim.py out/anim clips          # 애니메이션 클립 125개
 ```
 - 품질: 환경 변수 `KIT_SAMPLES`(기본 80).
 - 결과: 폴더마다 `.glb`, `.blend`, `.manifest.json`, 렌더 사진.
@@ -37,7 +37,7 @@ python anim.py out/anim clips          # 애니메이션 클립 94개
 | `human.py` | 맨얼굴 사람 10명(거리 사람 5, 노동자, 상인, 회사원, 임원, 시술의)과 1인칭 팔 2종. 뼈대 53개, 사이버웨어 장식, 애니메이션 관절 대응표(손가락 포함) |
 | `machines.py` | 드론, 포탑, 감시 카메라 |
 | `clinic.py` | 시술 의자, 천장 로봇 팔 3개와 수술등, 도구 수레, 시술소 장면 |
-| `cyber_arms.py` | 사이버웨어 팔 3종: 파워암, 나노와이어, 런처 (블레이드 팔은 `../samples/cyber-arm`) |
+| `cyber_arms.py` | 사이버웨어 팔 4종: 파워암, 나노와이어, 런처, 손 레이저 (블레이드 팔은 `../samples/cyber-arm`) |
 | `districts.py` | 구역별 건물 양식 3종과 구역 그림: 빈민, 기업, 부유층 |
 | `anim.py` | 애니메이션 클립 생성과 미리보기 |
 | `out/` | 만들어진 결과물 |

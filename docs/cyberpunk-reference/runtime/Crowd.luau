@@ -7,6 +7,8 @@
 --   obstacles = {{x=, z=, r=}, ...},                       -- 노점, 가로등, 자판기 등
 --   activities = {{node=3, kind="talk"|"phone"|"look_around"|"idle", duration={4, 10}, chance=0.3}, ...},
 -- }
+local Vitals = require("./Vitals")
+
 local Crowd = {}
 Crowd.__index = Crowd
 
@@ -33,6 +35,8 @@ function Crowd.new(world, opts)
 	self.lodNear = opts.lodNear or 40
 	self.lodFar = opts.lodFar or 110
 	self.frame = 0
+	self.events = {}                              -- 사망·목격 등. Crowd:drain()으로 꺼낸다
+	self.corpseTime = opts.corpseTime             -- 시체가 남는 시간(초). nil이면 수위에 따라: 0 -> 1.5, 1 -> 12, 2 이상 -> 계속
 	self.adj = {}
 	for i = 1, #world.nodes do self.adj[i] = {} end
 	for ei, e in world.edges do
@@ -62,24 +66,30 @@ local function pickLane(self, edge)
 	return (0.15 + 0.85 * self.rand()) * half
 end
 
-function Crowd:spawn(count: number)
+-- 에이전트를 무작위 인도 위에 새로 놓는다(처음 만들 때와 다시 채울 때 같이 쓴다).
+local function place(self, ag)
 	local w = self.world
+	local ei = 1 + math.floor(self.rand() * #w.edges) % #w.edges
+	local e = w.edges[ei]
+	local from, to = e.a, e.b
+	if self.rand() < 0.5 then from, to = to, from end
+	ag.from, ag.to, ag.edge, ag.lane = from, to, ei, pickLane(self, e)
+	ag.state, ag.anim, ag.phase, ag.timer = "walk", "walk", self.rand(), 0
+	ag.pref, ag.speed = 1.05 + 0.5 * self.rand(), 0
+	ag.pending, ag.tx, ag.tz, ag.gone, ag.animTime = nil, nil, nil, false, 0
+	ag.vitals = Vitals.new({health = 60 + 40 * self.rand()})
+	local u = self.rand()
+	local a, b = w.nodes[from], w.nodes[to]
+	local tx, tz = target(self, ag)
+	local sx, sz = a.x + (tx - b.x), a.z + (tz - b.z)
+	ag.x, ag.z = sx + (tx - sx) * u, sz + (tz - sz) * u
+	ag.heading = math.atan2(tx - sx, tz - sz)
+end
+
+function Crowd:spawn(count: number)
 	for _ = 1, count do
-		local ei = 1 + math.floor(self.rand() * #w.edges) % #w.edges
-		local e = w.edges[ei]
-		local from, to = e.a, e.b
-		if self.rand() < 0.5 then from, to = to, from end
-		local ag = {
-			id = #self.agents + 1, from = from, to = to, edge = ei, lane = pickLane(self, e),
-			state = "walk", anim = "walk", phase = self.rand(), timer = 0,
-			pref = 1.05 + 0.5 * self.rand(), speed = 0, heading = 0, x = 0, z = 0,
-		}
-		local u = self.rand()
-		local a, b = w.nodes[from], w.nodes[to]
-		local tx, tz = target(self, ag)
-		local sx, sz = a.x + (tx - b.x), a.z + (tz - b.z)
-		ag.x, ag.z = sx + (tx - sx) * u, sz + (tz - sz) * u
-		ag.heading = math.atan2(tx - sx, tz - sz)
+		local ag = {id = #self.agents + 1, x = 0, z = 0, heading = 0}
+		place(self, ag)
 		table.insert(self.agents, ag)
 	end
 	return self.agents
@@ -172,10 +182,12 @@ function Crowd:step(dt: number, signals, focus)
 	self.frame += 1
 	local grid = {}
 	for _, ag in self.agents do
-		local key = math.floor(ag.x / CELL) * 73856093 + math.floor(ag.z / CELL) * 19349663
-		local cell = grid[key]
-		if not cell then cell = {}; grid[key] = cell end
-		table.insert(cell, ag)
+		if ag.state ~= "dead" then                       -- 시체는 길을 막지 않는다
+			local key = math.floor(ag.x / CELL) * 73856093 + math.floor(ag.z / CELL) * 19349663
+			local cell = grid[key]
+			if not cell then cell = {}; grid[key] = cell end
+			table.insert(cell, ag)
+		end
 	end
 	for _, ag in self.agents do
 		local skip = 1
@@ -184,9 +196,34 @@ function Crowd:step(dt: number, signals, focus)
 			ag.lod = if d < self.lodNear then 0 elseif d < self.lodFar then 1 else 2
 			skip = if ag.lod == 0 then 1 elseif ag.lod == 1 then 2 else 4
 		end
+		if ag.state == "dead" or ag.state == "downed" or ag.state == "stagger" or ag.state == "falling" then skip = 1 end
 		if (self.frame + ag.id) % skip == 0 then
 			local h = dt * skip
-			if ag.state == "walk" or ag.state == "flee" then
+			ag.animTime = (ag.animTime or 0) + h
+			if ag.state ~= "dead" and ag.vitals then
+				local r = Vitals.update(ag.vitals, h)
+				if r and r.killed then
+					ag.state = "dead"; ag.anim = r.anim; ag.animTime = 0; ag.speed = 0; ag.timer = self:corpseSeconds()
+					table.insert(self.events, {type = "death", id = ag.id, x = ag.x, z = ag.z, cause = ag.vitals.cause, anim = r.anim, effects = r.effects})
+				end
+			end
+			if ag.state == "dead" then
+				ag.timer -= h
+				if ag.timer <= 0 and not ag.gone then
+					ag.gone = true; table.insert(self.events, {type = "corpse_gone", id = ag.id, x = ag.x, z = ag.z})
+				end
+			elseif ag.state == "stagger" then
+				ag.timer -= h
+				if ag.timer <= 0 then                         -- 맞고 나면 도망친다
+					ag.state = "flee"; ag.anim = "run"; ag.timer = 8 + 4 * self.rand(); ag.fleeSpeed = 3.4 + 1.0 * self.rand()
+				end
+			elseif ag.state == "falling" then
+				ag.timer -= h
+				if ag.timer <= 0 then ag.state = "downed"; ag.anim = "wounded_crawl"; ag.animTime = 0 end
+			elseif ag.state == "downed" then                  -- 위협 반대쪽으로 기어간다
+				local sp = 0.35
+				ag.x += math.sin(ag.heading) * sp * h; ag.z += math.cos(ag.heading) * sp * h; ag.speed = sp
+			elseif ag.state == "walk" or ag.state == "flee" then
 				local fleeing = ag.state == "flee"
 				local dist, step = steer(self, ag, grid, h, if fleeing then ag.fleeSpeed else ag.pref, if fleeing then 8 else 4)
 				ag.phase = (ag.phase + step / (if fleeing then STRIDE.flee else STRIDE.walk)) % 1
@@ -229,7 +266,7 @@ function Crowd:panic(x: number, z: number, radius: number)
 	local n = 0
 	for _, ag in self.agents do
 		local d = math.sqrt((ag.x - x) ^ 2 + (ag.z - z) ^ 2)
-		if d <= radius and ag.state ~= "cower" then
+		if d <= radius and ag.state ~= "cower" and ag.state ~= "dead" and ag.state ~= "downed" and ag.state ~= "falling" and ag.state ~= "stagger" then
 			n += 1
 			if self.rand() < 0.3 then
 				ag.state = "cower"; ag.anim = "cower_loop"; ag.speed = 0; ag.timer = 4 + 4 * self.rand()
@@ -242,6 +279,82 @@ function Crowd:panic(x: number, z: number, radius: number)
 			end
 		end
 	end
+	return n
+end
+
+function Crowd:corpseSeconds(): number
+	if self.corpseTime then return self.corpseTime end
+	return if Vitals.GORE <= 0 then 1.5 elseif Vitals.GORE == 1 then 12 else math.huge
+end
+
+-- 군중 한 사람이 맞았다. hit = {damage, kind, zone | part, dirX, dirZ(공격이 날아가는 방향), attacker}
+-- 피해를 계산하고, 상태와 동작을 바꾸고, 주변 사람을 놀라게 하고, 사건을 기록한다. Vitals.hit의 결과를 돌려준다.
+function Crowd:damage(ag, hit)
+	if ag.state == "dead" and ag.gone then return nil end
+	local wasAlive = ag.state ~= "dead"
+	hit.facing = ag.heading; hit.roll = self.rand(); hit.roll2 = self.rand()
+	local res = Vitals.hit(ag.vitals, hit)
+	local dx, dz = hit.dirX or 0, hit.dirZ or 0
+	local len = math.sqrt(dx * dx + dz * dz)
+	if len > 1e-6 and res.knock > 0 then ag.x += dx / len * res.knock; ag.z += dz / len * res.knock end
+	if res.killed then
+		ag.state = "dead"; ag.anim = res.anim; ag.animTime = 0; ag.speed = 0; ag.timer = self:corpseSeconds(); ag.pending = nil
+		table.insert(self.events, {type = "death", id = ag.id, x = ag.x, z = ag.z, cause = hit.kind or "bullet", anim = res.anim, attacker = hit.attacker, effects = res.effects})
+	elseif res.downed then
+		ag.state = "falling"; ag.anim = "fall_wounded"; ag.animTime = 0; ag.speed = 0; ag.timer = 1.0; ag.pending = nil
+		if len > 1e-6 then ag.heading = math.atan2(dx, dz) end            -- 공격이 날아온 반대쪽으로 기어간다
+		table.insert(self.events, {type = "downed", id = ag.id, x = ag.x, z = ag.z, attacker = hit.attacker, effects = res.effects})
+	elseif wasAlive and res.anim and ag.state ~= "downed" and ag.state ~= "falling" then
+		ag.state = "stagger"; ag.anim = res.anim; ag.animTime = 0; ag.speed = 0; ag.timer = if res.anim == "stagger" then 0.9 else 0.5; ag.pending = nil
+		ag.tx, ag.tz = ag.x - dx, ag.z - dz
+		table.insert(self.events, {type = "hurt", id = ag.id, x = ag.x, z = ag.z, attacker = hit.attacker, effects = res.effects})
+	end
+	if wasAlive and res.fear > 0 then
+		local n = self:panic(ag.x, ag.z, res.fear)
+		if res.killed and n > 0 then table.insert(self.events, {type = "witnessed", id = ag.id, x = ag.x, z = ag.z, witnesses = n, attacker = hit.attacker}) end
+	end
+	return res
+end
+
+-- 폭발: 반경 안의 모두에게 거리에 따라 줄어드는 피해를 준다.
+function Crowd:explode(x: number, z: number, radius: number, damage: number, attacker)
+	local out = {}
+	for _, ag in self.agents do
+		local dx, dz = ag.x - x, ag.z - z
+		local d = math.sqrt(dx * dx + dz * dz)
+		if d <= radius and not ag.gone then
+			local res = self:damage(ag, {damage = damage * (1 - 0.7 * d / radius), kind = "explosive", zone = "torso", dirX = dx, dirZ = dz, attacker = attacker})
+			if res then table.insert(out, {agent = ag, result = res}) end
+		end
+	end
+	return out
+end
+
+-- 쌓인 사건을 꺼낸다(수배·경찰 출동, 소리, 이펙트에 쓴다).
+function Crowd:drain()
+	local ev = self.events
+	self.events = {}
+	return ev
+end
+
+-- 죽어서 치워진 사람 자리를 채운다. 플레이어(focus)에게서 minDist보다 먼 곳에만 새로 놓는다. 채운 수를 돌려준다.
+function Crowd:refill(focus, minDist: number)
+	local n = 0
+	for _, ag in self.agents do
+		if ag.gone then
+			for _ = 1, 8 do
+				place(self, ag)
+				if not focus or math.sqrt((ag.x - focus.x) ^ 2 + (ag.z - focus.z) ^ 2) >= minDist then n += 1; break end
+				ag.gone = true
+			end
+		end
+	end
+	return n
+end
+
+function Crowd:countAlive(): number
+	local n = 0
+	for _, ag in self.agents do if ag.state ~= "dead" then n += 1 end end
 	return n
 end
 

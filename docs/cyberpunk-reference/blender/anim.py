@@ -224,6 +224,113 @@ def fp_sprint(u):
 def fp_land(u):
     k = exp(-7 * u) * sin(pi * min(1.0, u * 5)); return {("view", "z"): -0.045 * k, ("view", "pitch"): -4 * k}
 
+# ------------------------------------------------------------------ 죽는 동작, 맞는 동작 (사람)
+# 죽는 클립은 반복하지 않는다. 끝 자세가 시체 자세이므로 마지막 프레임에서 멈춘 채로 둔다.
+def plus(pose, extra):
+    out = dict(pose)
+    for k, v in extra.items(): out[k] = out.get(k, 0.0) + v
+    return out
+
+LIE_OPEN = {("root", "pitch"): -88, ("root", "z"): -0.81, ("root", "y"): 0.46, ("hip_L", "flex"): 4, ("hip_R", "flex"): 10, ("knee_L", "bend"): 6, ("knee_R", "bend"): 30, ("hip_L", "abduct"): 0,
+            ("shoulder_L", "abduct"): 62, ("shoulder_R", "abduct"): 28, ("elbow_L", "bend"): 18, ("elbow_R", "bend"): 70, ("neck", "yaw"): 28, ("neck", "pitch"): -8, ("waist", "roll"): 4}
+LIE_TIGHT = {("root", "pitch"): -88, ("root", "z"): -0.81, ("root", "y"): 0.30, ("hip_L", "flex"): 16, ("hip_R", "flex"): 2, ("knee_L", "bend"): 44, ("knee_R", "bend"): 8,
+             ("shoulder_L", "abduct"): 18, ("shoulder_R", "abduct"): 22, ("elbow_L", "bend"): 40, ("elbow_R", "bend"): 24, ("neck", "yaw"): -34, ("neck", "pitch"): -4}
+PRONE = {("root", "pitch"): 86, ("root", "z"): -0.80, ("root", "y"): -0.46, ("hip_L", "flex"): -4, ("hip_R", "flex"): -8, ("knee_L", "bend"): 10, ("knee_R", "bend"): 26,
+         ("shoulder_L", "flex"): 150, ("shoulder_R", "flex"): 60, ("shoulder_L", "abduct"): 34, ("shoulder_R", "abduct"): 40, ("elbow_L", "bend"): 62, ("elbow_R", "bend"): 96, ("neck", "yaw"): 52, ("neck", "pitch"): -10}
+def side(s):
+    """옆으로 누운 자세. s = +1 왼쪽으로, -1 오른쪽으로 쓰러진다."""
+    return {("root", "roll"): 84 * s, ("root", "z"): -0.76, ("root", "x"): -0.40 * s, ("root", "yaw"): 30 * s, ("hip_L", "flex"): 36, ("hip_R", "flex"): 22, ("knee_L", "bend"): 58, ("knee_R", "bend"): 36,
+            ("shoulder_L", "flex"): 46, ("shoulder_R", "flex"): 30, ("elbow_L", "bend"): 64, ("elbow_R", "bend"): 50, ("waist", "pitch"): 16, ("neck", "pitch"): 14, ("neck", "yaw"): -10 * s}
+KNEEL = {("root", "z"): -0.46, ("root", "y"): -0.04, ("hip_L", "flex"): 6, ("hip_R", "flex"): 10, ("knee_L", "bend"): 104, ("knee_R", "bend"): 108, ("waist", "pitch"): 10, ("neck", "pitch"): 22,
+         ("shoulder_L", "flex"): 4, ("shoulder_R", "flex"): 6, ("elbow_L", "bend"): 10, ("elbow_R", "bend"): 12}
+JOLT_BACK = {("waist", "pitch"): -20, ("neck", "pitch"): -14, ("root", "y"): 0.10, ("shoulder_L", "abduct"): 44, ("shoulder_R", "abduct"): 40, ("shoulder_L", "flex"): 20, ("shoulder_R", "flex"): 26,
+             ("elbow_L", "bend"): 36, ("elbow_R", "bend"): 30, ("knee_L", "bend"): 18, ("knee_R", "bend"): 26, ("hip_R", "flex"): -8}
+CRAWL = {("root", "pitch"): 76, ("root", "z"): -0.70, ("root", "y"): -0.40, ("hip_L", "flex"): 30, ("hip_R", "flex"): 6, ("knee_L", "bend"): 70, ("knee_R", "bend"): 14,
+         ("shoulder_L", "flex"): 128, ("shoulder_R", "flex"): 96, ("shoulder_L", "abduct"): 16, ("shoulder_R", "abduct"): 22, ("elbow_L", "bend"): 44, ("elbow_R", "bend"): 100, ("neck", "pitch"): -34}
+
+def death_back(u): return seq(u, (0.16, JOLT_BACK), (0.50, FALL_MID), (0.82, LIE_OPEN), (1.0, LIE_OPEN))
+def death_front(u):
+    buckle = {("knee_L", "bend"): 64, ("knee_R", "bend"): 72, ("root", "z"): -0.20, ("root", "y"): -0.10, ("waist", "pitch"): 34, ("neck", "pitch"): 26, ("hip_L", "flex"): 30, ("hip_R", "flex"): 38,
+              ("shoulder_L", "flex"): 30, ("shoulder_R", "flex"): 20, ("elbow_L", "bend"): 40, ("elbow_R", "bend"): 30}
+    return seq(u, (0.12, {("waist", "pitch"): 16, ("neck", "pitch"): -10, ("root", "y"): -0.05}), (0.46, buckle), (0.82, PRONE), (1.0, PRONE))
+def death_side(s):
+    def f(u):
+        spin = {("root", "yaw"): 48 * s, ("waist", "yaw"): 30 * s, ("waist", "roll"): -14 * s, ("root", "x"): -0.10 * s, ("root", "z"): -0.10, ("knee_L", "bend"): 30, ("knee_R", "bend"): 36,
+                ("shoulder_L", "abduct"): 40, ("shoulder_R", "abduct"): 40, ("elbow_L", "bend"): 40, ("elbow_R", "bend"): 40, ("neck", "yaw"): 20 * s, ("hip_L", "flex"): 20, ("hip_R", "flex"): 14}
+        return seq(u, (0.40, spin), (0.82, side(s)), (1.0, side(s)))
+    return f
+def death_headshot(u):
+    snap = {("neck", "pitch"): -34, ("waist", "pitch"): -10, ("knee_L", "bend"): 40, ("knee_R", "bend"): 46, ("root", "z"): -0.14, ("root", "y"): 0.06, ("elbow_L", "bend"): 8, ("elbow_R", "bend"): 8}
+    return seq(u, (0.14, snap), (0.52, plus(FALL_MID, {("shoulder_L", "abduct"): -44, ("shoulder_R", "abduct"): -40, ("shoulder_L", "flex"): -30, ("shoulder_R", "flex"): -40})), (0.86, LIE_TIGHT), (1.0, LIE_TIGHT))
+def death_knees(u):
+    sway = plus(KNEEL, {("waist", "pitch"): 14, ("waist", "roll"): 6, ("neck", "pitch"): 18})
+    return seq(u, (0.24, KNEEL), (0.58, sway), (0.86, PRONE), (1.0, PRONE))
+def death_blast(u):
+    air = {("root", "y"): 1.00, ("root", "z"): 0.26, ("root", "pitch"): -62, ("hip_L", "flex"): 50, ("hip_R", "flex"): 30, ("knee_L", "bend"): 50, ("knee_R", "bend"): 70,
+           ("shoulder_L", "abduct"): 84, ("shoulder_R", "abduct"): 76, ("shoulder_L", "flex"): 30, ("shoulder_R", "flex"): 50, ("elbow_L", "bend"): 30, ("elbow_R", "bend"): 50, ("waist", "pitch"): -16, ("neck", "pitch"): -20}
+    land = plus(LIE_OPEN, {("root", "y"): 1.75, ("shoulder_R", "abduct"): 40, ("knee_L", "bend"): 30})
+    slide = plus(LIE_OPEN, {("root", "y"): 2.05, ("shoulder_R", "abduct"): 40, ("knee_L", "bend"): 30})
+    return seq(u, (0.34, air), (0.62, land), (0.90, slide), (1.0, slide))
+def death_burn(u):
+    """레이저·화염: 몸이 굳고 팔이 가슴으로 말리며 떨다가 뻣뻣하게 쓰러진다."""
+    stiff = {("shoulder_L", "flex"): 42, ("shoulder_R", "flex"): 46, ("elbow_L", "bend"): 128, ("elbow_R", "bend"): 132, ("shoulder_L", "abduct"): 10, ("shoulder_R", "abduct"): 10,
+             ("waist", "pitch"): -8, ("neck", "pitch"): -22, ("knee_L", "bend"): 14, ("knee_R", "bend"): 18, ("root", "z"): -0.02}
+    down = plus(LIE_TIGHT, {("elbow_L", "bend"): 90, ("elbow_R", "bend"): 104, ("shoulder_L", "flex"): 40, ("shoulder_R", "flex"): 44, ("knee_L", "bend"): 20, ("neck", "yaw"): 20})
+    base = seq(u, (0.14, stiff), (0.50, stiff), (0.84, down), (1.0, down)); k = (1 - smooth(0, 1, (u - 0.45) / 0.3)) * min(1.0, u / 0.1)
+    return plus(base, {("waist", "roll"): 4.0 * k * sin(2 * pi * u * 26), ("neck", "yaw"): 7.0 * k * sin(2 * pi * u * 22 + 1.0), ("elbow_R", "bend"): 6.0 * k * sin(2 * pi * u * 30), ("waist", "pitch"): 3.0 * k * sin(2 * pi * u * 19)})
+def death_shock(u):
+    rigid = {("shoulder_L", "abduct"): 34, ("shoulder_R", "abduct"): 34, ("elbow_L", "bend"): 70, ("elbow_R", "bend"): 70, ("waist", "pitch"): -14, ("neck", "pitch"): -26, ("knee_L", "bend"): 8, ("knee_R", "bend"): 8, ("root", "z"): 0.01,
+             ("hip_L", "flex"): -4, ("hip_R", "flex"): -4}
+    base = seq(u, (0.10, rigid), (0.52, rigid), (0.70, plus(COLLAPSE, {("root", "pitch"): -20})), (0.90, PRONE), (1.0, PRONE)); k = (1 - smooth(0, 1, (u - 0.48) / 0.12)) * min(1.0, u / 0.08)
+    return plus(base, {("waist", "roll"): 5.0 * k * sin(2 * pi * u * 34), ("neck", "yaw"): 8.0 * k * sin(2 * pi * u * 31), ("elbow_L", "bend"): 9.0 * k * sin(2 * pi * u * 37), ("elbow_R", "bend"): 9.0 * k * sin(2 * pi * u * 29 + 2), ("root", "x"): 0.01 * k * sin(2 * pi * u * 33)})
+def death_slash(u):
+    clutch = {("shoulder_R", "flex"): 38, ("elbow_R", "bend"): 118, ("shoulder_R", "abduct"): -14, ("shoulder_L", "flex"): 30, ("elbow_L", "bend"): 110, ("shoulder_L", "abduct"): -10, ("waist", "pitch"): 24, ("neck", "pitch"): 18,
+              ("root", "y"): 0.14, ("knee_L", "bend"): 22, ("knee_R", "bend"): 30, ("hip_L", "flex"): 14, ("hip_R", "flex"): 20, ("root", "z"): -0.04}
+    reel = plus(clutch, {("root", "y"): 0.26, ("root", "yaw"): -36, ("waist", "roll"): 12, ("root", "z"): -0.10, ("knee_R", "bend"): 30})
+    return seq(u, (0.20, clutch), (0.52, reel), (0.86, plus(side(-1), {("root", "y"): 0.44})), (1.0, plus(side(-1), {("root", "y"): 0.44})))
+def death_sit(u):
+    slump = plus(SIT, {("waist", "pitch"): 46, ("neck", "pitch"): 40, ("waist", "roll"): 14, ("shoulder_L", "flex"): -22, ("shoulder_R", "flex"): -20, ("elbow_L", "bend"): -46, ("elbow_R", "bend"): -44, ("neck", "yaw"): 16})
+    return seq(u, (0.0, SIT), (0.20, plus(SIT, {("waist", "pitch"): -12, ("neck", "pitch"): -16})), (0.80, slump), (1.0, slump))
+def fall_wounded(u): return seq(u, (0.30, plus(KNEEL, {("waist", "pitch"): 30, ("shoulder_L", "flex"): 50, ("shoulder_R", "flex"): 50})), (0.85, CRAWL), (1.0, CRAWL))
+def wounded_crawl(u):
+    a = sin(2 * pi * u); b = cos(2 * pi * u)
+    return plus(CRAWL, {("shoulder_L", "flex"): 18 * a, ("shoulder_R", "flex"): -22 * a, ("elbow_L", "bend"): -20 * a, ("elbow_R", "bend"): 26 * a, ("hip_L", "flex"): -16 * a, ("hip_R", "flex"): 18 * a,
+                        ("knee_L", "bend"): -30 * a, ("knee_R", "bend"): 34 * a, ("root", "roll"): 7 * a, ("waist", "yaw"): 8 * a, ("neck", "pitch"): 6 * b, ("root", "z"): 0.012 * b})
+def death_crawl(u): return seq(u, (0.0, CRAWL), (0.40, plus(CRAWL, {("neck", "pitch"): 26, ("shoulder_L", "flex"): 14, ("root", "z"): 0.03})), (0.85, PRONE), (1.0, PRONE))
+
+def hit_dir(kind):
+    """방향별 피격. front = 앞에서 맞아 뒤로 젖혀짐, back = 뒤에서 맞아 앞으로 꺾임."""
+    P = {"front": {("waist", "pitch"): -16, ("root", "y"): 0.07, ("neck", "pitch"): -12, ("shoulder_L", "abduct"): 26, ("shoulder_R", "abduct"): 24, ("elbow_L", "bend"): 30, ("elbow_R", "bend"): 34, ("knee_L", "bend"): 14, ("knee_R", "bend"): 10},
+         "back": {("waist", "pitch"): 22, ("root", "y"): -0.09, ("neck", "pitch"): -16, ("shoulder_L", "flex"): -24, ("shoulder_R", "flex"): -28, ("elbow_L", "bend"): 26, ("elbow_R", "bend"): 22, ("knee_L", "bend"): 20, ("knee_R", "bend"): 12, ("hip_L", "flex"): 14},
+         "left": {("waist", "roll"): -16, ("waist", "yaw"): -18, ("root", "x"): -0.07, ("neck", "yaw"): 20, ("shoulder_L", "abduct"): -6, ("shoulder_R", "abduct"): 34, ("elbow_R", "bend"): 36, ("elbow_L", "bend"): 30, ("knee_R", "bend"): 16},
+         "right": {("waist", "roll"): 16, ("waist", "yaw"): 18, ("root", "x"): 0.07, ("neck", "yaw"): -20, ("shoulder_R", "abduct"): -6, ("shoulder_L", "abduct"): 34, ("elbow_L", "bend"): 36, ("elbow_R", "bend"): 30, ("knee_L", "bend"): 16},
+         "head": {("neck", "pitch"): -30, ("neck", "yaw"): 18, ("waist", "pitch"): -8, ("root", "y"): 0.04, ("shoulder_R", "flex"): 60, ("elbow_R", "bend"): 120, ("knee_L", "bend"): 10, ("knee_R", "bend"): 10},
+         "leg": {("knee_R", "bend"): 52, ("hip_R", "flex"): 30, ("root", "z"): -0.10, ("waist", "pitch"): 26, ("waist", "roll"): -10, ("shoulder_L", "abduct"): 40, ("shoulder_R", "flex"): 30, ("elbow_R", "bend"): 60, ("neck", "pitch"): 10}}[kind]
+    return lambda u: {k: v * sin(pi * min(1.0, u * 1.7)) * (1 - u) * 1.5 for k, v in P.items()}
+def stagger(u):
+    a = sin(2 * pi * u * 1.5); k = sin(pi * u)
+    return {("root", "y"): 0.50 * smooth(0, 1, u / 0.8), ("root", "x"): 0.06 * a * k, ("root", "roll"): 7 * a * k, ("waist", "pitch"): (-14 + 10 * a) * k, ("waist", "roll"): -8 * a * k, ("neck", "pitch"): -8 * k,
+            ("hip_L", "flex"): (-16 * a + 4) * k, ("hip_R", "flex"): (16 * a + 4) * k, ("knee_L", "bend"): (20 + 14 * a) * k, ("knee_R", "bend"): (20 - 14 * a) * k,
+            ("shoulder_L", "abduct"): 34 * k, ("shoulder_R", "abduct"): 30 * k, ("elbow_L", "bend"): 40 * k, ("elbow_R", "bend"): 46 * k}
+
+# 손 레이저 3인칭 자세
+AIM_PALM = {("shoulder_R", "flex"): 84, ("shoulder_R", "abduct"): -6, ("elbow_R", "bend"): 8, ("elbow_R", "yaw"): 90, ("wrist_R", "abduct"): 70, ("shoulder_L", "flex"): 8, ("elbow_L", "bend"): 30, ("waist", "yaw"): 14, ("neck", "yaw"): -10,
+            ("knee_L", "bend"): 12, ("knee_R", "bend"): 8, ("hip_L", "flex"): 10, ("root", "z"): -0.012}
+def fire_palm(u):
+    out = dict(AIM_PALM); out[("shoulder_R", "flex")] += 0.8 * sin(2 * pi * u * 9); out[("root", "y")] = 0.004 * sin(2 * pi * u * 9); out[("waist", "pitch")] = -1.5; return out
+
+def fp_laser_raise(u):
+    k = smooth(0, 1, u); o = sin(pi * u)
+    return {("view", "y"): -0.10 * k, ("view", "z"): 0.05 * k - 0.03 * o, ("view", "x"): -0.03 * k, ("view", "pitch"): 6 * k, ("view", "roll"): -8 * k, ("hand", "pitch"): -78 * k, ("finger", "curl"): 8 - 4 * k, ("view", "value"): k}
+def fp_laser_fire(u):
+    a = sin(2 * pi * u * 7); b = sin(2 * pi * u * 11 + 1.3)
+    return {("view", "y"): -0.10 + 0.006 + 0.0025 * a, ("view", "z"): 0.05 + 0.0018 * b, ("view", "x"): -0.03 + 0.0016 * a, ("view", "pitch"): 6 + 0.5 * b, ("view", "roll"): -8 + 0.5 * a, ("hand", "pitch"): -78, ("finger", "curl"): 4, ("view", "value"): 1.0}
+def fp_laser_overheat(u):
+    k = sin(pi * min(1.0, u * 1.4)); w = sin(2 * pi * u * 5) * (1 - u)
+    return {("view", "y"): -0.10 + 0.14 * k, ("view", "z"): 0.05 - 0.12 * k, ("view", "x"): -0.03 + 0.03 * w, ("view", "pitch"): 6 - 26 * k, ("view", "roll"): -8 + 22 * w, ("hand", "pitch"): -78 + 60 * k, ("finger", "curl"): 4 + 30 * k, ("view", "value"): 1.0}
+def fp_laser_lower(u):
+    k = 1 - smooth(0, 1, u); return {("view", "y"): -0.10 * k, ("view", "z"): 0.05 * k, ("view", "x"): -0.03 * k, ("view", "pitch"): 6 * k, ("view", "roll"): -8 * k, ("hand", "pitch"): -78 * k, ("finger", "curl"): 8 - 4 * k, ("view", "value"): k}
+
 def all_clips():
     c = []
     c.append(clip("walk", 1.06, True, lambda u: gait(u, 22, -6, 14, 60), 1.35, [(0.0, "foot_L"), (0.53, "foot_R")]))
@@ -265,6 +372,17 @@ def all_clips():
     h("fire_pistol_3p", 0.18, fire_3p(AIM_PISTOL, 9), [(0.0, "shot")]); h("fire_rifle_3p", 0.11, fire_3p(AIM_RIFLE, 3), [(0.0, "shot")], True)
     h("melee_slash", 0.62, melee_slash, [(0.14, "swing"), (0.27, "hit")]); h("melee_stab", 0.52, melee_stab, [(0.12, "swing"), (0.24, "hit")])
     h("melee_heavy", 1.05, melee_heavy, [(0.40, "swing"), (0.60, "hit")]); h("punch", 0.42, punch, [(0.10, "swing"), (0.20, "hit")]); h("throw", 0.9, throw, [(0.50, "release")])
+    # 죽는 동작과 맞는 동작
+    h("death_back", 1.1, death_back, [(0.0, "hit"), (0.70, "body_fall")]); h("death_front", 1.2, death_front, [(0.0, "hit"), (0.80, "body_fall")])
+    h("death_left", 1.2, death_side(1), [(0.0, "hit"), (0.80, "body_fall")]); h("death_right", 1.2, death_side(-1), [(0.0, "hit"), (0.80, "body_fall")])
+    h("death_headshot", 0.8, death_headshot, [(0.0, "hit"), (0.55, "body_fall")]); h("death_knees", 2.2, death_knees, [(0.0, "hit"), (0.45, "knees"), (1.75, "body_fall")])
+    h("death_blast", 1.0, death_blast, [(0.0, "blast"), (0.55, "body_fall"), (0.80, "slide")]); h("death_burn", 1.7, death_burn, [(0.0, "burn"), (1.25, "body_fall")])
+    h("death_shock", 1.6, death_shock, [(0.0, "shock"), (1.25, "body_fall")]); h("death_slash", 1.4, death_slash, [(0.0, "hit"), (1.05, "body_fall")])
+    h("death_sit", 1.3, death_sit, [(0.0, "hit")]); h("fall_wounded", 1.0, fall_wounded, [(0.30, "knees"), (0.75, "body_fall")])
+    h("wounded_crawl", 1.8, wounded_crawl, [(0.0, "drag"), (0.9, "drag")], loop=True, speed=0.35); h("death_crawl", 1.1, death_crawl, [(0.9, "body_fall")])
+    for kind in ("front", "back", "left", "right", "head", "leg"): h("hit_" + kind, 0.5, hit_dir(kind), [(0.0, "hit")])
+    h("stagger", 0.9, stagger, [(0.0, "hit"), (0.3, "foot_R"), (0.6, "foot_L")])
+    h("aim_palm", 2.4, hold(AIM_PALM, 0.6), loop=True); h("fire_palm", 0.4, fire_palm, [(0.0, "beam")], True)
     # 1인칭
     f = lambda n, d, fn, ev=(), loop=False: c.append(clip(n, d, loop, fn, events=ev, rig="fp"))
     f("fp_idle", 4.0, fp_idle, loop=True); f("fp_raise_light", 0.30, fp_raise, [(0.0, "draw")]); f("fp_raise_heavy", 0.60, fp_raise, [(0.0, "draw")]); f("fp_lower", 0.25, fp_lower)
@@ -273,6 +391,7 @@ def all_clips():
     f("fp_recoil_shotgun", 0.42, fp_recoil(0.075, 11.0, 1.4), [(0.0, "shot")]); f("fp_recoil_sniper", 0.60, fp_recoil(0.095, 13.0, 0.8), [(0.0, "shot")])
     f("fp_reload", 1.6, fp_reload, [(0.05, "mag_out"), (1.0, "mag_in"), (1.35, "chamber")]); f("fp_ads_in", 0.18, fp_ads); f("fp_ads_out", 0.16, lambda u: fp_ads(1 - u))
     f("fp_slash", 0.62, fp_slash, [(0.14, "swing"), (0.27, "hit")]); f("fp_stab", 0.52, fp_stab, [(0.12, "swing"), (0.22, "hit")]); f("fp_punch", 0.42, fp_punch, [(0.08, "swing"), (0.17, "hit")])
+    f("fp_laser_raise", 0.35, fp_laser_raise, [(0.0, "charge")]); f("fp_laser_fire", 0.5, fp_laser_fire, [(0.0, "beam")], True); f("fp_laser_overheat", 1.2, fp_laser_overheat, [(0.0, "overheat")]); f("fp_laser_lower", 0.25, fp_laser_lower)
     f("fp_heavy", 1.05, fp_heavy, [(0.40, "swing"), (0.60, "hit")]); f("fp_throw", 0.9, fp_throw, [(0.48, "release")]); f("fp_inspect", 3.0, fp_inspect); f("fp_sprint", 1.0, fp_sprint, loop=True); f("fp_land", 0.35, fp_land)
     # 사이버웨어 팔 (rig = cyberarm): joint = 부품 이름. open = 문 여는 각(도), move_x = 앞으로 미는 거리(m), move_z = 올리는 거리(m), value = 발광 0~1
     a = lambda n, d, fn, ev=(): c.append(clip(n, d, False, fn, events=ev, rig="cyberarm"))
@@ -285,6 +404,12 @@ def all_clips():
     a("launcher_deploy", 0.40, lambda u: {("hatch", "open"): 72 * smooth(0, 1, u / 0.45), ("tube", "move_z"): 0.030 * smooth(0, 1, (u - 0.35) / 0.5), ("tube", "pitch"): -6 * smooth(0, 1, (u - 0.5) / 0.5), ("glow", "value"): 0.3 + 0.7 * smooth(0, 1, u)}, [(0.0, "open"), (0.16, "tube_up"), (0.38, "lock")])
     a("launcher_fire", 0.50, lambda u: {("hatch", "open"): 72, ("tube", "move_z"): 0.030, ("tube", "pitch"): -6, ("tube", "move_x"): -0.022 * kick(u, 1.0, 0.08), ("rocket", "value"): 0.0}, [(0.0, "muzzle"), (0.0, "backblast")])
     a("launcher_retract", 0.36, lambda u: {("hatch", "open"): 72 * (1 - smooth(0, 1, (u - 0.45) / 0.55)), ("tube", "move_z"): 0.030 * (1 - smooth(0, 1, u / 0.5)), ("tube", "pitch"): -6 * (1 - smooth(0, 1, u / 0.4)), ("glow", "value"): 1 - 0.7 * smooth(0, 1, u)}, [(0.0, "tube_down"), (0.18, "close")])
+    a("laser_deploy", 0.40, lambda u: {("hand", "pitch"): -78 * smooth(0, 1, u / 0.35), ("finger", "curl"): 8 - 4 * smooth(0, 1, u / 0.35), ("iris", "value"): smooth(0, 1, (u - 0.2) / 0.3), ("cell_glow", "value"): 0.3 + 0.7 * smooth(0, 1, u)}, [(0.0, "charge"), (0.22, "iris_open"), (0.38, "ready")])
+    c.append(clip("laser_fire", 0.5, True, lambda u: {("hand", "pitch"): -78, ("finger", "curl"): 4, ("iris", "value"): 1.0, ("cell_glow", "value"): 0.8 + 0.2 * sin(2 * pi * u * 6), ("emitter", "value"): 1.0, ("beam", "value"): 1.0}, events=[(0.0, "beam")], rig="cyberarm"))
+    a("laser_overheat", 2.0, lambda u: {("hand", "pitch"): -78 * (1 - smooth(0, 1, u / 0.25)), ("finger", "curl"): 4 + 14 * smooth(0, 1, u / 0.25), ("iris", "value"): 1 - smooth(0, 1, u / 0.15), ("vent", "open"): 55 * (smooth(0, 1, u / 0.12) if u < 0.8 else 1 - smooth(0, 1, (u - 0.8) / 0.2)),
+                                        ("heat_glow", "value"): (smooth(0, 1, u / 0.1) if u < 0.2 else 1 - smooth(0, 1, (u - 0.2) / 0.7)), ("cell_glow", "value"): 0.1 + 0.2 * smooth(0, 1, (u - 0.7) / 0.3), ("beam", "value"): 0.0, ("emitter", "value"): 0.0},
+      [(0.0, "overheat"), (0.05, "vent_open"), (0.1, "steam"), (1.7, "vent_close"), (2.0, "ready")])
+    a("laser_retract", 0.30, lambda u: {("hand", "pitch"): -78 * (1 - smooth(0, 1, u)), ("finger", "curl"): 4 + 4 * smooth(0, 1, u), ("iris", "value"): 1 - smooth(0, 1, u / 0.5), ("cell_glow", "value"): 1 - 0.7 * smooth(0, 1, u), ("beam", "value"): 0.0, ("emitter", "value"): 0.0}, [(0.0, "iris_close")])
     # 보안 기계 (rig = machine): joint = manifest의 관절 이름. yaw·pitch는 도, spin은 초당 회전수, value는 발광 0~1
     m = lambda n, d, fn, ev=(), loop=False: c.append(clip(n, d, loop, fn, events=ev, rig="machine"))
     m("drone_hover", 3.0, lambda u: {("root", "z"): 0.05 * sin(2 * pi * u), ("root", "roll"): 2.0 * sin(2 * pi * u + 1.0), ("root", "pitch"): 1.5 * sin(4 * pi * u), ("fan", "spin"): 40, ("gimbal_yaw", "yaw"): 50 * sin(2 * pi * u), ("gun_pitch", "pitch"): -12}, loop=True)
@@ -313,7 +438,7 @@ def golden(clips):
     """Luau 포팅 검증용: 클립과 시각 -> 기대 값."""
     out = []
     for cl in clips:
-        if cl["name"] not in ("walk", "run", "cower_enter", "robot_fire", "mag_reload", "knockdown", "fp_reload", "launcher_deploy", "turret_scan"): continue
+        if cl["name"] not in ("walk", "run", "cower_enter", "robot_fire", "mag_reload", "knockdown", "fp_reload", "launcher_deploy", "turret_scan", "death_back", "death_burn", "laser_overheat"): continue
         for t in (0.0, 0.017, 0.2, cl["duration"] * 0.5, cl["duration"] * 0.93, cl["duration"] * 1.7):
             out.append({"clip": cl["name"], "t": round(t, 5), "pose": sample(cl, t)})
     return out

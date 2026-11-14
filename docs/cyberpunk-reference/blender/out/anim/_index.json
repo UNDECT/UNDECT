@@ -630,6 +630,364 @@
    ]
   },
   {
+   "name": "death_back",
+   "rig": "humanoid",
+   "duration": 1.1,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "hit"
+    ],
+    [
+     0.7,
+     "body_fall"
+    ]
+   ]
+  },
+  {
+   "name": "death_front",
+   "rig": "humanoid",
+   "duration": 1.2,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "hit"
+    ],
+    [
+     0.8,
+     "body_fall"
+    ]
+   ]
+  },
+  {
+   "name": "death_left",
+   "rig": "humanoid",
+   "duration": 1.2,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "hit"
+    ],
+    [
+     0.8,
+     "body_fall"
+    ]
+   ]
+  },
+  {
+   "name": "death_right",
+   "rig": "humanoid",
+   "duration": 1.2,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "hit"
+    ],
+    [
+     0.8,
+     "body_fall"
+    ]
+   ]
+  },
+  {
+   "name": "death_headshot",
+   "rig": "humanoid",
+   "duration": 0.8,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "hit"
+    ],
+    [
+     0.55,
+     "body_fall"
+    ]
+   ]
+  },
+  {
+   "name": "death_knees",
+   "rig": "humanoid",
+   "duration": 2.2,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "hit"
+    ],
+    [
+     0.45,
+     "knees"
+    ],
+    [
+     1.75,
+     "body_fall"
+    ]
+   ]
+  },
+  {
+   "name": "death_blast",
+   "rig": "humanoid",
+   "duration": 1.0,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "blast"
+    ],
+    [
+     0.55,
+     "body_fall"
+    ],
+    [
+     0.8,
+     "slide"
+    ]
+   ]
+  },
+  {
+   "name": "death_burn",
+   "rig": "humanoid",
+   "duration": 1.7,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "burn"
+    ],
+    [
+     1.25,
+     "body_fall"
+    ]
+   ]
+  },
+  {
+   "name": "death_shock",
+   "rig": "humanoid",
+   "duration": 1.6,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "shock"
+    ],
+    [
+     1.25,
+     "body_fall"
+    ]
+   ]
+  },
+  {
+   "name": "death_slash",
+   "rig": "humanoid",
+   "duration": 1.4,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "hit"
+    ],
+    [
+     1.05,
+     "body_fall"
+    ]
+   ]
+  },
+  {
+   "name": "death_sit",
+   "rig": "humanoid",
+   "duration": 1.3,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "hit"
+    ]
+   ]
+  },
+  {
+   "name": "fall_wounded",
+   "rig": "humanoid",
+   "duration": 1.0,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.3,
+     "knees"
+    ],
+    [
+     0.75,
+     "body_fall"
+    ]
+   ]
+  },
+  {
+   "name": "wounded_crawl",
+   "rig": "humanoid",
+   "duration": 1.8,
+   "loop": true,
+   "speed": 0.35,
+   "events": [
+    [
+     0.0,
+     "drag"
+    ],
+    [
+     0.9,
+     "drag"
+    ]
+   ]
+  },
+  {
+   "name": "death_crawl",
+   "rig": "humanoid",
+   "duration": 1.1,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.9,
+     "body_fall"
+    ]
+   ]
+  },
+  {
+   "name": "hit_front",
+   "rig": "humanoid",
+   "duration": 0.5,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "hit"
+    ]
+   ]
+  },
+  {
+   "name": "hit_back",
+   "rig": "humanoid",
+   "duration": 0.5,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "hit"
+    ]
+   ]
+  },
+  {
+   "name": "hit_left",
+   "rig": "humanoid",
+   "duration": 0.5,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "hit"
+    ]
+   ]
+  },
+  {
+   "name": "hit_right",
+   "rig": "humanoid",
+   "duration": 0.5,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "hit"
+    ]
+   ]
+  },
+  {
+   "name": "hit_head",
+   "rig": "humanoid",
+   "duration": 0.5,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "hit"
+    ]
+   ]
+  },
+  {
+   "name": "hit_leg",
+   "rig": "humanoid",
+   "duration": 0.5,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "hit"
+    ]
+   ]
+  },
+  {
+   "name": "stagger",
+   "rig": "humanoid",
+   "duration": 0.9,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "hit"
+    ],
+    [
+     0.3,
+     "foot_R"
+    ],
+    [
+     0.6,
+     "foot_L"
+    ]
+   ]
+  },
+  {
+   "name": "aim_palm",
+   "rig": "humanoid",
+   "duration": 2.4,
+   "loop": true,
+   "speed": 0.0,
+   "events": []
+  },
+  {
+   "name": "fire_palm",
+   "rig": "humanoid",
+   "duration": 0.4,
+   "loop": true,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "beam"
+    ]
+   ]
+  },
+  {
    "name": "fp_idle",
    "rig": "fp",
    "duration": 4.0,
@@ -836,6 +1194,53 @@
      "hit"
     ]
    ]
+  },
+  {
+   "name": "fp_laser_raise",
+   "rig": "fp",
+   "duration": 0.35,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "charge"
+    ]
+   ]
+  },
+  {
+   "name": "fp_laser_fire",
+   "rig": "fp",
+   "duration": 0.5,
+   "loop": true,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "beam"
+    ]
+   ]
+  },
+  {
+   "name": "fp_laser_overheat",
+   "rig": "fp",
+   "duration": 1.2,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "overheat"
+    ]
+   ]
+  },
+  {
+   "name": "fp_laser_lower",
+   "rig": "fp",
+   "duration": 0.25,
+   "loop": false,
+   "speed": 0.0,
+   "events": []
   },
   {
    "name": "fp_heavy",
@@ -1045,6 +1450,82 @@
     [
      0.18,
      "close"
+    ]
+   ]
+  },
+  {
+   "name": "laser_deploy",
+   "rig": "cyberarm",
+   "duration": 0.4,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "charge"
+    ],
+    [
+     0.22,
+     "iris_open"
+    ],
+    [
+     0.38,
+     "ready"
+    ]
+   ]
+  },
+  {
+   "name": "laser_fire",
+   "rig": "cyberarm",
+   "duration": 0.5,
+   "loop": true,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "beam"
+    ]
+   ]
+  },
+  {
+   "name": "laser_overheat",
+   "rig": "cyberarm",
+   "duration": 2.0,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "overheat"
+    ],
+    [
+     0.05,
+     "vent_open"
+    ],
+    [
+     0.1,
+     "steam"
+    ],
+    [
+     1.7,
+     "vent_close"
+    ],
+    [
+     2.0,
+     "ready"
+    ]
+   ]
+  },
+  {
+   "name": "laser_retract",
+   "rig": "cyberarm",
+   "duration": 0.3,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "iris_close"
     ]
    ]
   },

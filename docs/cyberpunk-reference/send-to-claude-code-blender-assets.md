@@ -5,7 +5,7 @@
 ---
 
 ## 0. 무엇이 바뀌었나
-- **모델 디자인과 제작은 다른 세션이 한다.** 보안 로봇·드론·포탑·감시 카메라, 차량, 비행 차량, 무기 17종, 맨얼굴 사람 10명과 가면 NPC 5종, 1인칭 팔, 사이버웨어 팔 4종, 시술소, 거리 소품, 구역 4종의 건물 규칙과 분위기 그림, 애니메이션 클립 94개를 Blender 스크립트로 만들어 저장소에 올려 두었다. 앞으로 모든 그래픽 요소는 이 방식으로 바꾼다.
+- **모델 디자인과 제작은 다른 세션이 한다.** 보안 로봇·드론·포탑·감시 카메라, 차량, 비행 차량, 무기 17종, 맨얼굴 사람 10명과 가면 NPC 5종, 1인칭 팔, 사이버웨어 팔 5종(손 레이저 포함), 시술소, 거리 소품, 구역 4종의 건물 규칙과 분위기 그림, 애니메이션 클립 125개(죽는 동작 포함), NPC 피해·사망 로직을 Blender 스크립트로 만들어 저장소에 올려 두었다. 앞으로 모든 그래픽 요소는 이 방식으로 바꾼다.
 - **너의 일은 그 에셋을 게임에 그대로 반영하는 것이다.** 모양, 비율, 색, 재질, 발광 위치를 바꾸지 않는다.
 - 지금 하는 C2(행인)는 그대로 계속한다. 맨얼굴 사람은 아직 이쪽에서 만들지 못했다(뒤 6번). 얼굴을 가린 거리 NPC 5종은 군중에 섞어 쓴다.
 - 기존 규칙은 그대로다: 한국어, `cyber-3v3.rbxl` 저장 금지, `rojo build -o cyber-rpg.rbxl` 금지, computer-use 금지, 기능 브랜치 커밋, Lune 테스트 전부 통과, Studio 확인은 직접.
@@ -35,7 +35,7 @@ git clone --depth 1 -b ccr-9e6cc8c3-bftdlm https://github.com/UNDECT/UNDECT.git 
 | 1인칭 팔 2종 | `human.py ... fp_sleeve fp_bare` | `human/fp_sleeve/`, `human/fp_bare/` (GLB, manifest), 사진 각 2장(`*_view.png`가 1인칭 시점) | 6천~9천 | 재킷 소매+장갑, 맨팔. 사람과 같은 뼈대. `manifest.eye`가 카메라 자리 |
 | 드론, 포탑, 감시 카메라 | `machines.py` | `machines/<이름>/<이름>.{glb,blend,manifest.json}`, 사진 각 2장, `machines_sheet.png` | 드론 1만 4천, 포탑 8천, 카메라 3천 | 드론: 팬 4, 총좌(좌우·상하). 포탑: 받침→몸(좌우)→머리(상하)→총열(반동). 카메라: 좌우·상하 |
 | 시술소 | `clinic.py` | `clinic/{chair,surgery_rig,cart}/…`, 사진 각 2장, **`clinic_scene.png`, `clinic_scene_close.png`(시술소 분위기 목표)** | 의자 1만 1천, 로봇 팔 1만 4천, 수레 4천 | 의자: 높이, 등받이, 다리 받침, 머리 받침, 팔걸이 2. 천장 로봇 팔 3개(어깨·팔꿈치·손목)와 수술등. 수레: 도구, 약병, 화면 |
-| 사이버웨어 팔 3종 | `cyber_arms.py` | `cyber_arms/{power,nanowire,launcher}/arm_<이름>.{glb,blend,manifest.json}`, 사진 각 2장(접힘, 펼침), `cyber_arms_sheet.png` | 1만 4천~1만 8천 | 파워암, 나노와이어, 런처. 손가락 14마디가 따로 움직인다. 펼침 동작은 `manifest.deploy`와 클립 |
+| 사이버웨어 팔 4종 | `cyber_arms.py` | `cyber_arms/{power,nanowire,launcher,laser}/arm_<이름>.{glb,blend,manifest.json}`, 사진 각 2장(접힘, 펼침), `cyber_arms_sheet.png` | 1만 4천~1만 8천 | 파워암, 나노와이어, 런처, **손 레이저**. 손가락 14마디가 따로 움직인다. 펼침 동작은 `manifest.deploy`와 클립 |
 | 낮 거리, 구역 3종 | `street.py ... scene_day`, `districts.py` | `street/street_day.png`, `street/district_{slum,corp,rich}.png`, `street/districts_sheet.png`(4구역 비교) | — | **낮 분위기 목표**와 **구역별 분위기 목표**. 건물 생성 규칙의 기준 |
 | 사이버웨어 팔 | `cyber-arm/make_arm.py` | 사진 4장, `cyber_arm_closed.glb` | 약 5만 4천 | 부품 약 180개(문 4장, 칼날, 손가락 마디) |
 | 공용 도구 | `kit.py` | — | — | 재질, 형상, 관절 기록, 내보내기 |
@@ -175,12 +175,13 @@ git clone --depth 1 -b ccr-9e6cc8c3-bftdlm https://github.com/UNDECT/UNDECT.git 
 - **도구 수레**(`cart`): 도구, 약병 3개(`vial_glow`), 칩 상자, 화면(`monitor`, 회전). 화면의 심박선과 막대(`screen_glow`)는 시술 중에 움직이게 한다(UV 스크롤이나 SurfaceGui).
 - 시술 연출 순서(스펙 `SURG`): 플레이어가 의자에 앉는다(`sit_down` → 1인칭 시점 고정) → `chair_recline` → `surgery_start` → `surgery_loop`(화면 어두워짐, 부위 강조) → `chair_release` → `stand_up`. 시술의는 `talk`와 `idle`을 쓰고, 시술 중에는 화면 쪽을 본다.
 
-### 사이버웨어 팔 3종과 1인칭 팔 → 스펙 `CW`, `BODY` (C10, C11)
+### 사이버웨어 팔 4종과 1인칭 팔 → 스펙 `CW`, `BODY` (C10, C11)
 - 좌표는 블레이드 팔과 같다: X = 팔꿈치 → 손끝, Y = 엄지 쪽, Z = 손등 쪽. 팔꿈치가 원점, 손목이 x = 0.27 m. 게임의 오른팔 아래팔 뼈에 맞춰 붙인다.
 - 공통 부품: `forearm`, `hand`, 손가락 `finger1_a` ~ `finger4_c`(검지~새끼, 마디 3개씩), `thumb_a`, `thumb_b`, 발광 `glow`. 관절은 `manifest.pivots`에 있다.
 - **파워암**(`power`, 노랑·검정): 옆 유압 피스톤(`piston`), 손목 코일(`charge_glow`), 너클 판(`knuckle_plate`). 클립 `power_charge`(주먹을 쥐고 판이 2 cm 나오며 코일이 밝아진다) → 타격 → `power_release`.
 - **나노와이어**(`nanowire`, 흰색·검정, 자홍 발광): 손목 안쪽 감개(`spool`)와 덮개(`spool_cover`). **실은 모델에 없다.** 붙임점 `wire_out`부터 Beam이나 Trail로 그린다(굵기 약 2 mm, 자홍 발광, 길이 2.5~3 m, 채찍처럼 휘는 곡선). 클립 `wire_deploy`, `wire_retract`.
 - **런처**(`launcher`, 올리브·검정, 붉은 발광): 손등 문 2장(`hatch_L`, `hatch_R`)이 72° 열리고 발사관(`tube`)이 3 cm 올라온다. 탄두(`rocket`)는 쏘면 숨긴다. 붙임점 `muzzle`, `backblast`(뒤로 나가는 연기). 옆의 탄약 표시등 3개. 클립 `launcher_deploy`, `launcher_fire`, `launcher_retract`.
+- **손 레이저**(`laser`, 검정·구리, 청록 발광): 아래팔 손등 쪽에 축전지 4개(`cell_glow`), 양옆 방열판(`vent_L`, `vent_R`), 손바닥 발사구(`emitter`)와 조리개(`iris`). 쏠 때는 손목을 78° 젖혀 손바닥이 앞을 보고 손가락을 편다. **빔은 모델에 없다.** 붙임점 `beam_out`부터 Beam 2겹(흰 심 지름 7 mm, 청록 겉 17 mm)으로 그린다. 발사 로직은 `runtime/Laser.luau`를 그대로 쓴다(아래 4-2). 클립 `laser_deploy` → `laser_fire`(반복) → `laser_overheat`(방열판 55° 열림, `heat_glow`, 김) 또는 `laser_retract`. 1인칭은 `fp_laser_raise/fire/overheat/lower`, 3인칭은 `aim_palm`, `fire_palm`, 손 모양 `palm_out`. 목표 그림은 `cyber_arms/arm_laser_deployed.png`다.
 - **블레이드 팔**: 클립 `blade_deploy`, `blade_retract`가 생겼다(문 56° → 칼날 23 cm 전진 → 날 발광).
 - **1인칭 팔**(`fp_sleeve`, `fp_bare`): 진짜 사람 팔이다. 스킨 메시이고 사람과 같은 뼈대·관절표를 쓴다. `manifest.eye`가 카메라 자리다. 사이버웨어를 달면 오른쪽 아래팔과 손을 숨기고 그 자리에 사이버웨어 팔을 붙인다(팔꿈치를 `lowerarm_r` 머리에, X축을 뼈 방향에 맞춘다).
 - 1인칭 동작은 `fp_*` 클립을 쓴다. `view` 값을 팔·무기 뭉치 전체의 카메라 기준 이동·회전으로 적용한다. 무기군별 대응: 권총 `fp_recoil_pistol` + `fp_raise_light`, 리볼버 `fp_recoil_revolver`, 기관단총·소총 `fp_recoil_auto`, 경기관총 `fp_recoil_lmg`, 산탄총 `fp_recoil_shotgun`, 저격총·정밀 소총 `fp_recoil_sniper`, 큰 총 꺼내기 `fp_raise_heavy`. 기존 반동·조준 값이 이미 승인된 것이면 그 값을 유지하고 이 클립은 빈 곳에만 쓴다.
@@ -192,9 +193,9 @@ git clone --depth 1 -b ccr-9e6cc8c3-bftdlm https://github.com/UNDECT/UNDECT.git 
 - 1인칭에서 보이는 각도(팔 안쪽, 손바닥) 보강이 필요하면 요청한다.
 
 ## 4-1. 애니메이션과 이동도 받아서 쓴다 (새로 만들지 않는다)
-`docs/cyberpunk-reference/runtime/`에 Luau 모듈과 테스트가, `blender/out/anim/`에 클립 94개와 손 모양 8개가 있다. `runtime/README.md`를 먼저 읽는다.
+`docs/cyberpunk-reference/runtime/`에 Luau 모듈과 테스트가, `blender/out/anim/`에 클립 125개와 손 모양 9개가 있다. `runtime/README.md`를 먼저 읽는다.
 
-1. **넣기**: `runtime/*.luau`를 `src/shared/Fable/`(이름은 프로젝트 규칙에 맞게)로 복사한다. 클립 JSON은 ModuleScript 표로 변환하는 빌드 단계를 만든다. `tests/run.luau`의 검사 47개를 프로젝트의 Lune 테스트에 편입한다(경로만 고친다).
+1. **넣기**: `runtime/*.luau`를 `src/shared/Fable/`(이름은 프로젝트 규칙에 맞게)로 복사한다. 클립 JSON은 ModuleScript 표로 변환하는 빌드 단계를 만든다. `tests/run.luau`의 검사 80개를 프로젝트의 Lune 테스트에 편입한다(경로만 고친다).
 2. **고치지 않는다**: 걸음 곡선, 군중 규칙, 순찰·교통 로직을 다시 짜지 않는다. 버그를 찾으면 재현 테스트와 함께 사용자에게 알린다. Roblox 연결부(`RigAnimator`)만 Studio에서 확인하며 고친다.
 3. **`RigAnimator` 확인 (가장 먼저)**: 이 파일만 여기서 테스트하지 못했다. 보안 로봇에 `walk_heavy`를 틀고 Blender 미리보기(`preview_robot_walk_heavy.png`)와 같은 자세가 나오는지 본다. 팔다리가 엉뚱한 축으로 돌면 `RigAnimator.AXIS` 표를 고친다. 뼈는 관절 위치에 만든다. 뼈의 기준 방향은 `RigAnimator`가 모델에서 읽어 보정하므로 맞추지 않아도 된다. 그다음 사람(`human_man_a`)에 `walk`를 틀어 `human_walk_check.png`와 비교한다.
 4. **군중**: C2에서 만든 군중 이동을 `Crowd`로 바꾼다. 허브의 인도 그래프(`nodes`, `edges`), 소품 위치(`obstacles`), 활동 지점(`activities`)은 맵 정보(`WLD-150~153`)에서 만든다. 횡단보도는 `signal`로 신호등과 묶는다. 총성 이벤트는 `crowd:panic(x, z, 반경)`으로 넘긴다. 에이전트의 `anim`, `speed`, `heading`을 그대로 `RigAnimator`에 넘긴다.
@@ -202,19 +203,47 @@ git clone --depth 1 -b ccr-9e6cc8c3-bftdlm https://github.com/UNDECT/UNDECT.git 
 6. **차량**: 지상 교통과 `SkyTraffic`의 이동을 `Traffic`으로 바꾼다. `wheel`(라디안)을 바퀴 4개에, `bank`와 `tilt`를 비행 차량 몸체와 추진기에 적용한다. `braking`이면 뒤 발광을 세게 한다.
 7. **무기**: 발사·재장전 때 부품 클립(`pistol_fire`, `auto_fire`, `shotgun_pump`, `mag_reload` 등)을 틀고, 클립의 이벤트(`muzzle`, `eject`, `mag_out`, `mag_in`, `chamber`)에 총구 화염·탄피·소리를 붙인다.
 8. **발소리**: 걷기·달리기 클립의 `foot_L` / `foot_R` 이벤트에 바닥 재질별 발소리를 붙인다.
-9. **새 사람 동작**: 앉기(`sit_down`, `sit_loop`, `stand_up`), 넘어짐(`knockdown`, `lie_loop`, `get_up`), 쓰러짐(`collapse`: 무릎을 꿇고 주저앉는다. Kids 설정에서는 이 뒤에 소멸 연출을 붙인다), 3인칭 무기 자세(`aim_pistol`, `aim_rifle`, `low_ready`, `fire_pistol_3p`, `fire_rifle_3p`), 근접(`melee_slash`, `melee_stab`, `melee_heavy`, `punch`), 던지기(`throw`). 근접은 `hit` 이벤트에서 판정하고 `swing`에서 휘두르는 소리를 낸다. 미리보기는 `preview_human_actions.png`다.
+9. **새 사람 동작**: 앉기(`sit_down`, `sit_loop`, `stand_up`), 넘어짐(`knockdown`, `lie_loop`, `get_up`), 쓰러짐(`collapse`: 무릎을 꿇고 주저앉는다. 수위 0에서 사망 대신 쓴다), 3인칭 무기 자세(`aim_pistol`, `aim_rifle`, `low_ready`, `fire_pistol_3p`, `fire_rifle_3p`), 근접(`melee_slash`, `melee_stab`, `melee_heavy`, `punch`), 던지기(`throw`). 근접은 `hit` 이벤트에서 판정하고 `swing`에서 휘두르는 소리를 낸다. 미리보기는 `preview_human_actions.png`다.
 10. **부품 클립**(`weapon`, `cyberarm`, `machine`, `clinic`)은 `AnimSampler.sample`로 값을 뽑아 부품에 직접 적용한다. 값의 뜻은 `runtime/README.md`의 클립 표 아래에 있다.
 11. **아직 없는 동작**: 사다리, 수영, 차 타고 내리기, 문 여는 손, 얼굴 표정(눈 깜빡임, 입 모양). 필요하면 `docs/asset-requests.md`에 적는다.
 12. 웅크릴 때 손에 든 소품(공구함, 서류 가방, 우산)은 손에서 떼어 바닥에 떨어뜨린다.
+
+## 4-2. NPC를 죽일 수 있게 하고, 손 레이저를 넣는다 (새 지시)
+**지금은 Kids 설정을 끄고 수위를 가장 높게 만든다.** 나중에 내가 낮춘다. 그래서 수위를 코드 여기저기에 박지 말고 `Vitals.GORE`(0~3) 한 값으로만 갈리게 한다. `GameConfig.Kids.Enabled`가 켜지면 0, 꺼지면 3이 되게 잇는다. 지금 기본값은 꺼짐(3)이다.
+
+1. **피해 경로를 하나로**: 총, 칼, 둔기, 수류탄, 사이버웨어 팔, 차에 치임까지 NPC가 맞는 모든 곳이 `crowd:damage(agent, hit)`(폭발은 `crowd:explode`)를 거치게 한다. 직접 체력을 깎는 코드는 남기지 않는다. `hit.part`에 맞은 뼈 이름을, `hit.dirX/dirZ`에 공격이 날아가는 방향을, `hit.attacker`에 플레이어를 넣는다. 서버에서만 판정한다.
+2. **대상**: 거리 군중(맨얼굴 사람 10명, 가면 NPC 5종) 전부. 상인과 시술의도 죽을 수 있게 하되, 가게 기능이 막히지 않게 일정 시간 뒤 다른 사람으로 다시 채운다. 퀘스트에 필요한 NPC만 `invulnerable` 표시로 뺀다(목록을 보고하고 내 승인을 받는다). 보안 로봇·드론·포탑은 같은 `Vitals`를 쓰되 죽으면 `robot_shutdown` / `drone_crash` / `turret_shutdown`을 틀고 불꽃과 연기를 낸다.
+3. **동작**: `res.anim`을 그대로 튼다. 죽는 클립 12종, 부상 2종, 피격 7종이 있다(`runtime/README.md`, 미리보기 `anim/preview_human_deaths.png`). 죽는 클립은 반복하지 않고 끝 프레임에서 멈춘다. 클립이 끝나면 그 자세로 굳히거나(가벼움), 랙돌로 넘겨 바닥에 맞춘다(계단·경사에서 필요). 손에 든 소품은 떨어뜨린다.
+4. **이펙트**: `res.effects`의 이름마다 아래를 붙인다. 이름이 없으면 내지 않는다(수위가 내려가면 저절로 빠진다).
+
+| 이름 | 만들 것 |
+|---|---|
+| `hit_flash`, `hit_dust` | 맞은 곳의 짧은 번쩍임과 옷 먼지 |
+| `blood_spray`, `blood_arc`, `blood_mist` | 맞은 곳에서 공격 진행 방향으로 튀는 피 파티클. 칼은 호를 그리고, 머리는 옅은 안개 |
+| `blood_drops_ground`, `blood_wall_behind` | 바닥의 핏방울 데칼, 맞은 사람 뒤 3 m 안에 벽이 있으면 벽 핏자국 데칼 |
+| `blood_pool`, `blood_pool_grow` | 시체 밑 피 웅덩이 데칼. `grow`면 6초 동안 0.4 m에서 1.2 m로 커진다 |
+| `wound_mark_body`, `slash_mark_body`, `burn_mark_body` | 맞은 위치의 옷·피부에 총상·베인 자국·그을린 자국 데칼 |
+| `burn_glow`, `smoke_wisp`, `char_body`, `smoke_corpse` | 레이저·불: 맞은 곳이 0.4초 달아오르고 연기가 난다. 죽으면 몸 전체가 2초에 걸쳐 검게 그을리고 20초 동안 연기가 난다 |
+| `arc_sparks`, `scorch_ground`, `clothes_scorch` | 감전 불꽃, 폭발 그을음, 옷 그을림 |
+| `corpse_stay`, `corpse_fade`, `dissolve` | 시체 남김 / 12초 뒤 흐려져 사라짐 / 수위 0의 소멸 연출 |
+
+5. **시체**: 수위 2 이상에서는 남는다. 성능을 위해 동시에 40구까지만 두고 넘으면 가장 오래되고 먼 것부터 `corpse_fade`로 치운다. 시체는 충돌을 끄고 군중이 밟고 지나가지 않게 가볍게 피한다. 다시 쏘면 자국은 남는다.
+6. **주변 반응**: `crowd:damage`가 알아서 주변 사람을 도망치게 하거나 웅크리게 한다. `crowd:drain()`의 `witnessed`(목격자 수)와 `death`를 수배·경찰 출동(스펙 `SEC`)에 잇는다. 목격자가 없으면 수배가 오르지 않는다. 소리(비명, 쓰러지는 소리)는 클립의 `hit`, `body_fall`, `knees` 이벤트에 붙인다.
+7. **채우기**: `corpse_gone` 뒤 `crowd:refill(플레이어 위치, 60)`으로 화면 밖에서 다시 채운다. 대량 사살로 거리가 비지 않게 하되, 사건이 난 블록은 2~3분 동안 한산하게 둔다.
+8. **손 레이저**: `Laser.new()` 하나를 플레이어의 사이버웨어 슬롯에 둔다. 매 프레임 `beam_out`에서 조준 방향으로 레이캐스트를 여러 번 이어 쏴(관통) 맞은 것들을 가까운 순서로 `laser:update`에 넘기고, 돌려받은 `damage`를 1번의 경로로 넣는다. 빔이 닿은 벽·바닥에는 달아오른 점과 그을린 선 데칼을 남긴다. 열(`out.heat`)은 HUD에 막대로 보인다. 수치는 `Laser.DEFAULTS`에서만 고친다.
+9. **확인**: Studio에서 수위 3과 0을 각각 켜고 (가) 총·칼·레이저·폭발로 죽이는 장면 (나) 시체와 핏자국 (다) 목격자 반응 (라) 수위 0에서 피가 하나도 안 나오는 것을 영상이나 연속 사진으로 보고한다.
+10. **넣지 않는 것**: 신체 절단, 고문 연출, 시체 훼손 보상. 플랫폼 규정에서 과도한 묘사는 등급과 상관없이 제재될 수 있으므로 수위 3은 "많은 피, 상처 자국, 남는 시체, 그을림"까지로 한다.
+11. **등급**: 이 수위로 공개하려면 경험 설문에서 '강한 폭력, 많은 사실적 피'로 답해야 하고 Restricted 등급이 된다. 공개 설정을 바꾸기 전에 내게 알린다(임의로 설문을 바꾸지 않는다).
 
 ## 5. 단계 순서에 미치는 영향
 | 단계 | 바뀐 점 |
 |---|---|
 | C3~C7 허브 | 소품과 건물 규칙은 위 에셋을 쓴다. 분위기 비교 기준은 `street_night.png`(밤)와 `street_day.png`(낮)이다. C4의 구역 양식은 `district_*.png`와 `districts.py` 규칙을 쓴다 |
+| C2 뒤, 새로 추가 | **NPC 피해·사망**(4-2)을 군중 교체와 같이 넣는다. 수위는 `Vitals.GORE` 한 값 |
 | C7b 보안 NPC | 외형 시안 단계를 건너뛴다. `security_robot`, `machines`(드론, 포탑, 감시 카메라)를 쓴다 |
 | C10 팔·총 | `weapons` 17종, 1인칭 팔 `fp_sleeve`·`fp_bare`, `fp_*` 클립, 손 모양을 쓴다. `GunShapes`는 불러오기 실패 대체용과 원거리 LOD로만 남긴다 |
 | C2 군중 | 진행 중인 작업을 먼저 끝낸다. 그 뒤 맨얼굴 행인의 겉모습을 `human` 10명으로 바꾸고, 이동은 `Crowd`, 동작은 `RigAnimator`로 옮긴다 |
-| C11 사이버웨어 | 팔 4종(`cyber-arm` 블레이드, `cyber_arms`의 파워암·나노와이어·런처), 시술소 `clinic`, 시술의 `human/doctor`를 쓴다. 에셋을 기다릴 것이 없다 |
+| C11 사이버웨어 | 팔 5종(`cyber-arm` 블레이드, `cyber_arms`의 파워암·나노와이어·런처·**손 레이저**), 시술소 `clinic`, 시술의 `human/doctor`를 쓴다. 에셋을 기다릴 것이 없다 |
 | C13 차량 | `car`를 쓴다 |
 
 ## 6. 아직 없는 에셋 (만들지 말고 기다릴 것)
