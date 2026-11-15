@@ -85,6 +85,8 @@ local res = crowd:damage(ag, {damage = 34, kind = "bullet", part = hitBone.Name,
 crowd:explode(x, z, 6, 400, player)            -- 폭발
 for _, e in crowd:drain() do ... end           -- death, downed, hurt, witnessed, corpse_gone 사건
 crowd:refill({x = px, z = pz}, 60)             -- 치워진 시체 수만큼 플레이어에게서 60 m 밖에 새로 채운다
+crowd:refill({{x = ax, z = az}, {x = bx, z = bz}}, 60)   -- 여러 명이면 목록을 넘긴다: 모든 플레이어에게서 60 m 밖에만 놓는다
+-- crowd:step(dt, signals, 플레이어 목록)에 넘긴 플레이어는 행인이 사람처럼 비켜 간다(끄려면 Crowd.new의 avoidPlayers = false, 거리는 playerSpace)
 ```
 - 에이전트 상태가 늘었다: `stagger`(맞고 비틀거림 → 곧 `flee`), `falling` → `downed`(기어감, `wounded_crawl`) → `dead`. `ag.anim`과 `ag.animTime`(그 클립을 튼 지 몇 초)을 그대로 `RigAnimator`에 넘긴다. `dead`면 클립을 반복하지 않고 끝 프레임에 멈춘다.
 - 피해 종류(`kind`): `bullet`, `shotgun`, `blade`, `blunt`, `laser`, `fire`, `electric`, `explosive`, `vehicle`(차에 치임), `fall`. 부위는 `zone`을 주거나 맞은 뼈 이름을 `part`로 준다(`Vitals.zoneOf`가 머리·목·몸통·팔·다리로 바꾼다). 배수는 머리 3.0, 목 2.2, 몸통 1.0, 팔 0.6, 다리 0.7.
@@ -151,7 +153,7 @@ local res = bot:damageBy({damage = 34, kind = "bullet", part = "torso", dirX = d
 -- bot.x, bot.z, bot.heading, bot.anim, bot.awareness(0~1, 잠입 표시용)
 
 local anims = CrowdNet.animTable(sortedClipNames)                   -- 서버와 클라이언트가 같은 목록
-remote:FireClient(player, CrowdNet.pack(crowd.agents, {x = px, z = pz}, 120, anims))   -- 초당 10번, UnreliableRemoteEvent
+remote:FireClient(player, CrowdNet.pack(crowd.agents, {x = px, z = pz}, 60, anims))   -- 초당 10번. 반경은 걸을 때 60 m, 차를 몰 때 90 m, UnreliableRemoteEvent
 -- 클라이언트
 interp:push(CrowdNet.unpack(buf, anims), os.clock())                -- interp = CrowdNet.Interp.new(0.15)
 for id, a in interp:sample(os.clock()) do ... end                   -- a.x, a.z, a.heading, a.anim, a.animTime, a.dead

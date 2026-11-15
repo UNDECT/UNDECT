@@ -32,6 +32,9 @@ function Crowd.new(world, opts)
 	self.agents = {}
 	self.radius = opts.radius or 0.32
 	self.personal = opts.personal or 1.1
+	self.avoidPlayers = opts.avoidPlayers ~= false   -- 행인이 플레이어를 사람처럼 비켜 간다
+	self.playerSpace = opts.playerSpace or 1.5       -- 플레이어 둘레로 비워 두는 거리(m)
+	self.players = {}                                -- step에 넘긴 focus에서 채운다
 	self.lodNear = opts.lodNear or 40
 	self.lodFar = opts.lodFar or 110
 	self.frame = 0
@@ -153,6 +156,18 @@ local function steer(self, ag, grid, dt: number, maxSpeed: number, turnRate: num
 			end
 		end
 	end
+	-- 플레이어도 비켜 간다(길을 막고 서 있으면 옆으로 돌아간다). 다가오는 쪽의 오른편으로 살짝 밀어 정면으로 맞서 멈추지 않게 한다
+	if self.avoidPlayers then
+		local PS = self.playerSpace
+		for _, pl in self.players do
+			local ox, oz = ag.x - pl.x, ag.z - pl.z
+			local d = math.sqrt(ox * ox + oz * oz)
+			if d < PS and d > 1e-6 then
+				local k = (PS - d) / PS * 3.4
+				vx += ox / d * k + (-oz / d) * k * 0.45; vz += oz / d * k + (ox / d) * k * 0.45
+			end
+		end
+	end
 	-- 시체를 밟지 않고 돌아간다
 	for _, c in self.corpses do
 		local ox, oz = ag.x - c.x, ag.z - c.z
@@ -191,6 +206,7 @@ end
 -- signals = {s1 = true(초록) | false(빨강)}, focus = {x=, z=} (카메라 위치: 멀리 있는 사람은 덜 자주 갱신)
 function Crowd:step(dt: number, signals, focus)
 	self.frame += 1
+	if focus then self.players = if focus[1] then focus else {focus} end
 	local grid = {}
 	table.clear(self.corpses)
 	for _, ag in self.agents do
@@ -417,15 +433,23 @@ function Crowd:drain()
 	return ev
 end
 
--- 죽어서 치워진 사람 자리를 채운다. 플레이어(focus)에게서 minDist보다 먼 곳에만 새로 놓는다. 채운 수를 돌려준다.
+-- 죽어서 치워진 사람 자리를 채운다. 플레이어에게서 minDist보다 먼 곳에만 새로 놓는다. 채운 수를 돌려준다.
+-- focus = 플레이어 한 명 {x, z} 또는 여러 명 {{x, z}, ...}. 여러 명이면 모든 플레이어에게서 멀어야 한다(누구 옆에도 갑자기 생기지 않는다).
 function Crowd:refill(focus, minDist: number)
+	local list = if not focus then {} elseif focus[1] then focus else {focus}
+	local function far(ag)
+		for _, f in list do
+			if math.sqrt((ag.x - f.x) ^ 2 + (ag.z - f.z) ^ 2) < minDist then return false end
+		end
+		return true
+	end
 	local n = 0
 	for _, ag in self.agents do
 		if ag.gone then
 			local ok = false
 			for _ = 1, 8 do
 				place(self, ag)
-				if not focus or math.sqrt((ag.x - focus.x) ^ 2 + (ag.z - focus.z) ^ 2) >= minDist then ok = true; break end
+				if far(ag) then ok = true; break end
 			end
 			if ok then
 				n += 1

@@ -482,6 +482,31 @@ do
 		c3:damage(c3.agents[1], {damage = 999, kind = "bullet", zone = "torso"}); c3.agents[1].gone = true
 		check("failed refill leaves the agent removed", c3:refill({x = 20, z = 15}, 1000) == 0 and c3.agents[1].gone and c3.agents[1].state == "dead" and c3:countAlive() == 2)
 		check("refill works once there is room", c3:refill({x = 20, z = 15}, 5) == 1 and c3:countAlive() == 3)
+		-- 플레이어가 여러 명이면 모든 플레이어에게서 멀리 놓는다
+		local c4 = Crowd.new(world(), {seed = 6}); c4:spawn(12)
+		local pl = {{x = c4.agents[1].x, z = c4.agents[1].z}, {x = c4.agents[7].x, z = c4.agents[7].z}}
+		for i = 1, 12 do c4.agents[i].gone = true; c4.agents[i].state = "dead" end
+		local nf = c4:refill(pl, 9); local okFar = true
+		for _, ag in c4.agents do
+			if not ag.gone then
+				for _, f in pl do okFar = okFar and math.sqrt((ag.x - f.x) ^ 2 + (ag.z - f.z) ^ 2) >= 9 end
+			end
+		end
+		check("refill keeps clear of every player", nf > 0 and okFar, tostring(nf))
+		-- 길을 막고 선 플레이어를 비켜 간다
+		local function closest(avoid)
+			local wk2 = Crowd.new({nodes = {{x = 0, z = 0}, {x = 60, z = 0}}, edges = {{a = 1, b = 2, width = 4}}}, {seed = 3, avoidPlayers = avoid}); wk2:spawn(1)
+			local ag = wk2.agents[1]; wk2:step(1 / 30, {}, nil)
+			local px, pz = ag.x + math.sin(ag.heading) * 5, ag.z + math.cos(ag.heading) * 5
+			local best = math.huge
+			for _ = 1, 360 do
+				wk2:step(1 / 30, {}, {{x = px, z = pz}})
+				best = math.min(best, math.sqrt((ag.x - px) ^ 2 + (ag.z - pz) ^ 2))
+			end
+			return best, math.sqrt((ag.x - px) ^ 2 + (ag.z - pz) ^ 2)
+		end
+		local nearOn, endOn = closest(true); local nearOff = closest(false)
+		check("walkers go around a standing player", nearOn > 0.6 and nearOff < 0.45 and endOn > 2.0, string.format("%.2f %.2f %.2f", nearOn, nearOff, endOn))
 	end
 	do  -- 사람은 Roblox 기준 오른쪽으로 비켜 걷는다: +X로 걸으면 오른쪽은 +Z다
 		local wk = Crowd.new({nodes = {{x = 0, z = 0}, {x = 200, z = 0}}, edges = {{a = 1, b = 2, width = 4}}}, {seed = 1}); wk:spawn(30)
