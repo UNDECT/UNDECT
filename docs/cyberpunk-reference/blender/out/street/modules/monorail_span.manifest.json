@@ -1,0 +1,47 @@
+{
+ "name": "monorail_span",
+ "units": "m",
+ "forward": "-Y",
+ "up": "+Z",
+ "triangles": 992,
+ "triangles_by_part": {
+  "monorail": 672,
+  "train": 320
+ },
+ "parts": {
+  "monorail": [
+   "rail_beam",
+   "rail_top",
+   "rail_rib",
+   "rail_rib.001",
+   "rail_rib.002",
+   "rail_rib.003",
+   "rail_rib.004",
+   "rail_rib.005",
+   "rail_rib.006",
+   "rail_rib.007",
+   "rail_rib.008",
+   "rail_rib.009",
+   "rail_rib.010",
+   "rail_cable",
+   "rail_strip",
+   "rail_strip.001"
+  ],
+  "train": [
+   "train_body",
+   "train_skirt",
+   "train_windows",
+   "train_stripe"
+  ]
+ },
+ "pivots": {},
+ "materials": [
+  "concrete",
+  "concrete_dark",
+  "glow_cyan",
+  "glow_magenta",
+  "gunmetal",
+  "titan",
+  "win_cool"
+ ]
+}

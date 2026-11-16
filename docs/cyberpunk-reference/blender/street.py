@@ -86,15 +86,19 @@ def stall(Mx=Matrix.Identity(4), part="stall"):
     finish("stall_pot", cyl(0.28, 0.24, 0.3, 16, "z"), "steel", 0.01, 1, Mx @ T(0.6, 0, 1.16), part)
     text("stall_text", "NAMU", 0.26, Mx @ frame((1, 0, 0), (0, -1, 0), (0, -0.61, 0.55)), "glow_amber", part, 0.004)
 
-def blade_sign(Mx=Matrix.Identity(4), part="blade_sign", word="KIRO", col="glow_magenta", h=4.2):
-    """벽에서 튀어나온 세로 간판. 원점 = 벽 붙는 점, +X 쪽으로 나온다. 글자는 -Y를 본다."""
-    finish("sign_bracket", box(1.5, 0.08, 0.08), "gunmetal", 0.005, 1, Mx @ T(0.7, 0, h / 2 - 0.2), part)
-    finish("sign_bracket2", box(1.5, 0.08, 0.08), "gunmetal", 0.005, 1, Mx @ T(0.7, 0, -h / 2 + 0.2), part)
-    finish("sign_body", box(1.05, 0.22, h), "black", 0.02, 2, Mx @ T(0.95, 0, 0), part)
-    finish("sign_border", box(1.13, 0.10, h + 0.08), col, 0, 1, Mx @ T(0.95, 0, 0), part)
+def blade_sign(Mx=Matrix.Identity(4), part="blade_sign", word="KIRO", col="glow_magenta", h=4.2, dx=1, both=False):
+    """벽에서 튀어나온 세로 간판. 원점 = 벽 붙는 점. dx = 1이면 +X 쪽, -1이면 -X 쪽으로 나온다(오른쪽 벽용. 뒤집지 않으므로 글자가 바로 읽힌다).
+    글자는 -Y를 본다. both = True면 +Y 쪽에도 글자를 넣는다(게임에서는 양쪽에서 본다)."""
+    finish("sign_bracket", box(1.5, 0.08, 0.08), "gunmetal", 0.005, 1, Mx @ T(0.7 * dx, 0, h / 2 - 0.2), part)
+    finish("sign_bracket2", box(1.5, 0.08, 0.08), "gunmetal", 0.005, 1, Mx @ T(0.7 * dx, 0, -h / 2 + 0.2), part)
+    finish("sign_body", box(1.05, 0.22, h), "black", 0.02, 2, Mx @ T(0.95 * dx, 0, 0), part)
+    finish("sign_border", box(1.13, 0.10, h + 0.08), col, 0, 1, Mx @ T(0.95 * dx, 0, 0), part)
     step = (h - 0.6) / max(1, len(word))
     for i, ch in enumerate(word):
-        if ch != " ": text("sign_ch", ch, 0.62, Mx @ frame((1, 0, 0), (0, -1, 0), (0.95, -0.125, h / 2 - 0.55 - i * step)), "glow_white", part, 0.006)
+        if ch == " ": continue
+        z = h / 2 - 0.55 - i * step
+        text("sign_ch", ch, 0.62, Mx @ frame((1, 0, 0), (0, -1, 0), (0.95 * dx, -0.125, z)), "glow_white", part, 0.006)
+        if both: text("sign_ch_back", ch, 0.62, Mx @ frame((-1, 0, 0), (0, 1, 0), (0.95 * dx, 0.125, z)), "glow_white", part, 0.006)
 
 def billboard(Mx=Matrix.Identity(4), part="billboard", w=9.0, h=4.5, word="ZENTH", col=(1.0, 0.1, 0.45), col2=(0.1, 0.6, 1.0)):
     """받침 구조가 있는 중형 광고판. 화면은 -Y를 본다."""
@@ -240,7 +244,7 @@ def scene(day=False):
     # 중형 광고판 하나: 오른쪽 첫 건물 옥상
     billboard(T(18.5, 45.0, 27.6) @ RZ(14), "roof_ad", 9.0, 4.4, "ZENTH", (1.0, 0.45, 0.05), (1.0, 0.1, 0.3))
     # 돌출 세로 간판 3개 (받침대 포함)
-    blade_sign(T(-11, 6.0, 9.5), "blade1", "KIRO", "glow_magenta"); blade_sign(T(11, 2.0, 8.0) @ RZ(180) @ S(1, -1, 1), "blade2", "MIRU", "glow_cyan", 3.6)
+    blade_sign(T(-11, 6.0, 9.5), "blade1", "KIRO", "glow_magenta"); blade_sign(T(11, 2.0, 8.0), "blade2", "MIRU", "glow_cyan", 3.6, dx=-1)
     blade_sign(T(-11, 24.0, 12.0), "blade3", "TEKKA", "glow_amber", 5.0)
     # 고가 선로와 공중 통로
     monorail(T(0, 50, 15.0)); pillar(T(-9.2, 50, 0)); pillar(T(9.2, 50, 0))
@@ -345,9 +349,9 @@ def buildings():
                          {"kit": "bld_d", "side": 1, "y0": -22, "y1": 9}, {"kit": "bld_e", "side": 1, "y0": 11, "y1": 42}, {"kit": "bld_f", "side": 1, "y0": 44, "y1": 72}, {"kit": "bld_g", "side": 1, "y0": 74, "y1": 110}],
            "megastructures": [{"kit": "mega_a", "pos": [-90, 260], "size": [120, 110, 340]}, {"kit": "mega_a", "pos": [95, 330], "size": [130, 120, 430]}, {"kit": "mega_b", "pos": [0, 470], "size": [90, 90, 520]},
                               {"kit": "mega_c", "pos": [-170, 150], "size": [80, 80, 210]}, {"kit": "mega_c", "pos": [170, 190], "size": [90, 90, 260]}],
-           "skybridge": {"pos": [0, 86, 30]}, "monorail": {"pos": [0, 50, 15.0], "span": 44.0, "pillars": [[-9.2, 50, 0], [9.2, 50, 0]]},
-           "hero_ad": {"pos": [21.5, 73.5, 46.0], "size": [15.0, 24.0], "word": "LUMEN"}, "roof_ad": {"pos": [18.5, 45.0, 27.6], "yaw_deg": 14, "size": [9.0, 4.4], "word": "ZENTH"},
-           "blade_signs": [{"pos": [-11, 6.0, 9.5], "word": "KIRO", "glow": "magenta", "h": 4.2}, {"pos": [11, 2.0, 8.0], "word": "MIRU", "glow": "cyan", "h": 3.6}, {"pos": [-11, 24.0, 12.0], "word": "TEKKA", "glow": "amber", "h": 5.0}],
+           "skybridge": {"pos": [0, 86, 30]}, "monorail": {"kit": "monorail_span", "pos": [0, 50, 15.0], "span": 44.0, "pillars": [[-9.2, 50, 0], [9.2, 50, 0]]},
+           "hero_ad": {"pos": [21.5, 73.5, 46.0], "size": [15.0, 24.0], "word": "LUMEN"}, "roof_ad": {"kit": "roof_ad", "pos": [18.5, 45.0, 27.6], "yaw_deg": 14, "size": [9.0, 4.4], "word": "ZENTH"},
+           "blade_signs": [{"kit": "blade_sign_kiro", "pos": [-11, 6.0, 9.5], "word": "KIRO", "glow": "magenta", "h": 4.2}, {"kit": "blade_sign_miru_right", "pos": [11, 2.0, 8.0], "word": "MIRU", "glow": "cyan", "h": 3.6, "note": "오른쪽 벽용. 돌리거나 뒤집지 않고 그대로 놓는다"}, {"kit": "blade_sign_tekka", "pos": [-11, 24.0, 12.0], "word": "TEKKA", "glow": "amber", "h": 5.0}],
            "lamps": {"left": {"x": -7.6, "y0": -4, "pitch": 19, "count": 7}, "right": {"x": 7.6, "y0": 5, "pitch": 19, "count": 7}},
            "props": [{"kit": "vending", "pos": [9.9, -3.4]}, {"kit": "vending", "pos": [9.9, -2.1]}, {"kit": "stall", "pos": [-9.0, 2.5]}, {"kit": "trash", "pos": [-10.0, -5.5]}, {"kit": "trash", "pos": [9.6, 13.0]},
                      {"kit": "barrier", "pos": [4.4, 10.0]}, {"kit": "barrier", "pos": [4.9, 12.4]}],
@@ -361,5 +365,15 @@ def buildings():
     sc = kit.reset(); materials(); base_ground(); building(1, 0, 34, 14, 30, 1, full=True); building(1, 36, 59, 16, 44, 2, full=True)
     light_and_shoot(sc, "buildings_check.png", True, [], cam=((58.0, -26.0, 30.0), (16.0, 26.0, 14.0), 28))
 
+def modules_extra():
+    """목표 장면에 쓰인 간판·광고판·선로를 그대로 내보낸다(게임에서 양쪽에서 보이도록 세로 간판은 앞뒤에 글자가 있다)."""
+    mods = {"blade_sign_kiro": lambda: blade_sign(T(0, 0, 2.2), "blade_sign", "KIRO", "glow_magenta", 4.2, 1, True),
+            "blade_sign_miru_right": lambda: blade_sign(T(0, 0, 2.0), "blade_sign", "MIRU", "glow_cyan", 3.6, -1, True),
+            "blade_sign_tekka": lambda: blade_sign(T(0, 0, 2.6), "blade_sign", "TEKKA", "glow_amber", 5.0, 1, True),
+            "roof_ad": lambda: billboard(T(0, 0, 2.6), "roof_ad", 9.0, 4.4, "ZENTH", (1.0, 0.45, 0.05), (1.0, 0.1, 0.3)),
+            "monorail_span": lambda: monorail(span=44.0, train=True)}
+    for name, fn in mods.items():
+        kit.reset(); materials(); fn(); kit.export(os.path.join(OUT, "modules"), name)
+
 if __name__ == "__main__":
-    scene() if MODE == "scene" else scene(True) if MODE == "scene_day" else buildings() if MODE == "buildings" else modules()
+    scene() if MODE == "scene" else scene(True) if MODE == "scene_day" else buildings() if MODE == "buildings" else modules_extra() if MODE == "modules_extra" else modules()

@@ -1,0 +1,35 @@
+{
+ "name": "blade_sign_tekka",
+ "units": "m",
+ "forward": "-Y",
+ "up": "+Z",
+ "triangles": 600,
+ "triangles_by_part": {
+  "blade_sign": 600
+ },
+ "parts": {
+  "blade_sign": [
+   "sign_bracket",
+   "sign_bracket2",
+   "sign_body",
+   "sign_border",
+   "sign_ch",
+   "sign_ch_back",
+   "sign_ch.001",
+   "sign_ch_back.001",
+   "sign_ch.002",
+   "sign_ch_back.002",
+   "sign_ch.003",
+   "sign_ch_back.003",
+   "sign_ch.004",
+   "sign_ch_back.004"
+  ]
+ },
+ "pivots": {},
+ "materials": [
+  "black",
+  "glow_amber",
+  "glow_white",
+  "gunmetal"
+ ]
+}

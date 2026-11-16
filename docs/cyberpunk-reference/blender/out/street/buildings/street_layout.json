@@ -171,7 +171,8 @@
     50,
     0
    ]
-  ]
+  ],
+  "kit": "monorail_span"
  },
  "hero_ad": {
   "pos": [
@@ -196,7 +197,8 @@
    9.0,
    4.4
   ],
-  "word": "ZENTH"
+  "word": "ZENTH",
+  "kit": "roof_ad"
  },
  "blade_signs": [
   {
@@ -207,7 +209,8 @@
    ],
    "word": "KIRO",
    "glow": "magenta",
-   "h": 4.2
+   "h": 4.2,
+   "kit": "blade_sign_kiro"
   },
   {
    "pos": [
@@ -217,7 +220,9 @@
    ],
    "word": "MIRU",
    "glow": "cyan",
-   "h": 3.6
+   "h": 3.6,
+   "kit": "blade_sign_miru_right",
+   "note": "오른쪽 벽용. 돌리거나 뒤집지 않고 그대로 놓는다"
   },
   {
    "pos": [
@@ -227,7 +232,8 @@
    ],
    "word": "TEKKA",
    "glow": "amber",
-   "h": 5.0
+   "h": 5.0,
+   "kit": "blade_sign_tekka"
   }
  ],
  "lamps": {
