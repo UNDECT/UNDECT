@@ -12,6 +12,7 @@ python street.py out/street modules  # 거리 소품 10종 내보내기
 python weapons.py out/weapons render  # 무기 17종
 python flying_car.py out/flying_car all   # 변형: ... render patrol
 python npc.py out/npc render           # 거리 NPC 5종
+python street.py out/street buildings   # 게임용 건물 8채 + 원경 탑 3종 + 공중 통로 + 큰 광고판 + 배치표(street_layout.json)
 python person.py out/human render     # 맨얼굴 사람 10명 + 1인칭 팔 2종 (전부 자체 제작, 준비물 없음)
 python machines.py out/machines render # 드론, 포탑, 감시 카메라
 python clinic.py out/clinic modules    # 시술 의자, 천장 로봇 팔, 도구 수레

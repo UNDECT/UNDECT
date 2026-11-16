@@ -1,0 +1,26 @@
+{
+ "name": "bld_corp",
+ "units": "m",
+ "forward": "-Y",
+ "up": "+Z",
+ "triangles": 156,
+ "triangles_by_part": {
+  "_static": 156
+ },
+ "parts": {},
+ "pivots": {},
+ "materials": [
+  "glow_cyan",
+  "gunmetal",
+  "tower_glass"
+ ],
+ "size_m": [
+  22,
+  34,
+  118
+ ],
+ "floors": 32,
+ "style": "corp",
+ "shops": true,
+ "origin": "거리 쪽 벽의 아래 모서리. +X 깊이, +Y 길이"
+}

@@ -133,7 +133,7 @@ def pillar(Mx=Matrix.Identity(4), part="pillar", h=15.0):
     finish("pillar_band", cyl(1.04, 1.04, 0.5, 16, "z"), "prop_yellow", 0, 1, Mx @ T(0, 0, 1.3), part)
 
 # ------------------------------------------------------------------ 건물
-def building(side, y0, y1, depth, h, seed, style="old", shops=True):
+def building(side, y0, y1, depth, h, seed, style="old", shops=True, full=False):
     """side = -1(왼쪽, 벽면이 +X를 봄) 또는 +1(오른쪽). 거리 쪽 벽은 x = 11 * side."""
     r = random.Random(seed); xf = 11.0 * side; xc = xf + side * depth / 2; yc = (y0 + y1) / 2; L = y1 - y0
     wall = "tower_glass" if style == "corp" else ("concrete" if r.random() < 0.6 else "concrete_dark")
@@ -166,6 +166,18 @@ def building(side, y0, y1, depth, h, seed, style="old", shops=True):
             k = r.random(); m = warm if k < 0.16 else cool if k < 0.22 else dark
             m.add(1.7, 0.10, 1.55, T(x, y0 - 0.03, z)); mull.add(0.07, 0.14, 1.6, T(x, y0 - 0.05, z)); mull.add(1.75, 0.14, 0.07, T(x, y0 - 0.05, z + 0.25)); x += side * 3.4
         z += 3.6
+    if full:   # 게임용: 반대쪽 옆벽과 뒷벽에도 창을 낸다(목표 그림에서는 안 보여서 뺐던 면)
+        z = 5.2; xb = xf + side * depth
+        while z < h - 2.0:
+            x = xf + side * 2.0
+            while abs(x - xf) < depth - 1.5:
+                k = r.random(); m = warm if k < 0.16 else cool if k < 0.22 else dark
+                m.add(1.7, 0.10, 1.55, T(x, y1 + 0.03, z)); mull.add(0.07, 0.14, 1.6, T(x, y1 + 0.05, z)); mull.add(1.75, 0.14, 0.07, T(x, y1 + 0.05, z + 0.25)); x += side * 3.4
+            y = y0 + 1.8
+            while y < y1 - 1.2:
+                k = r.random(); m = warm if k < 0.15 else cool if k < 0.21 else dark
+                m.add(0.10, 1.7, 1.55, T(xb + side * 0.03, y, z)); mull.add(0.14, 0.07, 1.6, T(xb + side * 0.05, y, z)); mull.add(0.14, 1.75, 0.07, T(xb + side * 0.05, y, z + 0.25)); y += 3.2
+            z += 3.6
     for mm, nm, mt in ((dark, "win", "win_dark"), (warm, "win_warm", "win_warm"), (cool, "win_cool", "win_cool"), (pink, "win_pink", "win_pink"),
                        (bands, "bands", "concrete_dark"), (fins, "fins", "concrete_dark"), (acs, "acs", "titan"), (mull, "mullions", "gunmetal")):
         mm.done("bld_" + nm, mt)
@@ -291,5 +303,63 @@ def modules():
     lamp(T(-9, 2, 0)); vending(T(-6.5, 0, 0)); ac_unit(T(-4.6, 0, 0.5)); barrier(T(-2.2, 0, 0)); trash(T(1.0, 0.5, 0)); stall(T(5.6, 0.5, 0)); blade_sign(T(8.4, 1, 2.4)); billboard(T(-1, 6, 3.0), w=7.0, h=3.4)
     kit.shot(os.path.join(OUT, "street_modules.png"), (-3.0, -21.0, 6.0), (0.0, 1.0, 2.6), 50)
 
+# ------------------------------------------------------------------ 게임용 건물 묶음
+KIT = [  # 이름, 길이(거리 방향), 깊이, 높이, 씨앗, 양식, 1층 가게  -- 목표 그림(street_day.png)의 건물 8채와 같다
+    ("bld_a", 34, 14, 30, 1, "old", True), ("bld_b", 23, 16, 44, 2, "old", True), ("bld_c", 26, 18, 62, 3, "old", False), ("bld_corp", 34, 22, 118, 4, "corp", True),
+    ("bld_d", 31, 14, 24, 5, "old", True), ("bld_e", 31, 18, 28, 6, "old", True), ("bld_f", 28, 16, 25, 7, "old", True), ("bld_g", 36, 22, 98, 8, "old", False)]
+
+def _pack(shift):
+    """내보내기 전에: 원점을 옮기고, 재질이 같은 메시끼리 하나로 합친다(글자는 따로 둔다: 그림에 굽지 않는 메시)."""
+    bpy.context.view_layer.update(); dg = bpy.context.evaluated_depsgraph_get(); by = {}
+    for o in list(kit.COL.objects):
+        if o.type != "MESH": o.matrix_world = shift @ o.matrix_world; continue
+        if o.modifiers:
+            nm = bpy.data.meshes.new_from_object(o.evaluated_get(dg), depsgraph=dg); o.modifiers.clear(); o.data = nm
+        o.data.transform(shift @ o.matrix_world); o.matrix_world = Matrix.Identity(4)
+        key = o.data.materials[0].name if o.data.materials else "none"
+        by.setdefault("text" if "text" in o.name else key, []).append(o)
+    for key, objs in by.items():
+        if len(objs) > 1:
+            with bpy.context.temp_override(active_object=objs[0], object=objs[0], selected_editable_objects=objs, selected_objects=objs): bpy.ops.object.join()
+        objs[0].name = key; objs[0].data.name = key
+    kit.PARTS.clear()   # 합치면서 사라진 오브젝트를 가리키지 않게 한다
+
+def buildings():
+    """목표 그림의 건물 8채, 원경 탑 3종, 공중 통로, 큰 광고판을 게임에 놓을 수 있는 부품으로 내보낸다. 배치표(street_layout.json)도 같이 쓴다.
+    건물 원점 = 거리 쪽 벽의 한쪽 아래 모서리. 건물은 +X로 깊이, +Y로 길이, +Z로 높이만큼 뻗는다. 네 면 모두 창이 있다."""
+    out = os.path.join(OUT, "buildings"); info = {}
+    for name, L, d, h, seed, style, shops in KIT:
+        kit.reset(); materials(); building(1, 0, L, d, h, seed, style, shops, full=True); _pack(T(-11, 0, 0))
+        kit.export(out, name, {"size_m": [d, L, h], "floors": int((h - 2.0 - 5.2) / 3.6) + 2, "style": style, "shops": shops, "origin": "거리 쪽 벽의 아래 모서리. +X 깊이, +Y 길이"})
+        info[name] = [d, L, h]
+    for name, a in (("mega_a", (120, 110, 340, 0.62, "glow_magenta")), ("mega_b", (90, 90, 520, 0.5, "glow_amber")), ("mega_c", (80, 80, 210, 0.7, None))):
+        kit.reset(); materials(); megastructure(0, 0, *a); _pack(Matrix.Identity(4)); kit.export(out, name, {"size_m": [a[0], a[1], a[2]], "origin": "바닥 중심"})
+    kit.reset(); materials()
+    finish("skybridge", box(22.2, 4.5, 4.2), "concrete_dark", 0.1, 1, T(0, 0, 0)); finish("skybridge_win", box(22.3, 4.56, 1.2), "win_warm", 0, 1, T(0, 0, 0.4), smooth=False)
+    _pack(Matrix.Identity(4)); kit.export(out, "skybridge", {"size_m": [22.2, 4.5, 4.2], "origin": "가운데"})
+    kit.reset(); materials(); billboard(T(0, 0, 0), "hero_ad", 15.0, 24.0, "LUMEN", (1.0, 0.08, 0.5), (0.15, 0.35, 1.0)); _pack(Matrix.Identity(4)); kit.export(out, "hero_ad", {"size_m": [15.0, 24.0], "origin": "billboard와 같다"})
+    lay = {"units": "m", "note": "street_day.png / street_night.png 장면의 배치. 도로는 +Y로 뻗고 x=0이 도로 중심. 왼쪽(-x) 건물은 Z축으로 180도 돌려 거리 쪽 벽을 x=-11에 맞춘다.",
+           "camera": {"pos": [2.4, -17.0, 1.75], "look_at": [-0.5, 40.0, 19.0], "lens_mm": 24, "sensor_mm": 36},
+           "road": {"width": 14.0, "sidewalk_width": 4.0, "curb_height": 0.18, "wall_to_wall": 22.0, "center_dash": [3.0, 7.0], "crosswalk": {"y": 4.0, "stripes": 9, "stripe": [0.55, 4.2], "pitch": 1.4}},
+           "buildings": [{"kit": "bld_a", "side": -1, "y0": -22, "y1": 12}, {"kit": "bld_b", "side": -1, "y0": 13, "y1": 36}, {"kit": "bld_c", "side": -1, "y0": 38, "y1": 64}, {"kit": "bld_corp", "side": -1, "y0": 66, "y1": 100},
+                         {"kit": "bld_d", "side": 1, "y0": -22, "y1": 9}, {"kit": "bld_e", "side": 1, "y0": 11, "y1": 42}, {"kit": "bld_f", "side": 1, "y0": 44, "y1": 72}, {"kit": "bld_g", "side": 1, "y0": 74, "y1": 110}],
+           "megastructures": [{"kit": "mega_a", "pos": [-90, 260], "size": [120, 110, 340]}, {"kit": "mega_a", "pos": [95, 330], "size": [130, 120, 430]}, {"kit": "mega_b", "pos": [0, 470], "size": [90, 90, 520]},
+                              {"kit": "mega_c", "pos": [-170, 150], "size": [80, 80, 210]}, {"kit": "mega_c", "pos": [170, 190], "size": [90, 90, 260]}],
+           "skybridge": {"pos": [0, 86, 30]}, "monorail": {"pos": [0, 50, 15.0], "span": 44.0, "pillars": [[-9.2, 50, 0], [9.2, 50, 0]]},
+           "hero_ad": {"pos": [21.5, 73.5, 46.0], "size": [15.0, 24.0], "word": "LUMEN"}, "roof_ad": {"pos": [18.5, 45.0, 27.6], "yaw_deg": 14, "size": [9.0, 4.4], "word": "ZENTH"},
+           "blade_signs": [{"pos": [-11, 6.0, 9.5], "word": "KIRO", "glow": "magenta", "h": 4.2}, {"pos": [11, 2.0, 8.0], "word": "MIRU", "glow": "cyan", "h": 3.6}, {"pos": [-11, 24.0, 12.0], "word": "TEKKA", "glow": "amber", "h": 5.0}],
+           "lamps": {"left": {"x": -7.6, "y0": -4, "pitch": 19, "count": 7}, "right": {"x": 7.6, "y0": 5, "pitch": 19, "count": 7}},
+           "props": [{"kit": "vending", "pos": [9.9, -3.4]}, {"kit": "vending", "pos": [9.9, -2.1]}, {"kit": "stall", "pos": [-9.0, 2.5]}, {"kit": "trash", "pos": [-10.0, -5.5]}, {"kit": "trash", "pos": [9.6, 13.0]},
+                     {"kit": "barrier", "pos": [4.4, 10.0]}, {"kit": "barrier", "pos": [4.9, 12.4]}],
+           "cables": [{"y": -2.0, "z": 9.0}, {"y": 8.0, "z": 11.5}, {"y": 20.0, "z": 10.0}, {"y": 30.0, "z": 13.0}],
+           "vehicles": [{"kit": "car_crimson", "pos": [5.6, 1.5], "yaw_deg": 180}, {"kit": "car_cab", "pos": [-2.2, 26.0]}, {"kit": "car_teal", "pos": [-5.6, -6.5]}], "robot": {"pos": [-8.2, -1.2], "yaw_deg": -150},
+           "day": {"sky_linear": [0.62, 0.68, 0.76], "sun_color": [1.0, 0.90, 0.76], "sun_elevation_deg": 40, "haze_color": [1.0, 0.95, 0.88]},
+           "night": {"sky_linear": [0.010, 0.012, 0.030], "pools": [{"pos": [-9.5, 5.5, 6.0], "color": [1.0, 0.1, 0.5]}, {"pos": [9.5, 0.5, 5.5], "color": [0.1, 0.8, 1.0]}, {"pos": [-9.5, 22.0, 7.0], "color": [1.0, 0.5, 0.1]}]},
+           "kit_sizes_m": info}
+    import json; json.dump(lay, open(os.path.join(out, "street_layout.json"), "w"), indent=1, ensure_ascii=False)
+    # 확인 사진: 뒤와 옆에서 본 건물 두 채
+    sc = kit.reset(); materials(); base_ground(); building(1, 0, 34, 14, 30, 1, full=True); building(1, 36, 59, 16, 44, 2, full=True)
+    light_and_shoot(sc, "buildings_check.png", True, [], cam=((58.0, -26.0, 30.0), (16.0, 26.0, 14.0), 28))
+
 if __name__ == "__main__":
-    scene() if MODE == "scene" else scene(True) if MODE == "scene_day" else modules()
+    scene() if MODE == "scene" else scene(True) if MODE == "scene_day" else buildings() if MODE == "buildings" else modules()

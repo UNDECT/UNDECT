@@ -1,0 +1,22 @@
+{
+ "name": "hero_ad",
+ "units": "m",
+ "forward": "-Y",
+ "up": "+Z",
+ "triangles": 848,
+ "triangles_by_part": {
+  "hero_ad": 848
+ },
+ "parts": {},
+ "pivots": {},
+ "materials": [
+  "ad_LUMEN",
+  "glow_white",
+  "gunmetal"
+ ],
+ "size_m": [
+  15.0,
+  24.0
+ ],
+ "origin": "billboard와 같다"
+}
