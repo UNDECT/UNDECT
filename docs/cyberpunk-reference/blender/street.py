@@ -27,8 +27,8 @@ def materials(tex=True):
     kit.mat_simple("shop_glow", (0, 0, 0), 0, 0.4, (1.0, 0.8, 0.55), 0.55); kit.mat_simple("sodium", (0, 0, 0), 0, 0.4, (1.0, 0.52, 0.16), 14.0)
     kit.mat_simple("paint_line", (0.55, 0.55, 0.5), 0.0, 0.5); kit.mat_simple("cloth", (0.30, 0.05, 0.04), 0.0, 0.8)
     kit.mat_simple("trash", (0.01, 0.01, 0.012), 0.0, 0.35)
-    kit.mat_simple("shop_glass", (0.02, 0.03, 0.035), 0.0, 0.04, alpha=0.16); kit.mat_simple("shop_wall", (0.50, 0.45, 0.38), 0.0, 0.7); kit.mat_simple("shop_floor", (0.07, 0.07, 0.075), 0.0, 0.35)
-    kit.mat_simple("shop_light", (0, 0, 0), 0, 0.4, (1.0, 0.82, 0.60), 9.0); kit.mat_simple("goods_a", (0.55, 0.08, 0.08), 0.0, 0.5); kit.mat_simple("goods_b", (0.08, 0.30, 0.50), 0.0, 0.5)
+    kit.mat_simple("shop_glass", (0.02, 0.03, 0.035), 0.0, 0.04, alpha=0.16); kit.mat_simple("shop_wall", (0.50, 0.45, 0.38), 0.0, 0.7, (1.0, 0.80, 0.58), 0.9); kit.mat_simple("shop_floor", (0.07, 0.07, 0.075), 0.0, 0.35)
+    kit.mat_simple("shop_light", (0, 0, 0), 0, 0.4, (1.0, 0.82, 0.60), 32.0); kit.mat_simple("goods_a", (0.55, 0.08, 0.08), 0.0, 0.5); kit.mat_simple("goods_b", (0.08, 0.30, 0.50), 0.0, 0.5)
     kit.mat_simple("goods_c", (0.65, 0.50, 0.08), 0.0, 0.5); kit.mat_metal("shutter", (0.11, 0.115, 0.125), 0.30, 0.50, brushed=False)
     kit.mat_windows("far_windows", ratio=0.20, cell=(4.5, 4.2), strength=2.2)
     # 벽 재질: wall_textures.py가 만든 그림이 있으면 그것을 쓴다(패널 줄눈, 거푸집 자국, 빗물 얼룩). 건물마다 섞여 쓰인다
@@ -221,6 +221,7 @@ def building(side, y0, y1, depth, h, seed, style="old", shops=True, full=False):
                 text("shop_text", word, 0.55, frame((0, -side, 0), (-side, 0, 0), (xf - side * 0.30, y + 2.8, 4.55)), colr, None, 0.01)
                 pier(last, y + 0.3); last = y + 5.3                      # 가게 사이는 벽으로 메우고, 가게 자리만 비운다
                 inner.add(0.08, 5.0, 3.6, T(xf + side * 1.76, y + 2.8, 2.0)); floors.add(1.8, 5.0, 0.06, T(xm, y + 2.8, 0.21))
+                for ys in (y + 0.34, y + 5.26): inner.add(1.72, 0.06, 3.6, T(xm, ys, 2.0))        # 옆벽도 밝게: 비스듬히 봐도 불 켜진 가게로 보인다
                 finish("shop_light", box(0.22, 4.2, 0.06), "shop_light", 0, 1, T(xf + side * 0.8, y + 2.8, 3.84), smooth=False)
                 for k2, yu in enumerate((y + 1.25, y + 4.35)):
                     shelf.add(0.34, 1.9, 1.9, T(xf + side * 1.52, yu, 1.19))
@@ -370,7 +371,7 @@ def buildings():
         info[name] = [d, L, h]
     for name, a in (("mega_a", (120, 110, 340, 0.62, "glow_magenta")), ("mega_b", (90, 90, 520, 0.5, "glow_amber")), ("mega_c", (80, 80, 210, 0.7, None))):
         kit.reset(); materials(False); megastructure(0, 0, *a); _pack(Matrix.Identity(4)); kit.export(out, name, {"size_m": [a[0], a[1], a[2]], "origin": "바닥 중심"})
-    kit.reset(); materials()
+    kit.reset(); materials(False)
     finish("skybridge", box(22.2, 4.5, 4.2), "concrete_dark", 0.1, 1, T(0, 0, 0)); finish("skybridge_win", box(22.3, 4.56, 1.2), "win_warm", 0, 1, T(0, 0, 0.4), smooth=False)
     _pack(Matrix.Identity(4)); kit.export(out, "skybridge", {"size_m": [22.2, 4.5, 4.2], "origin": "가운데"})
     kit.reset(); materials(False); billboard(T(0, 0, 0), "hero_ad", 15.0, 24.0, "LUMEN", (1.0, 0.08, 0.5), (0.15, 0.35, 1.0)); _pack(Matrix.Identity(4)); kit.export(out, "hero_ad", {"size_m": [15.0, 24.0], "origin": "billboard와 같다"})

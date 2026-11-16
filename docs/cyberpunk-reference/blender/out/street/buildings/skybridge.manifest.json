@@ -10,7 +10,7 @@
  "parts": {},
  "pivots": {},
  "materials": [
-  "concrete_dark.001",
+  "concrete_dark",
   "win_warm"
  ],
  "size_m": [

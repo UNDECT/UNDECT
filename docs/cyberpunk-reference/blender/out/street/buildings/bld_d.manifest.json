@@ -3,9 +3,9 @@
  "units": "m",
  "forward": "-Y",
  "up": "+Z",
- "triangles": 10416,
+ "triangles": 10488,
  "triangles_by_part": {
-  "_static": 10416
+  "_static": 10488
  },
  "parts": {},
  "pivots": {},
