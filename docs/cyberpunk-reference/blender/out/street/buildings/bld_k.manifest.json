@@ -1,0 +1,37 @@
+{
+ "name": "bld_k",
+ "units": "m",
+ "forward": "-Y",
+ "up": "+Z",
+ "triangles": 29104,
+ "triangles_by_part": {
+  "_static": 29104
+ },
+ "parts": {},
+ "pivots": {},
+ "materials": [
+  "black",
+  "cloth",
+  "concrete.001",
+  "concrete_dark.001",
+  "glow_amber",
+  "glow_magenta",
+  "glow_red",
+  "gunmetal",
+  "shop_glow",
+  "titan",
+  "win_cool",
+  "win_dark",
+  "win_pink",
+  "win_warm"
+ ],
+ "size_m": [
+  16,
+  30,
+  88
+ ],
+ "floors": 24,
+ "style": "old",
+ "shops": true,
+ "origin": "거리 쪽 벽의 아래 모서리. +X 깊이, +Y 길이"
+}

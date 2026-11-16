@@ -315,6 +315,9 @@ KIT = [  # 이름, 길이(거리 방향), 깊이, 높이, 씨앗, 양식, 1층 �
     ("bld_a", 34, 14, 30, 1, "old", True), ("bld_b", 23, 16, 44, 2, "old", True), ("bld_c", 26, 18, 62, 3, "old", False), ("bld_corp", 34, 22, 118, 4, "corp", True),
     ("bld_d", 31, 14, 24, 5, "old", True), ("bld_e", 31, 18, 28, 6, "old", True), ("bld_f", 28, 16, 25, 7, "old", True), ("bld_g", 36, 22, 98, 8, "old", False)]
 
+KIT2 = [  # 허브의 얕은 필지용: 깊이 16 m 이하이면서 높이가 다양한 건물. 앞줄에 같은 건물이 되풀이되지 않게 섞어 쓴다
+    ("bld_h", 28, 14, 52, 9, "old", True), ("bld_i", 24, 16, 70, 10, "old", True), ("bld_j", 34, 12, 36, 11, "old", True), ("bld_k", 30, 16, 88, 12, "old", True)]
+
 def _pack(shift):
     """내보내기 전에: 원점을 옮기고, 재질이 같은 메시끼리 하나로 합친다(글자는 따로 둔다: 그림에 굽지 않는 메시)."""
     bpy.context.view_layer.update(); dg = bpy.context.evaluated_depsgraph_get(); by = {}
@@ -378,5 +381,12 @@ def modules_extra():
     for name, fn in mods.items():
         kit.reset(); materials(); fn(); kit.export(os.path.join(OUT, "modules"), name)
 
+def buildings_more():
+    out = os.path.join(OUT, "buildings")
+    for name, L, d, h, seed, style, shops in KIT2:
+        kit.reset(); materials(); building(1, 0, L, d, h, seed, style, shops, full=True); _pack(T(-11, 0, 0))
+        kit.export(out, name, {"size_m": [d, L, h], "floors": int((h - 2.0 - 5.2) / 3.6) + 2, "style": style, "shops": shops, "origin": "거리 쪽 벽의 아래 모서리. +X 깊이, +Y 길이"})
+
 if __name__ == "__main__":
+    if MODE == "buildings_more": buildings_more(); sys.exit(0)
     scene() if MODE == "scene" else scene(True) if MODE == "scene_day" else buildings() if MODE == "buildings" else modules_extra() if MODE == "modules_extra" else modules()

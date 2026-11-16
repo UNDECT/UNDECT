@@ -23,6 +23,7 @@
 | 파일 | 내용 |
 |---|---|
 | `buildings/bld_a` ~ `bld_g`, `bld_corp` (GLB, manifest) | 목표 그림의 건물 8채. 네 면 모두 창이 있다. `manifest.size_m` = [깊이, 길이, 높이] |
+| `buildings/bld_h`, `bld_i`, `bld_j`, `bld_k` | 얕은 필지용 건물 4채(깊이 12~16 m, 높이 36~88 m). 허브 앞줄에 깊이 16 m 이하인 `bld_a`, `bld_b`, `bld_d`, `bld_f`와 섞어 쓴다 |
 | `buildings/mega_a`, `mega_b`, `mega_c` | 원경의 거대한 탑 3종(계단식으로 좁아지고 창 격자가 빛난다) |
 | `buildings/skybridge`, `buildings/hero_ad` | 공중 통로, 큰 광고판(15×24 m) |
 | `buildings/street_layout.json` | 목표 장면의 배치표: 도로 치수, 건물·탑·소품·간판·차·로봇의 위치, 카메라, 낮·밤의 하늘·해·안개 색 |
