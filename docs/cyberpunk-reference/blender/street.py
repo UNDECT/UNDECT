@@ -27,10 +27,13 @@ def materials():
     kit.mat_simple("shop_glow", (0, 0, 0), 0, 0.4, (1.0, 0.8, 0.55), 0.55); kit.mat_simple("sodium", (0, 0, 0), 0, 0.4, (1.0, 0.52, 0.16), 14.0)
     kit.mat_simple("paint_line", (0.55, 0.55, 0.5), 0.0, 0.5); kit.mat_simple("cloth", (0.30, 0.05, 0.04), 0.0, 0.8)
     kit.mat_simple("trash", (0.01, 0.01, 0.012), 0.0, 0.35)
+    kit.mat_simple("shop_glass", (0.02, 0.03, 0.035), 0.0, 0.04, alpha=0.16); kit.mat_simple("shop_wall", (0.50, 0.45, 0.38), 0.0, 0.7); kit.mat_simple("shop_floor", (0.07, 0.07, 0.075), 0.0, 0.35)
+    kit.mat_simple("shop_light", (0, 0, 0), 0, 0.4, (1.0, 0.82, 0.60), 9.0); kit.mat_simple("goods_a", (0.55, 0.08, 0.08), 0.0, 0.5); kit.mat_simple("goods_b", (0.08, 0.30, 0.50), 0.0, 0.5)
+    kit.mat_simple("goods_c", (0.65, 0.50, 0.08), 0.0, 0.5); kit.mat_metal("shutter", (0.11, 0.115, 0.125), 0.30, 0.50, brushed=False)
     kit.mat_windows("far_windows", ratio=0.20, cell=(4.5, 4.2), strength=2.2)
     # 벽 재질: wall_textures.py가 만든 그림이 있으면 그것을 쓴다(패널 줄눈, 거푸집 자국, 빗물 얼룩). 건물마다 섞여 쓰인다
     import wall_textures
-    wall_textures.material("concrete", "concrete_panel"); wall_textures.material("concrete_dark", "concrete_board")
+    wall_textures.material("concrete", "concrete_panel"); wall_textures.material("concrete_dark", "concrete_board"); wall_textures.material("shutter", "metal_ribbed", 1.0)
     kit.mat_windows("tower_glass", wall=(0.01, 0.014, 0.02), lit=(0.6, 0.85, 1.0), lit2=(1.0, 0.75, 0.5), ratio=0.35, cell=(3.0, 3.6), strength=1.2)
 
 class Multi:
@@ -144,7 +147,12 @@ def building(side, y0, y1, depth, h, seed, style="old", shops=True, full=False):
     """side = -1(왼쪽, 벽면이 +X를 봄) 또는 +1(오른쪽). 거리 쪽 벽은 x = 11 * side."""
     r = random.Random(seed); xf = 11.0 * side; xc = xf + side * depth / 2; yc = (y0 + y1) / 2; L = y1 - y0
     wall = "tower_glass" if style == "corp" else ("concrete" if r.random() < 0.6 else "concrete_dark")
-    finish("bld_body", box(depth, L, h, z0=True), wall, 0, 1, T(xc, yc, 0), smooth=False)
+    rec = shops and style != "corp"     # 가게가 있는 건물은 1층 거리 쪽을 1.8 m 들여서 그 안에 가게 내부를 만든다
+    if rec:
+        finish("bld_body", box(depth, L, h - 3.9, z0=True), wall, 0, 1, T(xc, yc, 3.9), smooth=False)
+        finish("bld_body", box(depth - 1.8, L, 3.9, z0=True), wall, 0, 1, T(xc + side * 0.9, yc, 0), smooth=False)
+    else:
+        finish("bld_body", box(depth, L, h, z0=True), wall, 0, 1, T(xc, yc, 0), smooth=False)
     if style == "corp":
         for z in range(8, int(h), 12): finish("bld_band", box(depth + 0.6, L + 0.6, 0.5), "gunmetal", 0, 1, T(xc, yc, z), smooth=False)
         finish("bld_crown", box(depth - 3, L - 3, 3.0, z0=True), "gunmetal", 0, 1, T(xc, yc, h), smooth=False)
@@ -193,12 +201,15 @@ def building(side, y0, y1, depth, h, seed, style="old", shops=True, full=False):
     finish("roof_tank", cyl(1.6, 1.6, 2.6, 16, "z"), "titan", 0, 1, T(xc + side * r.uniform(-2, 2), yc + r.uniform(-L / 4, L / 4), h + 2.6))
     finish("roof_mast", cyl(0.08, 0.05, 9.0, 6, "z"), "gunmetal", 0, 1, T(xc, y0 + 2.0, h + 4.5))
     finish("roof_beacon", sphere(0.22, 1, 1, 1, 8, 6), "glow_red", 0, 1, T(xc, y0 + 2.0, h + 9.1))
-    # 1층 가게: 가게마다 간판은 하나
+    # 1층 가게: 가게마다 간판은 하나. 열린 가게는 유리 안쪽에 진열대, 계산대, 조명이 있다
     if shops:
-        y = y0 + 0.6; i = 0
+        piers, inner, floors, shelf, pa, pb, pc = Multi(), Multi(), Multi(), Multi(), Multi(), Multi(), Multi()
+        xm = xf + side * 0.9; y = y0 + 0.6; i = 0; last = y0
+        def pier(a, b):
+            if b - a > 0.02: piers.add(1.8, b - a, 3.9, T(xm, (a + b) / 2, 1.95))
         while y + 5.6 < y1:
             closed = r.random() < 0.3
-            finish("shop_front", box(0.12, 5.0, 3.1), "gunmetal" if closed else "shop_glow", 0, 1, T(xf - side * 0.05, y + 2.8, 1.75), smooth=False)
+            finish("shop_front", box(0.12, 5.0, 3.1), "shutter" if closed else "shop_glass", 0, 1, T(xf - side * 0.05, y + 2.8, 1.75), smooth=False)
             finish("shop_frame", box(0.3, 5.4, 0.5), "concrete_dark", 0, 1, T(xf - side * 0.12, y + 2.8, 3.75), smooth=False)
             for q in range(4): finish("shop_mullion", box(0.18, 0.09, 3.1), "gunmetal", 0, 1, T(xf - side * 0.08, y + 0.4 + q * 1.6, 1.75), smooth=False)
             if not closed:
@@ -206,7 +217,20 @@ def building(side, y0, y1, depth, h, seed, style="old", shops=True, full=False):
                 word = r.choice(BRANDS); colr = r.choice(NEON[:4])
                 finish("shop_sign", box(0.16, 4.2, 0.85), "black", 0, 1, T(xf - side * 0.2, y + 2.8, 4.55), smooth=False)
                 text("shop_text", word, 0.55, frame((0, -side, 0), (-side, 0, 0), (xf - side * 0.30, y + 2.8, 4.55)), colr, None, 0.01)
+                pier(last, y + 0.3); last = y + 5.3                      # 가게 사이는 벽으로 메우고, 가게 자리만 비운다
+                inner.add(0.08, 5.0, 3.6, T(xf + side * 1.76, y + 2.8, 2.0)); floors.add(1.8, 5.0, 0.06, T(xm, y + 2.8, 0.21))
+                finish("shop_light", box(0.22, 4.2, 0.06), "shop_light", 0, 1, T(xf + side * 0.8, y + 2.8, 3.84), smooth=False)
+                for k2, yu in enumerate((y + 1.25, y + 4.35)):
+                    shelf.add(0.34, 1.9, 1.9, T(xf + side * 1.52, yu, 1.19))
+                    for row in range(3):
+                        for j in range(5):
+                            (pa, pb, pc)[(row + j + k2 + i) % 3].add(0.16, 0.26, 0.30, T(xf + side * 1.36, yu - 0.70 + j * 0.35, 0.60 + row * 0.60))
+                finish("shop_counter", box(0.6, 1.5, 1.0), "prop_paint", 0.01, 1, T(xf + side * 0.75, y + 2.8, 0.74), smooth=False)
             y += 6.2; i += 1
+        pier(last, y1)
+        if rec:
+            for mm, nm, mt in ((piers, "bld_piers", wall), (inner, "shop_inner", "shop_wall"), (floors, "shop_floor", "shop_floor"), (shelf, "shop_shelf", "gunmetal"),
+                               (pa, "shop_goods_a", "goods_a"), (pb, "shop_goods_b", "goods_b"), (pc, "shop_goods_c", "goods_c")): mm.done(nm, mt)
 
 def megastructure(x, y, w, d, h, taper=0.7, logo=None):
     rings = []

@@ -3,9 +3,9 @@
  "units": "m",
  "forward": "-Y",
  "up": "+Z",
- "triangles": 19240,
+ "triangles": 20692,
  "triangles_by_part": {
-  "_static": 19240
+  "_static": 20692
  },
  "parts": {},
  "pivots": {},
@@ -16,8 +16,15 @@
   "concrete_dark.001",
   "glow_amber",
   "glow_red",
+  "goods_a",
+  "goods_b",
+  "goods_c",
   "gunmetal",
-  "shop_glow",
+  "prop_paint",
+  "shop_floor",
+  "shop_glass",
+  "shop_light",
+  "shop_wall",
   "titan",
   "win_cool",
   "win_dark",

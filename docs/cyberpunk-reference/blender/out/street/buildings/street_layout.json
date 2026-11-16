@@ -154,6 +154,7 @@
   ]
  },
  "monorail": {
+  "kit": "monorail_span",
   "pos": [
    0,
    50,
@@ -171,8 +172,7 @@
     50,
     0
    ]
-  ],
-  "kit": "monorail_span"
+  ]
  },
  "hero_ad": {
   "pos": [
@@ -187,6 +187,7 @@
   "word": "LUMEN"
  },
  "roof_ad": {
+  "kit": "roof_ad",
   "pos": [
    18.5,
    45.0,
@@ -197,11 +198,11 @@
    9.0,
    4.4
   ],
-  "word": "ZENTH",
-  "kit": "roof_ad"
+  "word": "ZENTH"
  },
  "blade_signs": [
   {
+   "kit": "blade_sign_kiro",
    "pos": [
     -11,
     6.0,
@@ -209,10 +210,10 @@
    ],
    "word": "KIRO",
    "glow": "magenta",
-   "h": 4.2,
-   "kit": "blade_sign_kiro"
+   "h": 4.2
   },
   {
+   "kit": "blade_sign_miru_right",
    "pos": [
     11,
     2.0,
@@ -221,10 +222,10 @@
    "word": "MIRU",
    "glow": "cyan",
    "h": 3.6,
-   "kit": "blade_sign_miru_right",
    "note": "오른쪽 벽용. 돌리거나 뒤집지 않고 그대로 놓는다"
   },
   {
+   "kit": "blade_sign_tekka",
    "pos": [
     -11,
     24.0,
@@ -232,8 +233,7 @@
    ],
    "word": "TEKKA",
    "glow": "amber",
-   "h": 5.0,
-   "kit": "blade_sign_tekka"
+   "h": 5.0
   }
  ],
  "lamps": {
