@@ -28,6 +28,9 @@ def materials():
     kit.mat_simple("paint_line", (0.55, 0.55, 0.5), 0.0, 0.5); kit.mat_simple("cloth", (0.30, 0.05, 0.04), 0.0, 0.8)
     kit.mat_simple("trash", (0.01, 0.01, 0.012), 0.0, 0.35)
     kit.mat_windows("far_windows", ratio=0.20, cell=(4.5, 4.2), strength=2.2)
+    # 벽 재질: wall_textures.py가 만든 그림이 있으면 그것을 쓴다(패널 줄눈, 거푸집 자국, 빗물 얼룩). 건물마다 섞여 쓰인다
+    import wall_textures
+    wall_textures.material("concrete", "concrete_panel"); wall_textures.material("concrete_dark", "concrete_board")
     kit.mat_windows("tower_glass", wall=(0.01, 0.014, 0.02), lit=(0.6, 0.85, 1.0), lit2=(1.0, 0.75, 0.5), ratio=0.35, cell=(3.0, 3.6), strength=1.2)
 
 class Multi:
