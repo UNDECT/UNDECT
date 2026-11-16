@@ -16,7 +16,7 @@ MODE = sys.argv[2] if len(sys.argv) > 2 else "scene"
 NEON = ["glow_magenta", "glow_cyan", "glow_amber", "glow_red", "glow_white"]
 BRANDS = ["KIRO", "ZENTH", "HALO 9", "MIRU", "VANTA", "LUMEN", "ORBIT", "NAMU", "SORA", "TEKKA"]
 
-def materials():
+def materials(tex=True):
     kit.mat_concrete("concrete", (0.26, 0.25, 0.24)); kit.mat_concrete("concrete_dark", (0.12, 0.12, 0.125))
     kit.mat_concrete("sidewalk", (0.20, 0.20, 0.205), 3.0); kit.mat_wet_asphalt("asphalt")
     kit.mat_paint("prop_paint", (0.10, 0.22, 0.30), scale=0.4, wear=1.5); kit.mat_paint("prop_red", (0.45, 0.03, 0.03), scale=0.4, wear=1.5)
@@ -32,8 +32,10 @@ def materials():
     kit.mat_simple("goods_c", (0.65, 0.50, 0.08), 0.0, 0.5); kit.mat_metal("shutter", (0.11, 0.115, 0.125), 0.30, 0.50, brushed=False)
     kit.mat_windows("far_windows", ratio=0.20, cell=(4.5, 4.2), strength=2.2)
     # 벽 재질: wall_textures.py가 만든 그림이 있으면 그것을 쓴다(패널 줄눈, 거푸집 자국, 빗물 얼룩). 건물마다 섞여 쓰인다
-    import wall_textures
-    wall_textures.material("concrete", "concrete_panel"); wall_textures.material("concrete_dark", "concrete_board"); wall_textures.material("shutter", "metal_ribbed", 1.0)
+    # 게임용으로 내보낼 때(tex=False)는 그림을 넣지 않는다: 벽 그림은 materials/ 폴더에 따로 있고, 건물 파일에 넣으면 파일마다 같은 그림이 중복된다
+    if tex:
+        import wall_textures
+        wall_textures.material("concrete", "concrete_panel"); wall_textures.material("concrete_dark", "concrete_board"); wall_textures.material("shutter", "metal_ribbed", 1.0)
     kit.mat_windows("tower_glass", wall=(0.01, 0.014, 0.02), lit=(0.6, 0.85, 1.0), lit2=(1.0, 0.75, 0.5), ratio=0.35, cell=(3.0, 3.6), strength=1.2)
 
 class Multi:
@@ -363,15 +365,15 @@ def buildings():
     건물 원점 = 거리 쪽 벽의 한쪽 아래 모서리. 건물은 +X로 깊이, +Y로 길이, +Z로 높이만큼 뻗는다. 네 면 모두 창이 있다."""
     out = os.path.join(OUT, "buildings"); info = {}
     for name, L, d, h, seed, style, shops in KIT:
-        kit.reset(); materials(); building(1, 0, L, d, h, seed, style, shops, full=True); _pack(T(-11, 0, 0))
+        kit.reset(); materials(False); building(1, 0, L, d, h, seed, style, shops, full=True); _pack(T(-11, 0, 0))
         kit.export(out, name, {"size_m": [d, L, h], "floors": int((h - 2.0 - 5.2) / 3.6) + 2, "style": style, "shops": shops, "origin": "거리 쪽 벽의 아래 모서리. +X 깊이, +Y 길이"})
         info[name] = [d, L, h]
     for name, a in (("mega_a", (120, 110, 340, 0.62, "glow_magenta")), ("mega_b", (90, 90, 520, 0.5, "glow_amber")), ("mega_c", (80, 80, 210, 0.7, None))):
-        kit.reset(); materials(); megastructure(0, 0, *a); _pack(Matrix.Identity(4)); kit.export(out, name, {"size_m": [a[0], a[1], a[2]], "origin": "바닥 중심"})
+        kit.reset(); materials(False); megastructure(0, 0, *a); _pack(Matrix.Identity(4)); kit.export(out, name, {"size_m": [a[0], a[1], a[2]], "origin": "바닥 중심"})
     kit.reset(); materials()
     finish("skybridge", box(22.2, 4.5, 4.2), "concrete_dark", 0.1, 1, T(0, 0, 0)); finish("skybridge_win", box(22.3, 4.56, 1.2), "win_warm", 0, 1, T(0, 0, 0.4), smooth=False)
     _pack(Matrix.Identity(4)); kit.export(out, "skybridge", {"size_m": [22.2, 4.5, 4.2], "origin": "가운데"})
-    kit.reset(); materials(); billboard(T(0, 0, 0), "hero_ad", 15.0, 24.0, "LUMEN", (1.0, 0.08, 0.5), (0.15, 0.35, 1.0)); _pack(Matrix.Identity(4)); kit.export(out, "hero_ad", {"size_m": [15.0, 24.0], "origin": "billboard와 같다"})
+    kit.reset(); materials(False); billboard(T(0, 0, 0), "hero_ad", 15.0, 24.0, "LUMEN", (1.0, 0.08, 0.5), (0.15, 0.35, 1.0)); _pack(Matrix.Identity(4)); kit.export(out, "hero_ad", {"size_m": [15.0, 24.0], "origin": "billboard와 같다"})
     lay = {"units": "m", "note": "street_day.png / street_night.png 장면의 배치. 도로는 +Y로 뻗고 x=0이 도로 중심. 왼쪽(-x) 건물은 Z축으로 180도 돌려 거리 쪽 벽을 x=-11에 맞춘다.",
            "camera": {"pos": [2.4, -17.0, 1.75], "look_at": [-0.5, 40.0, 19.0], "lens_mm": 24, "sensor_mm": 36},
            "road": {"width": 14.0, "sidewalk_width": 4.0, "curb_height": 0.18, "wall_to_wall": 22.0, "center_dash": [3.0, 7.0], "crosswalk": {"y": 4.0, "stripes": 9, "stripe": [0.55, 4.2], "pitch": 1.4}},
@@ -408,7 +410,7 @@ def modules_extra():
 def buildings_more():
     out = os.path.join(OUT, "buildings")
     for name, L, d, h, seed, style, shops in KIT2:
-        kit.reset(); materials(); building(1, 0, L, d, h, seed, style, shops, full=True); _pack(T(-11, 0, 0))
+        kit.reset(); materials(False); building(1, 0, L, d, h, seed, style, shops, full=True); _pack(T(-11, 0, 0))
         kit.export(out, name, {"size_m": [d, L, h], "floors": int((h - 2.0 - 5.2) / 3.6) + 2, "style": style, "shops": shops, "origin": "거리 쪽 벽의 아래 모서리. +X 깊이, +Y 길이"})
 
 if __name__ == "__main__":

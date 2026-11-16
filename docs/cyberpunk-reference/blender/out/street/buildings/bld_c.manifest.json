@@ -10,8 +10,8 @@
  "parts": {},
  "pivots": {},
  "materials": [
-  "concrete.001",
-  "concrete_dark.001",
+  "concrete",
+  "concrete_dark",
   "glow_red",
   "gunmetal",
   "titan",

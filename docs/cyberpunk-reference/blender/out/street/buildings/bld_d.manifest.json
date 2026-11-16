@@ -12,7 +12,7 @@
  "materials": [
   "black",
   "cloth",
-  "concrete_dark.001",
+  "concrete_dark",
   "glow_amber",
   "glow_cyan",
   "glow_red",
@@ -25,7 +25,7 @@
   "shop_glass",
   "shop_light",
   "shop_wall",
-  "shutter.001",
+  "shutter",
   "titan",
   "win_cool",
   "win_dark",
