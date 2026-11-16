@@ -1,0 +1,588 @@
+{
+ "name": "arm_laser",
+ "units": "m",
+ "forward": "-Y",
+ "up": "+Z",
+ "triangles": 18848,
+ "triangles_by_part": {
+  "forearm": 9804,
+  "cell_glow": 608,
+  "vent_L": 1264,
+  "heat_glow": 352,
+  "vent_R": 1264,
+  "hand": 1780,
+  "glow": 60,
+  "finger1_a": 260,
+  "finger1_b": 260,
+  "finger1_c": 260,
+  "finger2_a": 260,
+  "finger2_b": 260,
+  "finger2_c": 260,
+  "finger3_a": 260,
+  "finger3_b": 260,
+  "finger3_c": 260,
+  "finger4_a": 260,
+  "finger4_b": 260,
+  "finger4_c": 260,
+  "thumb_a": 216,
+  "thumb_b": 216,
+  "emitter": 92,
+  "iris": 72
+ },
+ "parts": {
+  "forearm": [
+   "elbow_hinge",
+   "elbow_cap",
+   "bolt",
+   "elbow_cap.001",
+   "bolt.001",
+   "bellows",
+   "core",
+   "ventral",
+   "side_plate",
+   "side_plate.001",
+   "cell_bed",
+   "cell",
+   "cell_cap",
+   "cell_clamp",
+   "cell_clamp.001",
+   "cell.001",
+   "cell_cap.001",
+   "cell_clamp.002",
+   "cell_clamp.003",
+   "cell.002",
+   "cell_cap.002",
+   "cell_clamp.004",
+   "cell_clamp.005",
+   "cell.003",
+   "cell_cap.003",
+   "cell_clamp.006",
+   "cell_clamp.007",
+   "conduit",
+   "conduit.001",
+   "wrist_coil"
+  ],
+  "cell_glow": [
+   "side_line",
+   "side_line.001",
+   "cell_window",
+   "cell_window.001",
+   "cell_window.002",
+   "cell_window.003"
+  ],
+  "vent_L": [
+   "vent",
+   "vent_fin",
+   "vent_fin.001",
+   "vent_fin.002",
+   "vent_fin.003",
+   "vent_fin.004",
+   "vent_fin.005",
+   "vent_fin.006",
+   "vent_fin.007"
+  ],
+  "heat_glow": [
+   "vent_inner",
+   "vent_inner.001"
+  ],
+  "vent_R": [
+   "vent.001",
+   "vent_fin.008",
+   "vent_fin.009",
+   "vent_fin.010",
+   "vent_fin.011",
+   "vent_fin.012",
+   "vent_fin.013",
+   "vent_fin.014",
+   "vent_fin.015"
+  ],
+  "hand": [
+   "wrist_ball",
+   "wrist_ring",
+   "palm",
+   "palm_back",
+   "palm_pad",
+   "emitter_ring",
+   "focus_pin",
+   "focus_pin.001",
+   "focus_pin.002"
+  ],
+  "glow": [
+   "palm_led",
+   "tip_glow",
+   "tip_glow.001",
+   "tip_glow.002",
+   "tip_glow.003"
+  ],
+  "finger1_a": [
+   "knuckle",
+   "phalanx",
+   "phalanx_pad"
+  ],
+  "finger1_b": [
+   "knuckle.001",
+   "phalanx.001",
+   "phalanx_pad.001"
+  ],
+  "finger1_c": [
+   "knuckle.002",
+   "phalanx.002",
+   "phalanx_pad.002"
+  ],
+  "finger2_a": [
+   "knuckle.003",
+   "phalanx.003",
+   "phalanx_pad.003"
+  ],
+  "finger2_b": [
+   "knuckle.004",
+   "phalanx.004",
+   "phalanx_pad.004"
+  ],
+  "finger2_c": [
+   "knuckle.005",
+   "phalanx.005",
+   "phalanx_pad.005"
+  ],
+  "finger3_a": [
+   "knuckle.006",
+   "phalanx.006",
+   "phalanx_pad.006"
+  ],
+  "finger3_b": [
+   "knuckle.007",
+   "phalanx.007",
+   "phalanx_pad.007"
+  ],
+  "finger3_c": [
+   "knuckle.008",
+   "phalanx.008",
+   "phalanx_pad.008"
+  ],
+  "finger4_a": [
+   "knuckle.009",
+   "phalanx.009",
+   "phalanx_pad.009"
+  ],
+  "finger4_b": [
+   "knuckle.010",
+   "phalanx.010",
+   "phalanx_pad.010"
+  ],
+  "finger4_c": [
+   "knuckle.011",
+   "phalanx.011",
+   "phalanx_pad.011"
+  ],
+  "thumb_a": [
+   "knuckle.012",
+   "phalanx.012"
+  ],
+  "thumb_b": [
+   "knuckle.013",
+   "phalanx.013"
+  ],
+  "emitter": [
+   "emitter_lens"
+  ],
+  "iris": [
+   "iris",
+   "iris.001",
+   "iris.002",
+   "iris.003",
+   "iris.004",
+   "iris.005"
+  ]
+ },
+ "pivots": {
+  "elbow": {
+   "pos": [
+    0,
+    0,
+    0
+   ],
+   "axis": [
+    0,
+    1,
+    0
+   ],
+   "parent": "upperarm",
+   "child": "forearm",
+   "range": [
+    0,
+    140
+   ]
+  },
+  "vent_L": {
+   "pos": [
+    0.135,
+    0.0397,
+    0.0148
+   ],
+   "axis": [
+    1,
+    0,
+    0
+   ],
+   "parent": "forearm",
+   "child": "vent_L",
+   "range": [
+    0,
+    55
+   ]
+  },
+  "vent_R": {
+   "pos": [
+    0.135,
+    -0.0397,
+    0.0148
+   ],
+   "axis": [
+    1,
+    0,
+    0
+   ],
+   "parent": "forearm",
+   "child": "vent_R",
+   "range": [
+    0,
+    55
+   ]
+  },
+  "wrist": {
+   "pos": [
+    0.27,
+    0,
+    0
+   ],
+   "axis": [
+    0,
+    1,
+    0
+   ],
+   "parent": "forearm",
+   "child": "hand",
+   "range": [
+    -70,
+    70
+   ]
+  },
+  "finger1_a": {
+   "pos": [
+    0.3782,
+    0.0343,
+    0.001
+   ],
+   "axis": [
+    0.0,
+    1.0,
+    0.0
+   ],
+   "parent": "hand",
+   "child": "finger1_a",
+   "range": [
+    0,
+    95
+   ]
+  },
+  "finger1_b": {
+   "pos": [
+    0.4194,
+    0.0343,
+    -0.0048
+   ],
+   "axis": [
+    0.0,
+    1.0,
+    0.0
+   ],
+   "parent": "finger1_a",
+   "child": "finger1_b",
+   "range": [
+    0,
+    95
+   ]
+  },
+  "finger1_c": {
+   "pos": [
+    0.4451,
+    0.0343,
+    -0.0131
+   ],
+   "axis": [
+    0.0,
+    1.0,
+    0.0
+   ],
+   "parent": "finger1_b",
+   "child": "finger1_c",
+   "range": [
+    0,
+    95
+   ]
+  },
+  "finger2_a": {
+   "pos": [
+    0.3782,
+    0.0114,
+    0.001
+   ],
+   "axis": [
+    0.0,
+    1.0,
+    0.0
+   ],
+   "parent": "hand",
+   "child": "finger2_a",
+   "range": [
+    0,
+    95
+   ]
+  },
+  "finger2_b": {
+   "pos": [
+    0.4235,
+    0.0114,
+    -0.0054
+   ],
+   "axis": [
+    0.0,
+    1.0,
+    0.0
+   ],
+   "parent": "finger2_a",
+   "child": "finger2_b",
+   "range": [
+    0,
+    95
+   ]
+  },
+  "finger2_c": {
+   "pos": [
+    0.4522,
+    0.0114,
+    -0.0147
+   ],
+   "axis": [
+    0.0,
+    1.0,
+    0.0
+   ],
+   "parent": "finger2_b",
+   "child": "finger2_c",
+   "range": [
+    0,
+    95
+   ]
+  },
+  "finger3_a": {
+   "pos": [
+    0.3782,
+    -0.0114,
+    0.001
+   ],
+   "axis": [
+    0.0,
+    1.0,
+    0.0
+   ],
+   "parent": "hand",
+   "child": "finger3_a",
+   "range": [
+    0,
+    95
+   ]
+  },
+  "finger3_b": {
+   "pos": [
+    0.4204,
+    -0.0114,
+    -0.0049
+   ],
+   "axis": [
+    0.0,
+    1.0,
+    0.0
+   ],
+   "parent": "finger3_a",
+   "child": "finger3_b",
+   "range": [
+    0,
+    95
+   ]
+  },
+  "finger3_c": {
+   "pos": [
+    0.4471,
+    -0.0114,
+    -0.0136
+   ],
+   "axis": [
+    0.0,
+    1.0,
+    0.0
+   ],
+   "parent": "finger3_b",
+   "child": "finger3_c",
+   "range": [
+    0,
+    95
+   ]
+  },
+  "finger4_a": {
+   "pos": [
+    0.3782,
+    -0.0343,
+    0.001
+   ],
+   "axis": [
+    0.0,
+    1.0,
+    0.0
+   ],
+   "parent": "hand",
+   "child": "finger4_a",
+   "range": [
+    0,
+    95
+   ]
+  },
+  "finger4_b": {
+   "pos": [
+    0.4121,
+    -0.0343,
+    -0.0038
+   ],
+   "axis": [
+    0.0,
+    1.0,
+    0.0
+   ],
+   "parent": "finger4_a",
+   "child": "finger4_b",
+   "range": [
+    0,
+    95
+   ]
+  },
+  "finger4_c": {
+   "pos": [
+    0.4339,
+    -0.0343,
+    -0.0108
+   ],
+   "axis": [
+    0.0,
+    1.0,
+    0.0
+   ],
+   "parent": "finger4_b",
+   "child": "finger4_c",
+   "range": [
+    0,
+    95
+   ]
+  },
+  "thumb_a": {
+   "pos": [
+    0.3074,
+    0.0478,
+    -0.004
+   ],
+   "axis": [
+    -0.5795,
+    0.6436,
+    -0.5
+   ],
+   "parent": "hand",
+   "child": "thumb_a",
+   "range": [
+    0,
+    80
+   ]
+  },
+  "thumb_b": {
+   "pos": [
+    0.3378,
+    0.0674,
+    -0.014
+   ],
+   "axis": [
+    -0.5795,
+    0.6436,
+    -0.5
+   ],
+   "parent": "thumb_a",
+   "child": "thumb_b",
+   "range": [
+    0,
+    80
+   ]
+  },
+  "beam_out": {
+   "pos": [
+    0.3324,
+    0.0,
+    -0.0252
+   ],
+   "axis": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "parent": "hand",
+   "child": "fx",
+   "range": [
+    -90,
+    90
+   ]
+  }
+ },
+ "materials": [
+  "a_black",
+  "a_copper",
+  "black",
+  "chrome",
+  "fiber",
+  "glass",
+  "glow_cyan",
+  "gunmetal",
+  "rubber",
+  "titan"
+ ],
+ "deploy": [
+  {
+   "part": "hand",
+   "wrist_back_deg": 78,
+   "time": 0.12
+  },
+  {
+   "part": "finger*",
+   "do": "편다, 조금 벌린다",
+   "time": 0.12
+  },
+  {
+   "part": "iris",
+   "open": "0 -> 1",
+   "time": 0.1
+  },
+  {
+   "part": "cell_glow",
+   "emissive": "0.3 -> 1",
+   "time": 0.35
+  }
+ ],
+ "overheat": [
+  {
+   "part": "vent_L / vent_R",
+   "open_deg": 55,
+   "time": 0.2
+  },
+  {
+   "part": "heat_glow",
+   "emissive": "0 -> 1 -> 0",
+   "time": 2.0
+  }
+ ],
+ "beam": "빔은 모델에 없다. 게임에서 beam_out 붙임점부터 Beam 2겹(흰 심 지름 7 mm, 청록 겉 17 mm)으로 그린다. 맞은 곳에 불꽃과 그을음을 낸다."
+}

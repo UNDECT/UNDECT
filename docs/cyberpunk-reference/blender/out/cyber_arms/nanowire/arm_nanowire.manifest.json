@@ -1,0 +1,515 @@
+{
+ "name": "arm_nanowire",
+ "units": "m",
+ "forward": "-Y",
+ "up": "+Z",
+ "triangles": 14292,
+ "triangles_by_part": {
+  "forearm": 7684,
+  "glow": 548,
+  "spool": 484,
+  "spool_cover": 548,
+  "hand": 1476,
+  "finger1_a": 260,
+  "finger1_b": 260,
+  "finger1_c": 260,
+  "finger2_a": 260,
+  "finger2_b": 260,
+  "finger2_c": 260,
+  "finger3_a": 260,
+  "finger3_b": 260,
+  "finger3_c": 260,
+  "finger4_a": 260,
+  "finger4_b": 260,
+  "finger4_c": 260,
+  "thumb_a": 216,
+  "thumb_b": 216
+ },
+ "parts": {
+  "forearm": [
+   "elbow_hinge",
+   "elbow_cap",
+   "bolt",
+   "elbow_cap.001",
+   "bolt.001",
+   "bellows",
+   "core",
+   "dorsal",
+   "dorsal_inlay",
+   "ventral",
+   "side_strip",
+   "side_strip.001",
+   "spool_housing",
+   "nozzle"
+  ],
+  "glow": [
+   "dorsal_line",
+   "spool_glow",
+   "palm_led",
+   "tip_glow",
+   "tip_glow.001",
+   "tip_glow.002",
+   "tip_glow.003"
+  ],
+  "spool": [
+   "spool",
+   "spool_tooth",
+   "spool_tooth.001",
+   "spool_tooth.002",
+   "spool_tooth.003",
+   "spool_tooth.004",
+   "spool_tooth.005"
+  ],
+  "spool_cover": [
+   "cover",
+   "cover_tab"
+  ],
+  "hand": [
+   "wrist_ball",
+   "wrist_ring",
+   "palm",
+   "palm_back",
+   "palm_pad"
+  ],
+  "finger1_a": [
+   "knuckle",
+   "phalanx",
+   "phalanx_pad"
+  ],
+  "finger1_b": [
+   "knuckle.001",
+   "phalanx.001",
+   "phalanx_pad.001"
+  ],
+  "finger1_c": [
+   "knuckle.002",
+   "phalanx.002",
+   "phalanx_pad.002"
+  ],
+  "finger2_a": [
+   "knuckle.003",
+   "phalanx.003",
+   "phalanx_pad.003"
+  ],
+  "finger2_b": [
+   "knuckle.004",
+   "phalanx.004",
+   "phalanx_pad.004"
+  ],
+  "finger2_c": [
+   "knuckle.005",
+   "phalanx.005",
+   "phalanx_pad.005"
+  ],
+  "finger3_a": [
+   "knuckle.006",
+   "phalanx.006",
+   "phalanx_pad.006"
+  ],
+  "finger3_b": [
+   "knuckle.007",
+   "phalanx.007",
+   "phalanx_pad.007"
+  ],
+  "finger3_c": [
+   "knuckle.008",
+   "phalanx.008",
+   "phalanx_pad.008"
+  ],
+  "finger4_a": [
+   "knuckle.009",
+   "phalanx.009",
+   "phalanx_pad.009"
+  ],
+  "finger4_b": [
+   "knuckle.010",
+   "phalanx.010",
+   "phalanx_pad.010"
+  ],
+  "finger4_c": [
+   "knuckle.011",
+   "phalanx.011",
+   "phalanx_pad.011"
+  ],
+  "thumb_a": [
+   "knuckle.012",
+   "phalanx.012"
+  ],
+  "thumb_b": [
+   "knuckle.013",
+   "phalanx.013"
+  ]
+ },
+ "pivots": {
+  "elbow": {
+   "pos": [
+    0,
+    0,
+    0
+   ],
+   "axis": [
+    0,
+    1,
+    0
+   ],
+   "parent": "upperarm",
+   "child": "forearm",
+   "range": [
+    0,
+    140
+   ]
+  },
+  "spool": {
+   "pos": [
+    0.226,
+    0,
+    -0.04
+   ],
+   "axis": [
+    0,
+    0,
+    1
+   ],
+   "parent": "forearm",
+   "child": "spool",
+   "range": [
+    -360,
+    360
+   ]
+  },
+  "spool_cover": {
+   "pos": [
+    0.229,
+    0,
+    -0.05
+   ],
+   "axis": [
+    1,
+    0,
+    0
+   ],
+   "parent": "forearm",
+   "child": "spool_cover",
+   "range": [
+    0,
+    0
+   ]
+  },
+  "wire_out": {
+   "pos": [
+    0.288,
+    0,
+    -0.022
+   ],
+   "axis": [
+    1,
+    0,
+    0
+   ],
+   "parent": "forearm",
+   "child": "fx",
+   "range": [
+    -90,
+    90
+   ]
+  },
+  "wrist": {
+   "pos": [
+    0.27,
+    0,
+    0
+   ],
+   "axis": [
+    0,
+    1,
+    0
+   ],
+   "parent": "forearm",
+   "child": "hand",
+   "range": [
+    -70,
+    70
+   ]
+  },
+  "finger1_a": {
+   "pos": [
+    0.3698,
+    0.0317,
+    0.001
+   ],
+   "axis": [
+    0.0,
+    1.0,
+    0.0
+   ],
+   "parent": "hand",
+   "child": "finger1_a",
+   "range": [
+    0,
+    95
+   ]
+  },
+  "finger1_b": {
+   "pos": [
+    0.4079,
+    0.0317,
+    -0.0043
+   ],
+   "axis": [
+    0.0,
+    1.0,
+    0.0
+   ],
+   "parent": "finger1_a",
+   "child": "finger1_b",
+   "range": [
+    0,
+    95
+   ]
+  },
+  "finger1_c": {
+   "pos": [
+    0.4316,
+    0.0317,
+    -0.0121
+   ],
+   "axis": [
+    0.0,
+    1.0,
+    0.0
+   ],
+   "parent": "finger1_b",
+   "child": "finger1_c",
+   "range": [
+    0,
+    95
+   ]
+  },
+  "finger2_a": {
+   "pos": [
+    0.3698,
+    0.0106,
+    0.001
+   ],
+   "axis": [
+    0.0,
+    1.0,
+    0.0
+   ],
+   "parent": "hand",
+   "child": "finger2_a",
+   "range": [
+    0,
+    95
+   ]
+  },
+  "finger2_b": {
+   "pos": [
+    0.4117,
+    0.0106,
+    -0.0049
+   ],
+   "axis": [
+    0.0,
+    1.0,
+    0.0
+   ],
+   "parent": "finger2_a",
+   "child": "finger2_b",
+   "range": [
+    0,
+    95
+   ]
+  },
+  "finger2_c": {
+   "pos": [
+    0.4381,
+    0.0106,
+    -0.0135
+   ],
+   "axis": [
+    0.0,
+    1.0,
+    0.0
+   ],
+   "parent": "finger2_b",
+   "child": "finger2_c",
+   "range": [
+    0,
+    95
+   ]
+  },
+  "finger3_a": {
+   "pos": [
+    0.3698,
+    -0.0106,
+    0.001
+   ],
+   "axis": [
+    0.0,
+    1.0,
+    0.0
+   ],
+   "parent": "hand",
+   "child": "finger3_a",
+   "range": [
+    0,
+    95
+   ]
+  },
+  "finger3_b": {
+   "pos": [
+    0.4088,
+    -0.0106,
+    -0.0045
+   ],
+   "axis": [
+    0.0,
+    1.0,
+    0.0
+   ],
+   "parent": "finger3_a",
+   "child": "finger3_b",
+   "range": [
+    0,
+    95
+   ]
+  },
+  "finger3_c": {
+   "pos": [
+    0.4335,
+    -0.0106,
+    -0.0125
+   ],
+   "axis": [
+    0.0,
+    1.0,
+    0.0
+   ],
+   "parent": "finger3_b",
+   "child": "finger3_c",
+   "range": [
+    0,
+    95
+   ]
+  },
+  "finger4_a": {
+   "pos": [
+    0.3698,
+    -0.0317,
+    0.001
+   ],
+   "axis": [
+    0.0,
+    1.0,
+    0.0
+   ],
+   "parent": "hand",
+   "child": "finger4_a",
+   "range": [
+    0,
+    95
+   ]
+  },
+  "finger4_b": {
+   "pos": [
+    0.4012,
+    -0.0317,
+    -0.0034
+   ],
+   "axis": [
+    0.0,
+    1.0,
+    0.0
+   ],
+   "parent": "finger4_a",
+   "child": "finger4_b",
+   "range": [
+    0,
+    95
+   ]
+  },
+  "finger4_c": {
+   "pos": [
+    0.4213,
+    -0.0317,
+    -0.0099
+   ],
+   "axis": [
+    0.0,
+    1.0,
+    0.0
+   ],
+   "parent": "finger4_b",
+   "child": "finger4_c",
+   "range": [
+    0,
+    95
+   ]
+  },
+  "thumb_a": {
+   "pos": [
+    0.3046,
+    0.0442,
+    -0.004
+   ],
+   "axis": [
+    -0.5795,
+    0.6436,
+    -0.5
+   ],
+   "parent": "hand",
+   "child": "thumb_a",
+   "range": [
+    0,
+    80
+   ]
+  },
+  "thumb_b": {
+   "pos": [
+    0.3326,
+    0.0622,
+    -0.0132
+   ],
+   "axis": [
+    -0.5795,
+    0.6436,
+    -0.5
+   ],
+   "parent": "thumb_a",
+   "child": "thumb_b",
+   "range": [
+    0,
+    80
+   ]
+  }
+ },
+ "materials": [
+  "a_black",
+  "a_white",
+  "chrome",
+  "fiber",
+  "glow_magenta",
+  "gunmetal",
+  "rubber",
+  "titan"
+ ],
+ "deploy": [
+  {
+   "part": "spool_cover",
+   "slide_x": -0.034,
+   "time": 0.1
+  },
+  {
+   "part": "spool",
+   "spin_deg": 720,
+   "time": 0.25
+  },
+  {
+   "part": "glow",
+   "emissive": "0.4 -> 1",
+   "time": 0.2
+  }
+ ],
+ "wire": "실은 모델에 없다. 게임에서 wire_out 붙임점부터 Beam/Trail로 그린다. 굵기 약 2 mm, 발광 자홍. 길이 2.5~3 m."
+}

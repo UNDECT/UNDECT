@@ -1,0 +1,2192 @@
+{
+ "clips": [
+  {
+   "name": "walk",
+   "rig": "humanoid",
+   "duration": 1.06,
+   "loop": true,
+   "speed": 1.35,
+   "events": [
+    [
+     0.0,
+     "foot_L"
+    ],
+    [
+     0.53,
+     "foot_R"
+    ]
+   ]
+  },
+  {
+   "name": "walk_slow",
+   "rig": "humanoid",
+   "duration": 1.3,
+   "loop": true,
+   "speed": 0.85,
+   "events": [
+    [
+     0.0,
+     "foot_L"
+    ],
+    [
+     0.65,
+     "foot_R"
+    ]
+   ]
+  },
+  {
+   "name": "run",
+   "rig": "humanoid",
+   "duration": 0.68,
+   "loop": true,
+   "speed": 4.2,
+   "events": [
+    [
+     0.0,
+     "foot_L"
+    ],
+    [
+     0.34,
+     "foot_R"
+    ]
+   ]
+  },
+  {
+   "name": "walk_heavy",
+   "rig": "humanoid",
+   "duration": 1.34,
+   "loop": true,
+   "speed": 1.0,
+   "events": [
+    [
+     0.0,
+     "foot_L"
+    ],
+    [
+     0.67,
+     "foot_R"
+    ]
+   ]
+  },
+  {
+   "name": "idle",
+   "rig": "humanoid",
+   "duration": 4.0,
+   "loop": true,
+   "speed": 0.0,
+   "events": []
+  },
+  {
+   "name": "look_around",
+   "rig": "humanoid",
+   "duration": 5.0,
+   "loop": false,
+   "speed": 0.0,
+   "events": []
+  },
+  {
+   "name": "talk",
+   "rig": "humanoid",
+   "duration": 3.2,
+   "loop": true,
+   "speed": 0.0,
+   "events": []
+  },
+  {
+   "name": "phone",
+   "rig": "humanoid",
+   "duration": 4.0,
+   "loop": true,
+   "speed": 0.0,
+   "events": []
+  },
+  {
+   "name": "cower_enter",
+   "rig": "humanoid",
+   "duration": 0.45,
+   "loop": false,
+   "speed": 0.0,
+   "events": []
+  },
+  {
+   "name": "cower_loop",
+   "rig": "humanoid",
+   "duration": 1.0,
+   "loop": true,
+   "speed": 0.0,
+   "events": []
+  },
+  {
+   "name": "hit_react",
+   "rig": "humanoid",
+   "duration": 0.5,
+   "loop": false,
+   "speed": 0.0,
+   "events": []
+  },
+  {
+   "name": "robot_scan",
+   "rig": "humanoid",
+   "duration": 6.0,
+   "loop": true,
+   "speed": 0.0,
+   "events": []
+  },
+  {
+   "name": "robot_alert",
+   "rig": "humanoid",
+   "duration": 0.35,
+   "loop": false,
+   "speed": 0.0,
+   "events": []
+  },
+  {
+   "name": "robot_aim",
+   "rig": "humanoid",
+   "duration": 2.0,
+   "loop": true,
+   "speed": 0.0,
+   "events": []
+  },
+  {
+   "name": "robot_fire",
+   "rig": "humanoid",
+   "duration": 0.14,
+   "loop": true,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "shot"
+    ]
+   ]
+  },
+  {
+   "name": "robot_shutdown",
+   "rig": "humanoid",
+   "duration": 1.2,
+   "loop": false,
+   "speed": 0.0,
+   "events": []
+  },
+  {
+   "name": "robot_boot",
+   "rig": "humanoid",
+   "duration": 1.0,
+   "loop": false,
+   "speed": 0.0,
+   "events": []
+  },
+  {
+   "name": "pistol_fire",
+   "rig": "weapon",
+   "duration": 0.11,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "muzzle"
+    ],
+    [
+     0.03,
+     "eject"
+    ]
+   ]
+  },
+  {
+   "name": "revolver_fire",
+   "rig": "weapon",
+   "duration": 0.16,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "muzzle"
+    ]
+   ]
+  },
+  {
+   "name": "auto_fire",
+   "rig": "weapon",
+   "duration": 0.09,
+   "loop": true,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "muzzle"
+    ],
+    [
+     0.025,
+     "eject"
+    ]
+   ]
+  },
+  {
+   "name": "shotgun_pump",
+   "rig": "weapon",
+   "duration": 0.42,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.16,
+     "eject"
+    ],
+    [
+     0.36,
+     "chamber"
+    ]
+   ]
+  },
+  {
+   "name": "bolt_cycle",
+   "rig": "weapon",
+   "duration": 0.9,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.45,
+     "eject"
+    ]
+   ]
+  },
+  {
+   "name": "mag_reload",
+   "rig": "weapon",
+   "duration": 1.6,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.05,
+     "mag_out"
+    ],
+    [
+     1.0,
+     "mag_in"
+    ],
+    [
+     1.35,
+     "chamber"
+    ]
+   ]
+  },
+  {
+   "name": "charge",
+   "rig": "weapon",
+   "duration": 1.2,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     1.2,
+     "charged"
+    ]
+   ]
+  },
+  {
+   "name": "lmg_fire",
+   "rig": "weapon",
+   "duration": 0.075,
+   "loop": true,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "muzzle"
+    ],
+    [
+     0.02,
+     "eject"
+    ]
+   ]
+  },
+  {
+   "name": "lmg_reload",
+   "rig": "weapon",
+   "duration": 3.4,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.25,
+     "cover_open"
+    ],
+    [
+     0.75,
+     "mag_out"
+    ],
+    [
+     2.1,
+     "mag_in"
+    ],
+    [
+     2.75,
+     "cover_close"
+    ],
+    [
+     3.15,
+     "chamber"
+    ]
+   ]
+  },
+  {
+   "name": "break_reload",
+   "rig": "weapon",
+   "duration": 2.0,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.2,
+     "open"
+    ],
+    [
+     0.45,
+     "eject"
+    ],
+    [
+     1.0,
+     "shell_in"
+    ],
+    [
+     1.25,
+     "shell_in"
+    ],
+    [
+     1.7,
+     "close"
+    ]
+   ]
+  },
+  {
+   "name": "double_fire",
+   "rig": "weapon",
+   "duration": 0.14,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "muzzle"
+    ]
+   ]
+  },
+  {
+   "name": "grenade_prime",
+   "rig": "weapon",
+   "duration": 0.5,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.2,
+     "pin"
+    ],
+    [
+     0.4,
+     "lever"
+    ]
+   ]
+  },
+  {
+   "name": "baton_arc",
+   "rig": "weapon",
+   "duration": 0.6,
+   "loop": true,
+   "speed": 0.0,
+   "events": []
+  },
+  {
+   "name": "hammer_thrust",
+   "rig": "weapon",
+   "duration": 0.35,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "thrust"
+    ]
+   ]
+  },
+  {
+   "name": "knuckle_impact",
+   "rig": "weapon",
+   "duration": 0.3,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "impact"
+    ]
+   ]
+  },
+  {
+   "name": "sit_down",
+   "rig": "humanoid",
+   "duration": 1.1,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.9,
+     "seat"
+    ]
+   ]
+  },
+  {
+   "name": "sit_loop",
+   "rig": "humanoid",
+   "duration": 5.0,
+   "loop": true,
+   "speed": 0.0,
+   "events": []
+  },
+  {
+   "name": "stand_up",
+   "rig": "humanoid",
+   "duration": 1.0,
+   "loop": false,
+   "speed": 0.0,
+   "events": []
+  },
+  {
+   "name": "knockdown",
+   "rig": "humanoid",
+   "duration": 0.9,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.62,
+     "body_fall"
+    ]
+   ]
+  },
+  {
+   "name": "lie_loop",
+   "rig": "humanoid",
+   "duration": 3.0,
+   "loop": true,
+   "speed": 0.0,
+   "events": []
+  },
+  {
+   "name": "get_up",
+   "rig": "humanoid",
+   "duration": 1.6,
+   "loop": false,
+   "speed": 0.0,
+   "events": []
+  },
+  {
+   "name": "collapse",
+   "rig": "humanoid",
+   "duration": 0.8,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.6,
+     "body_fall"
+    ]
+   ]
+  },
+  {
+   "name": "aim_pistol",
+   "rig": "humanoid",
+   "duration": 2.4,
+   "loop": true,
+   "speed": 0.0,
+   "events": []
+  },
+  {
+   "name": "aim_rifle",
+   "rig": "humanoid",
+   "duration": 2.4,
+   "loop": true,
+   "speed": 0.0,
+   "events": []
+  },
+  {
+   "name": "low_ready",
+   "rig": "humanoid",
+   "duration": 3.0,
+   "loop": true,
+   "speed": 0.0,
+   "events": []
+  },
+  {
+   "name": "fire_pistol_3p",
+   "rig": "humanoid",
+   "duration": 0.18,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "shot"
+    ]
+   ]
+  },
+  {
+   "name": "fire_rifle_3p",
+   "rig": "humanoid",
+   "duration": 0.11,
+   "loop": true,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "shot"
+    ]
+   ]
+  },
+  {
+   "name": "melee_slash",
+   "rig": "humanoid",
+   "duration": 0.62,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.14,
+     "swing"
+    ],
+    [
+     0.27,
+     "hit"
+    ]
+   ]
+  },
+  {
+   "name": "melee_stab",
+   "rig": "humanoid",
+   "duration": 0.52,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.12,
+     "swing"
+    ],
+    [
+     0.24,
+     "hit"
+    ]
+   ]
+  },
+  {
+   "name": "melee_heavy",
+   "rig": "humanoid",
+   "duration": 1.05,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.4,
+     "swing"
+    ],
+    [
+     0.6,
+     "hit"
+    ]
+   ]
+  },
+  {
+   "name": "punch",
+   "rig": "humanoid",
+   "duration": 0.42,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.1,
+     "swing"
+    ],
+    [
+     0.2,
+     "hit"
+    ]
+   ]
+  },
+  {
+   "name": "throw",
+   "rig": "humanoid",
+   "duration": 0.9,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.5,
+     "release"
+    ]
+   ]
+  },
+  {
+   "name": "death_back",
+   "rig": "humanoid",
+   "duration": 1.1,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "hit"
+    ],
+    [
+     0.7,
+     "body_fall"
+    ]
+   ]
+  },
+  {
+   "name": "death_front",
+   "rig": "humanoid",
+   "duration": 1.2,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "hit"
+    ],
+    [
+     0.8,
+     "body_fall"
+    ]
+   ]
+  },
+  {
+   "name": "death_left",
+   "rig": "humanoid",
+   "duration": 1.2,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "hit"
+    ],
+    [
+     0.8,
+     "body_fall"
+    ]
+   ]
+  },
+  {
+   "name": "death_right",
+   "rig": "humanoid",
+   "duration": 1.2,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "hit"
+    ],
+    [
+     0.8,
+     "body_fall"
+    ]
+   ]
+  },
+  {
+   "name": "death_headshot",
+   "rig": "humanoid",
+   "duration": 0.8,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "hit"
+    ],
+    [
+     0.55,
+     "body_fall"
+    ]
+   ]
+  },
+  {
+   "name": "death_knees",
+   "rig": "humanoid",
+   "duration": 2.2,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "hit"
+    ],
+    [
+     0.45,
+     "knees"
+    ],
+    [
+     1.75,
+     "body_fall"
+    ]
+   ]
+  },
+  {
+   "name": "death_blast",
+   "rig": "humanoid",
+   "duration": 1.0,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "blast"
+    ],
+    [
+     0.55,
+     "body_fall"
+    ],
+    [
+     0.8,
+     "slide"
+    ]
+   ]
+  },
+  {
+   "name": "death_burn",
+   "rig": "humanoid",
+   "duration": 1.7,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "burn"
+    ],
+    [
+     1.25,
+     "body_fall"
+    ]
+   ]
+  },
+  {
+   "name": "death_shock",
+   "rig": "humanoid",
+   "duration": 1.6,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "shock"
+    ],
+    [
+     1.25,
+     "body_fall"
+    ]
+   ]
+  },
+  {
+   "name": "death_slash",
+   "rig": "humanoid",
+   "duration": 1.4,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "hit"
+    ],
+    [
+     1.05,
+     "body_fall"
+    ]
+   ]
+  },
+  {
+   "name": "death_sit",
+   "rig": "humanoid",
+   "duration": 1.3,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "hit"
+    ]
+   ]
+  },
+  {
+   "name": "fall_wounded",
+   "rig": "humanoid",
+   "duration": 1.0,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.3,
+     "knees"
+    ],
+    [
+     0.75,
+     "body_fall"
+    ]
+   ]
+  },
+  {
+   "name": "wounded_crawl",
+   "rig": "humanoid",
+   "duration": 1.8,
+   "loop": true,
+   "speed": 0.35,
+   "events": [
+    [
+     0.0,
+     "drag"
+    ],
+    [
+     0.9,
+     "drag"
+    ]
+   ]
+  },
+  {
+   "name": "death_crawl",
+   "rig": "humanoid",
+   "duration": 1.1,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.9,
+     "body_fall"
+    ]
+   ]
+  },
+  {
+   "name": "hit_front",
+   "rig": "humanoid",
+   "duration": 0.5,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "hit"
+    ]
+   ]
+  },
+  {
+   "name": "hit_back",
+   "rig": "humanoid",
+   "duration": 0.5,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "hit"
+    ]
+   ]
+  },
+  {
+   "name": "hit_left",
+   "rig": "humanoid",
+   "duration": 0.5,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "hit"
+    ]
+   ]
+  },
+  {
+   "name": "hit_right",
+   "rig": "humanoid",
+   "duration": 0.5,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "hit"
+    ]
+   ]
+  },
+  {
+   "name": "hit_head",
+   "rig": "humanoid",
+   "duration": 0.5,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "hit"
+    ]
+   ]
+  },
+  {
+   "name": "hit_leg",
+   "rig": "humanoid",
+   "duration": 0.5,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "hit"
+    ]
+   ]
+  },
+  {
+   "name": "stagger",
+   "rig": "humanoid",
+   "duration": 0.9,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "hit"
+    ],
+    [
+     0.3,
+     "foot_R"
+    ],
+    [
+     0.6,
+     "foot_L"
+    ]
+   ]
+  },
+  {
+   "name": "aim_palm",
+   "rig": "humanoid",
+   "duration": 2.4,
+   "loop": true,
+   "speed": 0.0,
+   "events": []
+  },
+  {
+   "name": "fire_palm",
+   "rig": "humanoid",
+   "duration": 0.4,
+   "loop": true,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "beam"
+    ]
+   ]
+  },
+  {
+   "name": "car_door_open",
+   "rig": "humanoid",
+   "duration": 0.45,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.2,
+     "handle"
+    ],
+    [
+     0.3,
+     "door_open"
+    ]
+   ]
+  },
+  {
+   "name": "car_enter",
+   "rig": "humanoid",
+   "duration": 0.9,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.75,
+     "seat"
+    ],
+    [
+     0.85,
+     "door_close"
+    ]
+   ]
+  },
+  {
+   "name": "car_exit",
+   "rig": "humanoid",
+   "duration": 0.8,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.1,
+     "door_open"
+    ],
+    [
+     0.7,
+     "foot_L"
+    ]
+   ]
+  },
+  {
+   "name": "drive_idle",
+   "rig": "humanoid",
+   "duration": 4.0,
+   "loop": true,
+   "speed": 0.0,
+   "events": []
+  },
+  {
+   "name": "drive_steer_L",
+   "rig": "humanoid",
+   "duration": 1.0,
+   "loop": true,
+   "speed": 0.0,
+   "events": []
+  },
+  {
+   "name": "drive_steer_R",
+   "rig": "humanoid",
+   "duration": 1.0,
+   "loop": true,
+   "speed": 0.0,
+   "events": []
+  },
+  {
+   "name": "car_smash_window",
+   "rig": "humanoid",
+   "duration": 0.7,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.3,
+     "swing"
+    ],
+    [
+     0.43,
+     "glass_break"
+    ]
+   ]
+  },
+  {
+   "name": "car_hack",
+   "rig": "humanoid",
+   "duration": 2.2,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.2,
+     "deck_connect"
+    ],
+    [
+     2.1,
+     "unlock"
+    ]
+   ]
+  },
+  {
+   "name": "car_hotwire",
+   "rig": "humanoid",
+   "duration": 3.2,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.5,
+     "panel_open"
+    ],
+    [
+     1.2,
+     "spark"
+    ],
+    [
+     2.1,
+     "spark"
+    ],
+    [
+     3.0,
+     "engine_on"
+    ]
+   ]
+  },
+  {
+   "name": "carjack_pull",
+   "rig": "humanoid",
+   "duration": 1.1,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.33,
+     "grab"
+    ],
+    [
+     0.75,
+     "throw"
+    ]
+   ]
+  },
+  {
+   "name": "carjack_victim",
+   "rig": "humanoid",
+   "duration": 1.5,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.4,
+     "scream"
+    ],
+    [
+     1.25,
+     "body_fall"
+    ]
+   ]
+  },
+  {
+   "name": "hands_up",
+   "rig": "humanoid",
+   "duration": 2.0,
+   "loop": true,
+   "speed": 0.0,
+   "events": []
+  },
+  {
+   "name": "point",
+   "rig": "humanoid",
+   "duration": 2.4,
+   "loop": false,
+   "speed": 0.0,
+   "events": []
+  },
+  {
+   "name": "record_phone",
+   "rig": "humanoid",
+   "duration": 3.0,
+   "loop": true,
+   "speed": 0.0,
+   "events": []
+  },
+  {
+   "name": "phone_report",
+   "rig": "humanoid",
+   "duration": 4.0,
+   "loop": true,
+   "speed": 0.0,
+   "events": [
+    [
+     0.3,
+     "dial"
+    ],
+    [
+     3.6,
+     "hang_up"
+    ]
+   ]
+  },
+  {
+   "name": "startle",
+   "rig": "humanoid",
+   "duration": 0.8,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "gasp"
+    ]
+   ]
+  },
+  {
+   "name": "dodge_left",
+   "rig": "humanoid",
+   "duration": 0.7,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "gasp"
+    ],
+    [
+     0.5,
+     "foot_L"
+    ]
+   ]
+  },
+  {
+   "name": "dodge_right",
+   "rig": "humanoid",
+   "duration": 0.7,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "gasp"
+    ],
+    [
+     0.5,
+     "foot_R"
+    ]
+   ]
+  },
+  {
+   "name": "shake_fist",
+   "rig": "humanoid",
+   "duration": 1.6,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.2,
+     "shout"
+    ]
+   ]
+  },
+  {
+   "name": "robot_halt",
+   "rig": "humanoid",
+   "duration": 1.2,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.3,
+     "warn"
+    ]
+   ]
+  },
+  {
+   "name": "calibrate",
+   "rig": "humanoid",
+   "duration": 6.0,
+   "loop": false,
+   "speed": 0.0,
+   "events": []
+  },
+  {
+   "name": "fp_idle",
+   "rig": "fp",
+   "duration": 4.0,
+   "loop": true,
+   "speed": 0.0,
+   "events": []
+  },
+  {
+   "name": "fp_raise_light",
+   "rig": "fp",
+   "duration": 0.3,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "draw"
+    ]
+   ]
+  },
+  {
+   "name": "fp_raise_heavy",
+   "rig": "fp",
+   "duration": 0.6,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "draw"
+    ]
+   ]
+  },
+  {
+   "name": "fp_lower",
+   "rig": "fp",
+   "duration": 0.25,
+   "loop": false,
+   "speed": 0.0,
+   "events": []
+  },
+  {
+   "name": "fp_recoil_pistol",
+   "rig": "fp",
+   "duration": 0.22,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "shot"
+    ]
+   ]
+  },
+  {
+   "name": "fp_recoil_revolver",
+   "rig": "fp",
+   "duration": 0.34,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "shot"
+    ]
+   ]
+  },
+  {
+   "name": "fp_recoil_auto",
+   "rig": "fp",
+   "duration": 0.12,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "shot"
+    ]
+   ]
+  },
+  {
+   "name": "fp_recoil_lmg",
+   "rig": "fp",
+   "duration": 0.11,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "shot"
+    ]
+   ]
+  },
+  {
+   "name": "fp_recoil_shotgun",
+   "rig": "fp",
+   "duration": 0.42,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "shot"
+    ]
+   ]
+  },
+  {
+   "name": "fp_recoil_sniper",
+   "rig": "fp",
+   "duration": 0.6,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "shot"
+    ]
+   ]
+  },
+  {
+   "name": "fp_reload",
+   "rig": "fp",
+   "duration": 1.6,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.05,
+     "mag_out"
+    ],
+    [
+     1.0,
+     "mag_in"
+    ],
+    [
+     1.35,
+     "chamber"
+    ]
+   ]
+  },
+  {
+   "name": "fp_ads_in",
+   "rig": "fp",
+   "duration": 0.18,
+   "loop": false,
+   "speed": 0.0,
+   "events": []
+  },
+  {
+   "name": "fp_ads_out",
+   "rig": "fp",
+   "duration": 0.16,
+   "loop": false,
+   "speed": 0.0,
+   "events": []
+  },
+  {
+   "name": "fp_slash",
+   "rig": "fp",
+   "duration": 0.62,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.14,
+     "swing"
+    ],
+    [
+     0.27,
+     "hit"
+    ]
+   ]
+  },
+  {
+   "name": "fp_stab",
+   "rig": "fp",
+   "duration": 0.52,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.12,
+     "swing"
+    ],
+    [
+     0.22,
+     "hit"
+    ]
+   ]
+  },
+  {
+   "name": "fp_punch",
+   "rig": "fp",
+   "duration": 0.42,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.08,
+     "swing"
+    ],
+    [
+     0.17,
+     "hit"
+    ]
+   ]
+  },
+  {
+   "name": "fp_laser_raise",
+   "rig": "fp",
+   "duration": 0.35,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "charge"
+    ]
+   ]
+  },
+  {
+   "name": "fp_laser_fire",
+   "rig": "fp",
+   "duration": 0.5,
+   "loop": true,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "beam"
+    ]
+   ]
+  },
+  {
+   "name": "fp_laser_overheat",
+   "rig": "fp",
+   "duration": 1.2,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "overheat"
+    ]
+   ]
+  },
+  {
+   "name": "fp_laser_lower",
+   "rig": "fp",
+   "duration": 0.25,
+   "loop": false,
+   "speed": 0.0,
+   "events": []
+  },
+  {
+   "name": "fp_car_enter",
+   "rig": "fp",
+   "duration": 0.9,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.75,
+     "seat"
+    ]
+   ]
+  },
+  {
+   "name": "fp_car_exit",
+   "rig": "fp",
+   "duration": 0.8,
+   "loop": false,
+   "speed": 0.0,
+   "events": []
+  },
+  {
+   "name": "fp_drive",
+   "rig": "fp",
+   "duration": 4.0,
+   "loop": true,
+   "speed": 0.0,
+   "events": []
+  },
+  {
+   "name": "fp_smash",
+   "rig": "fp",
+   "duration": 0.7,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.3,
+     "swing"
+    ],
+    [
+     0.43,
+     "glass_break"
+    ]
+   ]
+  },
+  {
+   "name": "fp_pull",
+   "rig": "fp",
+   "duration": 1.1,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.33,
+     "grab"
+    ],
+    [
+     0.75,
+     "throw"
+    ]
+   ]
+  },
+  {
+   "name": "fp_heavy",
+   "rig": "fp",
+   "duration": 1.05,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.4,
+     "swing"
+    ],
+    [
+     0.6,
+     "hit"
+    ]
+   ]
+  },
+  {
+   "name": "fp_throw",
+   "rig": "fp",
+   "duration": 0.9,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.48,
+     "release"
+    ]
+   ]
+  },
+  {
+   "name": "fp_inspect",
+   "rig": "fp",
+   "duration": 3.0,
+   "loop": false,
+   "speed": 0.0,
+   "events": []
+  },
+  {
+   "name": "fp_sprint",
+   "rig": "fp",
+   "duration": 1.0,
+   "loop": true,
+   "speed": 0.0,
+   "events": []
+  },
+  {
+   "name": "fp_land",
+   "rig": "fp",
+   "duration": 0.35,
+   "loop": false,
+   "speed": 0.0,
+   "events": []
+  },
+  {
+   "name": "blade_deploy",
+   "rig": "cyberarm",
+   "duration": 0.38,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "open"
+    ],
+    [
+     0.14,
+     "blade_out"
+    ],
+    [
+     0.34,
+     "lock"
+    ]
+   ]
+  },
+  {
+   "name": "blade_retract",
+   "rig": "cyberarm",
+   "duration": 0.32,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "blade_in"
+    ],
+    [
+     0.2,
+     "close"
+    ]
+   ]
+  },
+  {
+   "name": "power_charge",
+   "rig": "cyberarm",
+   "duration": 0.45,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "charge"
+    ],
+    [
+     0.45,
+     "ready"
+    ]
+   ]
+  },
+  {
+   "name": "power_release",
+   "rig": "cyberarm",
+   "duration": 0.3,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "impact"
+    ]
+   ]
+  },
+  {
+   "name": "wire_deploy",
+   "rig": "cyberarm",
+   "duration": 0.35,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "open"
+    ],
+    [
+     0.1,
+     "wire_out"
+    ]
+   ]
+  },
+  {
+   "name": "wire_retract",
+   "rig": "cyberarm",
+   "duration": 0.3,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "wire_in"
+    ],
+    [
+     0.2,
+     "close"
+    ]
+   ]
+  },
+  {
+   "name": "launcher_deploy",
+   "rig": "cyberarm",
+   "duration": 0.4,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "open"
+    ],
+    [
+     0.16,
+     "tube_up"
+    ],
+    [
+     0.38,
+     "lock"
+    ]
+   ]
+  },
+  {
+   "name": "launcher_fire",
+   "rig": "cyberarm",
+   "duration": 0.5,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "muzzle"
+    ],
+    [
+     0.0,
+     "backblast"
+    ]
+   ]
+  },
+  {
+   "name": "launcher_retract",
+   "rig": "cyberarm",
+   "duration": 0.36,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "tube_down"
+    ],
+    [
+     0.18,
+     "close"
+    ]
+   ]
+  },
+  {
+   "name": "laser_deploy",
+   "rig": "cyberarm",
+   "duration": 0.4,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "charge"
+    ],
+    [
+     0.22,
+     "iris_open"
+    ],
+    [
+     0.38,
+     "ready"
+    ]
+   ]
+  },
+  {
+   "name": "laser_fire",
+   "rig": "cyberarm",
+   "duration": 0.5,
+   "loop": true,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "beam"
+    ]
+   ]
+  },
+  {
+   "name": "laser_overheat",
+   "rig": "cyberarm",
+   "duration": 2.0,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "overheat"
+    ],
+    [
+     0.05,
+     "vent_open"
+    ],
+    [
+     0.1,
+     "steam"
+    ],
+    [
+     1.7,
+     "vent_close"
+    ],
+    [
+     2.0,
+     "ready"
+    ]
+   ]
+  },
+  {
+   "name": "laser_retract",
+   "rig": "cyberarm",
+   "duration": 0.3,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "iris_close"
+    ]
+   ]
+  },
+  {
+   "name": "drone_hover",
+   "rig": "machine",
+   "duration": 3.0,
+   "loop": true,
+   "speed": 0.0,
+   "events": []
+  },
+  {
+   "name": "drone_alert",
+   "rig": "machine",
+   "duration": 0.4,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "alert"
+    ]
+   ]
+  },
+  {
+   "name": "drone_fire",
+   "rig": "machine",
+   "duration": 0.1,
+   "loop": true,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "muzzle"
+    ]
+   ]
+  },
+  {
+   "name": "drone_crash",
+   "rig": "machine",
+   "duration": 1.2,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "disabled"
+    ],
+    [
+     1.2,
+     "impact"
+    ]
+   ]
+  },
+  {
+   "name": "turret_scan",
+   "rig": "machine",
+   "duration": 6.0,
+   "loop": true,
+   "speed": 0.0,
+   "events": []
+  },
+  {
+   "name": "turret_alert",
+   "rig": "machine",
+   "duration": 0.35,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "alert"
+    ]
+   ]
+  },
+  {
+   "name": "turret_fire",
+   "rig": "machine",
+   "duration": 0.09,
+   "loop": true,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "muzzle"
+    ],
+    [
+     0.02,
+     "eject"
+    ]
+   ]
+  },
+  {
+   "name": "turret_shutdown",
+   "rig": "machine",
+   "duration": 1.0,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "disabled"
+    ]
+   ]
+  },
+  {
+   "name": "camera_sweep",
+   "rig": "machine",
+   "duration": 8.0,
+   "loop": true,
+   "speed": 0.0,
+   "events": []
+  },
+  {
+   "name": "camera_alert",
+   "rig": "machine",
+   "duration": 0.3,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "alert"
+    ]
+   ]
+  },
+  {
+   "name": "camera_disabled",
+   "rig": "machine",
+   "duration": 0.8,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "disabled"
+    ]
+   ]
+  },
+  {
+   "name": "car_door",
+   "rig": "vehicle",
+   "duration": 0.45,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "latch"
+    ],
+    [
+     0.4,
+     "door_stop"
+    ]
+   ]
+  },
+  {
+   "name": "car_door_close",
+   "rig": "vehicle",
+   "duration": 0.35,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.3,
+     "door_slam"
+    ]
+   ]
+  },
+  {
+   "name": "car_window_break",
+   "rig": "vehicle",
+   "duration": 0.25,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.02,
+     "glass_break"
+    ]
+   ]
+  },
+  {
+   "name": "car_alarm",
+   "rig": "vehicle",
+   "duration": 1.0,
+   "loop": true,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "horn"
+    ],
+    [
+     0.5,
+     "horn"
+    ]
+   ]
+  },
+  {
+   "name": "car_engine_start",
+   "rig": "vehicle",
+   "duration": 0.8,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "starter"
+    ],
+    [
+     0.45,
+     "engine_on"
+    ]
+   ]
+  },
+  {
+   "name": "patrol_lightbar",
+   "rig": "vehicle",
+   "duration": 0.8,
+   "loop": true,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "siren"
+    ]
+   ]
+  },
+  {
+   "name": "car_brake",
+   "rig": "vehicle",
+   "duration": 0.2,
+   "loop": false,
+   "speed": 0.0,
+   "events": []
+  },
+  {
+   "name": "chair_recline",
+   "rig": "clinic",
+   "duration": 1.6,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "motor"
+    ],
+    [
+     1.5,
+     "lock"
+    ]
+   ]
+  },
+  {
+   "name": "chair_release",
+   "rig": "clinic",
+   "duration": 1.4,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "motor"
+    ]
+   ]
+  },
+  {
+   "name": "surgery_loop",
+   "rig": "clinic",
+   "duration": 6.0,
+   "loop": true,
+   "speed": 0.0,
+   "events": [
+    [
+     0.5,
+     "laser"
+    ],
+    [
+     1.6,
+     "servo"
+    ],
+    [
+     2.9,
+     "laser"
+    ],
+    [
+     4.2,
+     "servo"
+    ]
+   ]
+  },
+  {
+   "name": "surgery_start",
+   "rig": "clinic",
+   "duration": 1.2,
+   "loop": false,
+   "speed": 0.0,
+   "events": [
+    [
+     0.0,
+     "servo"
+    ],
+    [
+     0.3,
+     "light_on"
+    ]
+   ]
+  }
+ ]
+}

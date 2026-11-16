@@ -1,0 +1,22 @@
+{
+ "name": "skybridge",
+ "units": "m",
+ "forward": "-Y",
+ "up": "+Z",
+ "triangles": 56,
+ "triangles_by_part": {
+  "_static": 56
+ },
+ "parts": {},
+ "pivots": {},
+ "materials": [
+  "concrete_dark",
+  "win_warm"
+ ],
+ "size_m": [
+  22.2,
+  4.5,
+  4.2
+ ],
+ "origin": "가운데"
+}

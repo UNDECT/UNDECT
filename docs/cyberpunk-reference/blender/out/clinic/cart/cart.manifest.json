@@ -1,0 +1,116 @@
+{
+ "name": "cart",
+ "units": "m",
+ "forward": "-Y",
+ "up": "+Z",
+ "triangles": 3688,
+ "triangles_by_part": {
+  "cart": 2956,
+  "vial_glow": 168,
+  "monitor": 120,
+  "screen_glow": 444
+ },
+ "parts": {
+  "cart": [
+   "leg",
+   "wheel",
+   "leg.001",
+   "wheel.001",
+   "leg.002",
+   "wheel.002",
+   "leg.003",
+   "wheel.003",
+   "shelf",
+   "shelf_rail",
+   "shelf_rail.001",
+   "shelf.001",
+   "shelf_rail.002",
+   "shelf_rail.003",
+   "shelf.002",
+   "shelf_rail.004",
+   "shelf_rail.005",
+   "tray",
+   "tool",
+   "tool_grip",
+   "tool.001",
+   "tool_grip.001",
+   "tool.002",
+   "tool_grip.002",
+   "tool.003",
+   "tool_grip.003",
+   "tool.004",
+   "tool_grip.004",
+   "tool.005",
+   "tool_grip.005",
+   "vial",
+   "vial.001",
+   "vial.002",
+   "chip_case",
+   "box_low",
+   "box_low2",
+   "coil",
+   "monitor_pole"
+  ],
+  "vial_glow": [
+   "vial_fluid",
+   "vial_fluid.001",
+   "vial_fluid.002",
+   "chip",
+   "chip.001",
+   "chip.002"
+  ],
+  "monitor": [
+   "monitor_case",
+   "monitor_screen"
+  ],
+  "screen_glow": [
+   "pulse",
+   "pulse.001",
+   "pulse.002",
+   "pulse.003",
+   "pulse.004",
+   "pulse.005",
+   "pulse.006",
+   "pulse.007",
+   "pulse.008",
+   "bar",
+   "bar.001",
+   "bar.002",
+   "bar.003",
+   "ring_gauge"
+  ]
+ },
+ "pivots": {
+  "monitor": {
+   "pos": [
+    0.25,
+    0.18,
+    1.38
+   ],
+   "axis": [
+    0,
+    0,
+    1
+   ],
+   "parent": "cart",
+   "child": "monitor",
+   "range": [
+    -90,
+    90
+   ]
+  }
+ },
+ "materials": [
+  "c_dark",
+  "c_orange",
+  "c_screen",
+  "c_shell",
+  "c_teal",
+  "chrome",
+  "glass",
+  "glow_amber",
+  "glow_cyan",
+  "glow_magenta",
+  "rubber"
+ ]
+}

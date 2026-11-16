@@ -1,0 +1,1 @@
+{"name":"auto_fire","rig":"weapon","duration":0.09,"loop":true,"speed":0.0,"fps":30,"tracks":[{"joint":"bolt","dof":"move_y","keys":[[0.0,0.0],[0.03,0.04286],[0.06,0.02143],[0.09,0.0]]},{"joint":"trigger","dof":"pitch","keys":[[0.0,-10],[0.03,-10],[0.06,-10],[0.09,-10]]}],"events":[[0.0,"muzzle"],[0.025,"eject"]]}

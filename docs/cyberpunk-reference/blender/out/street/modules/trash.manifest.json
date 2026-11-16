@@ -1,0 +1,28 @@
+{
+ "name": "trash",
+ "units": "m",
+ "forward": "-Y",
+ "up": "+Z",
+ "triangles": 1392,
+ "triangles_by_part": {
+  "trash": 1392
+ },
+ "parts": {
+  "trash": [
+   "bag",
+   "bag.001",
+   "bag.002",
+   "bag.003",
+   "bag.004",
+   "bag.005",
+   "bin",
+   "bin_lid"
+  ]
+ },
+ "pivots": {},
+ "materials": [
+  "gunmetal",
+  "prop_paint",
+  "trash"
+ ]
+}

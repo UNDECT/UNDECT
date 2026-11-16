@@ -1,0 +1,1 @@
+{"name":"lmg_fire","rig":"weapon","duration":0.075,"loop":true,"speed":0.0,"fps":30,"tracks":[{"joint":"bolt","dof":"move_y","keys":[[0.0,0.0],[0.0375,0.03571],[0.075,0.0]]},{"joint":"trigger","dof":"pitch","keys":[[0.0,-10],[0.0375,-10],[0.075,-10]]}],"events":[[0.0,"muzzle"],[0.02,"eject"]]}
