@@ -17,6 +17,7 @@
 | `Security.luau` | 보안 로봇 한 대의 두뇌: 순찰, 시야와 인지도, 정지 명령, 조준·점사, 차 피하기, 수색, 복귀, 피격·파괴 | ✅ |
 | `CrowdNet.luau` | 서버 → 클라이언트 전송: 주변 것만 10바이트씩 묶기, 풀기, 클라이언트 보간 | ✅ |
 | `Zone.luau` | 배틀로얄의 줄어드는 구역: 인원에 맞춘 첫 원 크기, 맵 안에서 자리 고르기, 6단계로 줄어들기, 원 밖 피해 | ✅ |
+| `Loot.luau` | 배틀로얄의 아이템: 아이템 표, 건물의 아이템 자리 채우기, 전장 전체 수량 맞추기, 보급 상자, 소지품 규칙(줍기·바꾸기·탄약 한도·방어구·회복·죽을 때 떨어뜨리기) | ✅ |
 | `RigAnimator.luau` | Roblox 연결: 자세를 Bone/Motor6D의 `Transform`에 적용, 동작 전환 섞기. 사람은 `RigAnimator.new(model, manifest.joints)` | ⚠️ Studio에서 확인 필요 |
 | `tests/run.luau` | 테스트 189개 | `lune run tests/run.luau` (이 폴더에서 실행) |
 

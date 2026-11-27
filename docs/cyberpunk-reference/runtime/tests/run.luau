@@ -15,6 +15,7 @@ local Wanted = require("../Wanted")
 local Security = require("../Security")
 local CrowdNet = require("../CrowdNet")
 local Zone = require("../Zone")
+local Loot = require("../Loot")
 
 local CLIPS = "../blender/out/anim/"
 local passed, failed = 0, 0
@@ -1006,6 +1007,105 @@ do
 	check("match length matches the phase table", math.abs(t - Zone.duration()) <= 1 and Zone.duration() > 600 and Zone.duration() < 900, t)
 	local z2 = Zone.new({x = 0, z = 0, radius = 500, rand = rnd}); z2:start()
 	check("outside hurts, inside does not, far outside hurts more", z2:damage(0, 0, 1) == 0 and z2:damage(520, 0, 1) > 0 and z2:damage(900, 0, 1) > z2:damage(520, 0, 1) and z2:inside(0, 499) and not z2:inside(0, 501))
+end
+
+-- 아이템: 표, 건물 채우기, 균형, 소지품
+do
+	local seed = 7
+	local function rnd() seed = (seed * 1103515245 + 12345) % 2147483648; return seed / 2147483648 end
+	local okModel, okAmmo = true, true
+	for _, id in Loot.IDS do
+		local it = Loot.ITEMS[id]
+		if it.cat == "weapon" or it.cat == "melee" or it.cat == "throw" then okModel = okModel and fs.isDir("../blender/out/weapons/" .. id) end
+		if it.cat == "cyber" and it.arm ~= "blade" then okModel = okModel and fs.isDir("../blender/out/cyber_arms/" .. it.arm) end
+		if it.cat == "weapon" then okAmmo = okAmmo and Loot.ITEMS["ammo_" .. it.ammo] ~= nil and Loot.AMMO_CAP[it.ammo] ~= nil end
+	end
+	check("every weapon, throwable and cyberware item has a model", okModel)
+	check("every gun has an ammo item and a carry limit", okAmmo)
+	local tier4, lockerArm, floorArm, hi1, hi3 = 0, 0, 0, 0, 0
+	for _ = 1, 4000 do
+		local a, b = Loot.ITEMS[Loot.roll(rnd, "by_locker", 2)], Loot.ITEMS[Loot.roll(rnd, "floor", 2)]
+		if a.tier == 4 or b.tier == 4 then tier4 += 1 end
+		if a.cat == "armor" or a.cat == "helmet" then lockerArm += 1 end
+		if b.cat == "armor" or b.cat == "helmet" then floorArm += 1 end
+		if Loot.ITEMS[Loot.roll(rnd, "floor", 1)].tier >= 3 then hi1 += 1 end
+		if Loot.ITEMS[Loot.roll(rnd, "floor", 3)].tier >= 3 then hi3 += 1 end
+	end
+	check("supply-only items never appear in buildings", tier4 == 0, tier4)
+	check("lockers give more protective gear than the floor", lockerArm > floorArm * 1.4, lockerArm .. " vs " .. floorArm)
+	check("bigger buildings give rarer items", hi3 > hi1 * 2, hi3 .. " vs " .. hi1)
+	-- 실제 건물 manifest로 채우기
+	local names, all, spotsTotal, okFill, okGun, okPair = {"shack", "rowhouse", "shop", "apartment", "warehouse", "office"}, {}, 0, true, true, true
+	for _, n in names do
+		local man = serde.decode("json", fs.readFile("../blender/out/houses/house_" .. n .. ".manifest.json"))
+		spotsTotal += #man.loot
+		for _ = 1, 30 do
+			local drops = Loot.fill(man.loot, rnd, {building = n})
+			local ratio, gun = #drops / #man.loot, false
+			okFill = okFill and ratio > 0.5 and ratio < 0.7
+			for _, d in drops do
+				local it = Loot.ITEMS[d.items[1].id]
+				okFill = okFill and man.loot[d.spot].pos == d.pos
+				if it.cat == "weapon" then
+					gun = true
+					okPair = okPair and d.items[2] ~= nil and Loot.ITEMS[d.items[2].id].ammo == it.ammo
+				end
+			end
+			okGun = okGun and gun
+		end
+		for _, d in Loot.fill(man.loot, rnd, {building = n}) do table.insert(all, d) end
+	end
+	check("six buildings carry 151 item spots", spotsTotal == 151, spotsTotal)
+	check("about 60% of the spots are filled, at their manifest positions", okFill)
+	check("every building gets at least one gun", okGun)
+	check("guns come with their own ammo", okPair)
+	local s1, s2 = 99, 99
+	local function r1() s1 = (s1 * 1103515245 + 12345) % 2147483648; return s1 / 2147483648 end
+	local function r2() s2 = (s2 * 1103515245 + 12345) % 2147483648; return s2 / 2147483648 end
+	local man = serde.decode("json", fs.readFile("../blender/out/houses/house_office.manifest.json"))
+	local da, db, same = Loot.fill(man.loot, r1, {building = "office"}), Loot.fill(man.loot, r2, {building = "office"}), true
+	for i, d in da do same = same and db[i] ~= nil and db[i].spot == d.spot and db[i].items[1].id == d.items[1].id end
+	check("same random numbers give the same loot", same and #da == #db)
+	-- 균형: 6채(자리 약 90곳)로 12명 몫을 맞춘다. 40명 몫은 모자라다고 알려 준다
+	local st = Loot.balance(all, rnd, 12)
+	check("balance tops up guns, protection, healing and cyberware", st.counts.weapon >= 24 and st.counts.armor >= 10 and st.counts.helmet >= 10 and st.counts.heal >= 30 and st.counts.cyber >= 5 and next(st.short) == nil,
+		serde.encode("json", st))
+	local st2 = Loot.balance(all, rnd, 40)
+	check("balance reports what is still missing when there are too few spots", next(st2.short) ~= nil)
+	local sup, supGun, supCyber = Loot.supply(rnd), false, false
+	for _, e in sup do
+		local it = Loot.ITEMS[e.id]
+		if it.cat == "weapon" and it.tier >= 2 then supGun = true end
+		if it.cat == "cyber" then supCyber = true end
+	end
+	check("a supply crate holds a good gun and a cyberware arm", supGun and supCyber)
+	-- 소지품
+	local inv = Loot.newInventory()
+	Loot.pickup(inv, "pistol"); Loot.pickup(inv, "rifle"); inv.active = 2
+	local r = Loot.pickup(inv, "sniper")
+	check("a third gun replaces the one in hand and drops it", r.ok and inv.guns[1] == "pistol" and inv.guns[2] == "sniper" and r.dropped[1].id == "rifle")
+	local a1 = Loot.pickup(inv, "ammo_shell", 30); local a2 = Loot.pickup(inv, "ammo_shell", 30); local a3 = Loot.pickup(inv, "ammo_shell", 5)
+	check("ammo stops at the carry limit and leaves the rest", a1.taken == 30 and a2.taken == 10 and a2.left == 20 and not a3.ok and inv.ammo.shell == 40)
+	Loot.pickup(inv, "armor_2")
+	local w = Loot.pickup(inv, "armor_1"); local b = Loot.pickup(inv, "armor_3")
+	check("worse armor is refused, better armor swaps and drops the old one", not w.ok and w.reason == "worse" and b.ok and b.dropped[1].id == "armor_2" and inv.armor.id == "armor_3")
+	Loot.pickup(inv, "helmet_1")
+	check("helmet protects the head, vest the torso, nothing the limbs", Loot.protection(inv, "head") == 0.30 and Loot.protection(inv, "torso") == 0.55 and Loot.protection(inv, "leg") == 0)
+	local v = Vitals.new({}); v.armor = Loot.protection(inv, "torso")
+	local hitRes = Vitals.hit(v, {kind = "bullet", part = "spine_02", damage = 40, dirX = 0, dirZ = 1, roll = 0.5, roll2 = 0.5})
+	check("the vest value plugs into Vitals", math.abs((100 - v.health) - 40 * 0.45) < 1e-6 and hitRes ~= nil, v.health)
+	local br = Loot.absorb(inv, "head", 100); local br2 = Loot.absorb(inv, "head", 100)
+	check("armor wears down and breaks", not br.broken and br2.broken and inv.helmet == nil and Loot.protection(inv, "head") == 0)
+	Loot.pickup(inv, "bandage", 2); Loot.pickup(inv, "medkit", 1)
+	local okFull = Loot.canUse(inv, "bandage", 80)
+	local u1 = Loot.applyUse(inv, "bandage", 70); local u2 = Loot.applyUse(inv, "medkit", 20)
+	check("bandages stop at 75, a medkit fills up", not okFull and u1.health == 75 and u2.health == 100 and inv.items.bandage == 1 and inv.items.medkit == 0)
+	Loot.pickup(inv, "cw_blade"); local c2 = Loot.pickup(inv, "cw_power")
+	check("only one cyberware arm at a time", inv.cyber == "cw_power" and c2.dropped[1].id == "cw_blade" and c2.time == 4)
+	check("reloading draws from the right ammo pool", Loot.takeAmmo(inv, "shotgun", 6) == 6 and inv.ammo.shell == 34 and Loot.takeAmmo(inv, "pistol", 12) == 0)
+	local dd, ids = Loot.deathDrop(inv), {}
+	for _, e in dd do ids[e.id] = e.count end
+	check("death drops everything and empties the inventory", ids.pistol == 1 and ids.sniper == 1 and ids.armor_3 == 1 and ids.ammo_shell == 34 and ids.cw_power == 1 and ids.bandage == 1 and inv.guns[1] == nil and inv.armor == nil and inv.ammo.shell == 0)
 end
 
 print(string.format("%d passed, %d failed", passed, failed))

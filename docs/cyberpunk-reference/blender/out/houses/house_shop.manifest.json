@@ -1,0 +1,844 @@
+{
+ "name": "house_shop",
+ "units": "m",
+ "forward": "-Y",
+ "up": "+Z",
+ "triangles": 3336,
+ "triangles_by_part": {
+  "_static": 3240,
+  "door_0": 48,
+  "door_1": 48
+ },
+ "parts": {
+  "door_0": [
+   "door_0_door_yellow",
+   "door_0_gunmetal"
+  ],
+  "door_1": [
+   "door_1_door_yellow",
+   "door_1_gunmetal"
+  ]
+ },
+ "pivots": {
+  "door_0": {
+   "pos": [
+    1.6,
+    -3.375,
+    1.1
+   ],
+   "axis": [
+    0,
+    0,
+    1
+   ],
+   "parent": "shop",
+   "child": "door_0",
+   "range": [
+    0,
+    100
+   ]
+  },
+  "door_1": {
+   "pos": [
+    2.2,
+    3.375,
+    1.1
+   ],
+   "axis": [
+    0,
+    0,
+    1
+   ],
+   "parent": "shop",
+   "child": "door_1",
+   "range": [
+    0,
+    100
+   ]
+  }
+ },
+ "materials": [
+  "cloth",
+  "concrete",
+  "concrete_dark",
+  "dark",
+  "door_yellow",
+  "floor",
+  "goods_a",
+  "goods_b",
+  "goods_c",
+  "gunmetal",
+  "lamp",
+  "paint_red",
+  "paint_teal",
+  "paint_yellow",
+  "pane",
+  "plaster",
+  "titan",
+  "win_pink",
+  "wood"
+ ],
+ "size_m": [
+  8.0,
+  7.0,
+  3.4
+ ],
+ "levels_m": [
+  0.0,
+  3.4
+ ],
+ "colliders": [
+  {
+   "type": "box",
+   "pos": [
+    -3.7,
+    -3.375,
+    1.7
+   ],
+   "size": [
+    0.6,
+    0.25,
+    3.4
+   ],
+   "tag": "structure"
+  },
+  {
+   "type": "box",
+   "pos": [
+    -1.5,
+    -3.375,
+    0.25
+   ],
+   "size": [
+    3.8,
+    0.25,
+    0.5
+   ],
+   "tag": "structure"
+  },
+  {
+   "type": "box",
+   "pos": [
+    -1.5,
+    -3.375,
+    3.05
+   ],
+   "size": [
+    3.8,
+    0.25,
+    0.7
+   ],
+   "tag": "structure"
+  },
+  {
+   "type": "box",
+   "pos": [
+    1.0,
+    -3.375,
+    1.7
+   ],
+   "size": [
+    1.2,
+    0.25,
+    3.4
+   ],
+   "tag": "structure"
+  },
+  {
+   "type": "box",
+   "pos": [
+    2.2,
+    -3.375,
+    2.8
+   ],
+   "size": [
+    1.2,
+    0.25,
+    1.2
+   ],
+   "tag": "structure"
+  },
+  {
+   "type": "box",
+   "pos": [
+    3.4,
+    -3.375,
+    1.7
+   ],
+   "size": [
+    1.2,
+    0.25,
+    3.4
+   ],
+   "tag": "structure"
+  },
+  {
+   "type": "box",
+   "pos": [
+    -0.9,
+    3.375,
+    1.7
+   ],
+   "size": [
+    6.2,
+    0.25,
+    3.4
+   ],
+   "tag": "structure"
+  },
+  {
+   "type": "box",
+   "pos": [
+    2.75,
+    3.375,
+    2.8
+   ],
+   "size": [
+    1.1,
+    0.25,
+    1.2
+   ],
+   "tag": "structure"
+  },
+  {
+   "type": "box",
+   "pos": [
+    3.65,
+    3.375,
+    1.7
+   ],
+   "size": [
+    0.7,
+    0.25,
+    3.4
+   ],
+   "tag": "structure"
+  },
+  {
+   "type": "box",
+   "pos": [
+    -3.875,
+    -0.775,
+    1.7
+   ],
+   "size": [
+    0.25,
+    4.95,
+    3.4
+   ],
+   "tag": "structure"
+  },
+  {
+   "type": "box",
+   "pos": [
+    -3.875,
+    2.2,
+    0.45
+   ],
+   "size": [
+    0.25,
+    1.0,
+    0.9
+   ],
+   "tag": "structure"
+  },
+  {
+   "type": "box",
+   "pos": [
+    -3.875,
+    2.2,
+    2.75
+   ],
+   "size": [
+    0.25,
+    1.0,
+    1.3
+   ],
+   "tag": "structure"
+  },
+  {
+   "type": "box",
+   "pos": [
+    -3.875,
+    2.975,
+    1.7
+   ],
+   "size": [
+    0.25,
+    0.55,
+    3.4
+   ],
+   "tag": "structure"
+  },
+  {
+   "type": "box",
+   "pos": [
+    3.875,
+    -2.675,
+    1.7
+   ],
+   "size": [
+    0.25,
+    1.15,
+    3.4
+   ],
+   "tag": "structure"
+  },
+  {
+   "type": "box",
+   "pos": [
+    3.875,
+    -1.4,
+    0.45
+   ],
+   "size": [
+    0.25,
+    1.4,
+    0.9
+   ],
+   "tag": "structure"
+  },
+  {
+   "type": "box",
+   "pos": [
+    3.875,
+    -1.4,
+    2.75
+   ],
+   "size": [
+    0.25,
+    1.4,
+    1.3
+   ],
+   "tag": "structure"
+  },
+  {
+   "type": "box",
+   "pos": [
+    3.875,
+    1.275,
+    1.7
+   ],
+   "size": [
+    0.25,
+    3.95,
+    3.4
+   ],
+   "tag": "structure"
+  },
+  {
+   "type": "box",
+   "pos": [
+    -3.425,
+    1.1,
+    1.575
+   ],
+   "size": [
+    0.65,
+    0.12,
+    3.15
+   ],
+   "tag": "structure"
+  },
+  {
+   "type": "box",
+   "pos": [
+    -2.55,
+    1.1,
+    2.725
+   ],
+   "size": [
+    1.1,
+    0.12,
+    0.85
+   ],
+   "tag": "structure"
+  },
+  {
+   "type": "box",
+   "pos": [
+    0.875,
+    1.1,
+    1.575
+   ],
+   "size": [
+    5.75,
+    0.12,
+    3.15
+   ],
+   "tag": "structure"
+  },
+  {
+   "type": "box",
+   "pos": [
+    1.5,
+    0.1,
+    0.5
+   ],
+   "size": [
+    2.6,
+    0.6,
+    1.0
+   ],
+   "tag": "furniture"
+  },
+  {
+   "type": "box",
+   "pos": [
+    -3.5,
+    -1.2,
+    0.9
+   ],
+   "size": [
+    0.4,
+    2.2,
+    1.8
+   ],
+   "tag": "furniture"
+  },
+  {
+   "type": "box",
+   "pos": [
+    -0.6,
+    -1.6,
+    0.9
+   ],
+   "size": [
+    0.4,
+    1.6,
+    1.8
+   ],
+   "tag": "furniture"
+  },
+  {
+   "type": "box",
+   "pos": [
+    -1.1,
+    0.8,
+    0.9
+   ],
+   "size": [
+    1.6,
+    0.4,
+    1.8
+   ],
+   "tag": "furniture"
+  },
+  {
+   "type": "box",
+   "pos": [
+    -2.1,
+    -2.5,
+    0.385
+   ],
+   "size": [
+    1.0,
+    0.6,
+    0.77
+   ],
+   "tag": "furniture"
+  },
+  {
+   "type": "box",
+   "pos": [
+    -0.4,
+    3.0,
+    0.9
+   ],
+   "size": [
+    2.0,
+    0.4,
+    1.8
+   ],
+   "tag": "furniture"
+  },
+  {
+   "type": "box",
+   "pos": [
+    2.9,
+    1.9,
+    0.4
+   ],
+   "size": [
+    0.8,
+    0.8,
+    0.8
+   ],
+   "tag": "structure"
+  },
+  {
+   "type": "box",
+   "pos": [
+    -3.0,
+    2.1,
+    0.35
+   ],
+   "size": [
+    0.7,
+    0.7,
+    0.7
+   ],
+   "tag": "structure"
+  },
+  {
+   "type": "box",
+   "pos": [
+    1.2,
+    2.95,
+    0.95
+   ],
+   "size": [
+    0.88,
+    0.5,
+    1.9
+   ],
+   "tag": "furniture"
+  },
+  {
+   "type": "box",
+   "pos": [
+    0.0,
+    0.0,
+    3.275
+   ],
+   "size": [
+    7.5,
+    6.5,
+    0.25
+   ],
+   "tag": "structure"
+  },
+  {
+   "type": "box",
+   "pos": [
+    0.0,
+    -3.375,
+    3.85
+   ],
+   "size": [
+    8.0,
+    0.25,
+    0.9
+   ],
+   "tag": "structure"
+  },
+  {
+   "type": "box",
+   "pos": [
+    0.0,
+    3.375,
+    3.85
+   ],
+   "size": [
+    8.0,
+    0.25,
+    0.9
+   ],
+   "tag": "structure"
+  },
+  {
+   "type": "box",
+   "pos": [
+    -3.875,
+    0.0,
+    3.85
+   ],
+   "size": [
+    0.25,
+    6.5,
+    0.9
+   ],
+   "tag": "structure"
+  },
+  {
+   "type": "box",
+   "pos": [
+    3.875,
+    -1.075,
+    3.85
+   ],
+   "size": [
+    0.25,
+    4.35,
+    0.9
+   ],
+   "tag": "structure"
+  },
+  {
+   "type": "box",
+   "pos": [
+    3.875,
+    2.625,
+    3.85
+   ],
+   "size": [
+    0.25,
+    1.25,
+    0.9
+   ],
+   "tag": "structure"
+  },
+  {
+   "type": "ladder",
+   "pos": [
+    4.2,
+    1.55,
+    2.2
+   ],
+   "size": [
+    0.1,
+    0.5,
+    4.4
+   ]
+  },
+  {
+   "type": "box",
+   "pos": [
+    -2.0,
+    -1.3,
+    3.9
+   ],
+   "size": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "tag": "structure"
+  },
+  {
+   "type": "box",
+   "pos": [
+    1.6,
+    -1.5,
+    3.85
+   ],
+   "size": [
+    1.2,
+    1.2,
+    0.9
+   ],
+   "tag": "structure"
+  }
+ ],
+ "loot": [
+  {
+   "pos": [
+    1.5,
+    0.1,
+    1.02
+   ],
+   "kind": "counter"
+  },
+  {
+   "pos": [
+    -3.0,
+    -1.2,
+    0.02
+   ],
+   "kind": "by_shelf"
+  },
+  {
+   "pos": [
+    -0.1,
+    -1.6,
+    0.02
+   ],
+   "kind": "by_shelf"
+  },
+  {
+   "pos": [
+    -1.1,
+    0.3,
+    0.02
+   ],
+   "kind": "by_shelf"
+  },
+  {
+   "pos": [
+    -2.1,
+    -2.5,
+    0.79
+   ],
+   "kind": "table"
+  },
+  {
+   "pos": [
+    -0.4,
+    2.5,
+    0.02
+   ],
+   "kind": "by_shelf"
+  },
+  {
+   "pos": [
+    2.9,
+    1.9,
+    0.8
+   ],
+   "kind": "crate_top"
+  },
+  {
+   "pos": [
+    -3.0,
+    2.1,
+    0.7
+   ],
+   "kind": "crate_top"
+  },
+  {
+   "pos": [
+    1.2,
+    2.35,
+    0.02
+   ],
+   "kind": "by_locker"
+  },
+  {
+   "pos": [
+    0.4,
+    2.0,
+    0.02
+   ],
+   "kind": "floor"
+  },
+  {
+   "pos": [
+    0.6,
+    -1.3,
+    0.02
+   ],
+   "kind": "floor"
+  },
+  {
+   "pos": [
+    -2.0,
+    -1.3,
+    4.4
+   ],
+   "kind": "crate_top"
+  },
+  {
+   "pos": [
+    1.2,
+    1.1,
+    3.42
+   ],
+   "kind": "floor"
+  }
+ ],
+ "doors": [
+  {
+   "hinge": [
+    1.6,
+    -3.375,
+    0
+   ],
+   "along": "x",
+   "width": 1.2,
+   "height": 2.2
+  },
+  {
+   "hinge": [
+    2.2,
+    3.375,
+    0
+   ],
+   "along": "x",
+   "width": 1.1,
+   "height": 2.2
+  }
+ ],
+ "glass": [
+  {
+   "pos": [
+    -1.5,
+    -3.375,
+    1.6
+   ],
+   "size": [
+    3.8,
+    0.03,
+    2.2
+   ]
+  },
+  {
+   "pos": [
+    -3.875,
+    2.2,
+    1.5
+   ],
+   "size": [
+    0.03,
+    1.0,
+    1.2
+   ]
+  },
+  {
+   "pos": [
+    3.875,
+    -1.4,
+    1.5
+   ],
+   "size": [
+    0.03,
+    1.4,
+    1.2
+   ]
+  }
+ ],
+ "lights": [
+  {
+   "pos": [
+    2.2,
+    -3.675,
+    2.37
+   ],
+   "kind": "door"
+  },
+  {
+   "pos": [
+    2.75,
+    3.675,
+    2.37
+   ],
+   "kind": "door"
+  },
+  {
+   "pos": [
+    -1.6,
+    -1.1,
+    3.05
+   ],
+   "kind": "ceiling"
+  },
+  {
+   "pos": [
+    1.8,
+    -1.1,
+    3.05
+   ],
+   "kind": "ceiling"
+  },
+  {
+   "pos": [
+    0.0,
+    2.2,
+    3.05
+   ],
+   "kind": "ceiling"
+  },
+  {
+   "pos": [
+    -1.5,
+    -4.0,
+    3.82
+   ],
+   "kind": "sign"
+  }
+ ],
+ "origin": "바닥 가운데, 앞(정문) = -Y",
+ "walkable_m2_by_level": [
+  19.8,
+  33.0
+ ]
+}

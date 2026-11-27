@@ -22,6 +22,7 @@ python cyber_arms.py out/cyber_arms render   # 사이버웨어 팔 4종 (접힌 
 python street.py out/street scene_day  # 낮 거리
 python districts.py out/street all     # 구역 3종: slum, corp, rich
 python anim.py out/anim clips          # 애니메이션 클립 157개
+python houses.py out/houses render     # 들어갈 수 있는 건물 6종 (걸어 다닐 수 있는지 검사 포함). 일부만: ... render shack shop
 ```
 - 품질: 환경 변수 `KIT_SAMPLES`(기본 80).
 - 결과: 폴더마다 `.glb`, `.blend`, `.manifest.json`, 렌더 사진.
@@ -41,6 +42,7 @@ python anim.py out/anim clips          # 애니메이션 클립 157개
 | `clinic.py` | 시술 의자, 천장 로봇 팔 3개와 수술등, 도구 수레, 시술소 장면 |
 | `cyber_arms.py` | 사이버웨어 팔 4종: 파워암, 나노와이어, 런처, 손 레이저 (블레이드 팔은 `../samples/cyber-arm`) |
 | `districts.py` | 구역별 건물 양식 3종과 구역 그림: 빈민, 기업, 부유층 |
+| `houses.py` | 들어갈 수 있는 건물 6종(판잣집, 연립, 가게, 아파트, 창고, 사무실). 문·창·방·계단·사다리·옥상, 가구와 아이템 자리. 충돌 상자 목록과 걸어서 닿는지 검사한 결과를 manifest에 넣는다 |
 | `anim.py` | 애니메이션 클립 생성과 미리보기 |
 | `out/` | 만들어진 결과물 |
 
