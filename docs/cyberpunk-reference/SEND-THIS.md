@@ -33,7 +33,7 @@ git clone --depth 1 -b ccr-9e6cc8c3-bftdlm https://github.com/UNDECT/UNDECT.git 
 2. 진행 중인 C2는 끊지 말고 끝낸 다음 시작해.
 3. 문서 맨 끝 "8. 작업 순서" 표대로 하고, 단계마다 멈춰서 보고해. 승인받고 다음으로 가.
 4. 새 기능: NPC를 죽일 수 있게(4-2), 손 레이저(4-2), 차 훔쳐 타기와 시민·보안 반응(4-3).
-5. 수위는 지금 Kids 설정을 끄고 가장 높게(Vitals.GORE = 3) 만들어. 나중에 내가 낮출 거야.
+5. 수위는 제한 없이 가장 높게(Vitals.GORE = 4, 절단 포함) 만들어. 등급 문제는 다 만든 뒤에 내가 정할 거야.
 6. 쓸데없는 간판은 지워(문서 4의 거리 항목).
 
 기존 규칙은 그대로야: 답은 한국어, cyber-3v3.rbxl 저장 금지, rojo build -o cyber-rpg.rbxl 금지, computer-use로 Studio 열기 금지,
@@ -61,5 +61,5 @@ git clone --depth 1 -b ccr-9e6cc8c3-bftdlm https://github.com/UNDECT/UNDECT.git 
 - 죽었을 때의 벌(스펙 CMB-09)
 - 퀘스트에 필요해서 죽으면 안 되는 NPC 목록
 - 적·보스 디자인 방향(승인 전이라 에셋이 없다)
-- 공개 등급: 수위 3으로 공개하면 Restricted 등급이 된다
+- 공개 등급: 다 만든 뒤에 정한다. 지금은 수위 제한 없이 만든다(절단은 가장 높은 등급에서도 허용되지 않을 수 있어서, 그때 값 하나로 끌 수 있게 해 뒀다)
 - 이전부터 남은 것: UI 색, 오디오 출처, 맵 구조(MP-14), 대상 기기(MP-19), 음성 방식(SND-30)

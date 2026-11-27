@@ -481,6 +481,22 @@ do
 		local c3 = Crowd.new(world(), {seed = 6}); c3:spawn(3)
 		c3:damage(c3.agents[1], {damage = 999, kind = "bullet", zone = "torso"}); c3.agents[1].gone = true
 		check("failed refill leaves the agent removed", c3:refill({x = 20, z = 15}, 1000) == 0 and c3.agents[1].gone and c3.agents[1].state == "dead" and c3:countAlive() == 2)
+		do   -- 수위 4: 절단
+			local keep = Vitals.GORE
+			Vitals.GORE = 4
+			local a1 = Vitals.hit(Vitals.new({health = 10}), {damage = 200, kind = "blade", part = "forearm_R", roll2 = 0.45})   -- 0.4 미만이면 죽지 않고 쓰러져 기어간다
+			local hasFx = false
+			for _, e in a1.effects do hasFx = hasFx or e == "sever_arm" end
+			check("gore 4 severs a limb on a blade kill", a1.killed and a1.sever ~= nil and a1.sever.zone == "arm" and a1.sever.limbSide == "R" and hasFx)
+			local a2 = Vitals.hit(Vitals.new({health = 10}), {damage = 500, kind = "explosive", zone = "torso", roll2 = 0.5})
+			check("explosion on the torso gibs", a2.sever ~= nil and a2.sever.zone == "gib")
+			local a3 = Vitals.hit(Vitals.new({health = 10, machine = true}), {damage = 500, kind = "blade", zone = "arm", roll2 = 0.1})
+			check("machines are not dismembered", a3.killed and a3.sever == nil)
+			Vitals.GORE = 3
+			local a4 = Vitals.hit(Vitals.new({health = 10}), {damage = 200, kind = "blade", part = "forearm_R", roll2 = 0.9})
+			check("gore 3 never severs", a4.killed and a4.sever == nil)
+			Vitals.GORE = keep
+		end
 		check("refill works once there is room", c3:refill({x = 20, z = 15}, 5) == 1 and c3:countAlive() == 3)
 		-- 플레이어가 여러 명이면 모든 플레이어에게서 멀리 놓는다
 		local c4 = Crowd.new(world(), {seed = 6}); c4:spawn(12)

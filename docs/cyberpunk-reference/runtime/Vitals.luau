@@ -1,14 +1,15 @@
 --!nonstrict
 -- NPC의 체력, 피격, 사망. Roblox API를 쓰지 않는 순수 모듈.
 -- 무엇에 어디를 어느 방향에서 맞았는지 받아서: 피해량, 반응 동작(피격·비틀거림·쓰러짐·사망 클립), 내야 할 이펙트 목록을 돌려준다.
--- 수위(Vitals.GORE)는 한 곳에서 조절한다. 지금은 가장 높게(3) 두고 나중에 낮춘다.
+-- 수위(Vitals.GORE)는 한 곳에서 조절한다. 0~4. 지금은 제한 없이 가장 높게(4) 두고, 다 만든 뒤에 등급에 맞춰 낮춘다.
+-- 4 = 3에 더해 신체 절단(팔·다리·머리)과 폭발로 인한 산산조각. 출시 등급에서 허용되지 않으면 이 값만 3으로 내리면 된다.
 --   0 = 피 없음. 죽으면 주저앉은 뒤 사라진다(Kids 설정)
 --   1 = 맞은 곳 번쩍임과 먼지. 시체는 잠깐 남았다가 사라진다
 --   2 = 피 튐, 바닥 핏자국. 시체가 남는다
 --   3 = 2에 더해 상처 자국, 뒤쪽 벽 핏자국, 커지는 피 웅덩이, 화상·그을음, 부상당해 기어가는 상태
 local Vitals = {}
 
-Vitals.GORE = 3
+Vitals.GORE = 4
 
 -- 부위별 피해 배수
 Vitals.ZONE = {head = 3.0, neck = 2.2, torso = 1.0, arm = 0.6, leg = 0.7}
@@ -171,6 +172,7 @@ function Vitals.hit(v, hit)
 				else Vitals.deathClip(kind, zone, side, v, roll)
 			v.state = "dead"; v.health = 0; v.cause = kind; v.killer = hit.attacker
 			res.killed = true; res.knock = t.knock
+			res.sever = Vitals.sever(kind, zone, side, hit.part, v, roll2)
 		end
 	else
 		local strong = t.stagger >= 0.8 or dmg >= v.maxHealth * 0.4
@@ -178,7 +180,38 @@ function Vitals.hit(v, hit)
 	end
 	res.state = v.state
 	res.effects = if v.machine then Vitals.machineEffects(kind, res.killed) else Vitals.effects(kind, zone, res.killed)
+	if res.sever then
+		table.insert(res.effects, if res.sever.zone == "gib" then "gib_chunks" else "sever_" .. res.sever.zone); table.insert(res.effects, "blood_gush")
+		if res.sever.cauterized then table.insert(res.effects, "sever_cauterized") end
+	end
 	return res
+end
+
+-- 수위 4: 죽을 때 잘려 나가는 부위. 없으면 nil.
+-- 돌려주는 값: {zone = "arm" | "leg" | "head" | "gib"(폭발로 산산조각), limbSide = "L" | "R" | nil, cauterized = 레이저·불로 지져진 단면}
+-- 게임 쪽 처리: 그 부위의 뼈(팔 = upperarm_/forearm_/hand_, 다리 = thigh_/shin_/foot_, 머리 = head) 크기를 0으로 줄여 숨기고, 떨어져 나간 조각과 단면을 따로 놓는다.
+function Vitals.sever(kind: string, zone: string, side: string, part: string?, v, roll2: number)
+	if Vitals.GORE < 4 or v.machine then return nil end
+	local chance = 0
+	if kind == "explosive" then
+		if zone == "torso" then return {zone = "gib"} end
+		chance = 0.9
+	elseif kind == "blade" then chance = if zone == "torso" then 0 else 0.55
+	elseif kind == "shotgun" then chance = if zone == "head" then 0.5 elseif zone == "arm" or zone == "leg" then 0.35 else 0
+	elseif kind == "laser" then chance = if zone == "arm" or zone == "leg" then 0.3 else 0
+	elseif kind == "vehicle" then chance = if zone == "arm" or zone == "leg" then 0.15 else 0
+	elseif kind == "bullet" then chance = if zone == "head" then 0.08 else 0
+	end
+	if roll2 >= chance then return nil end
+	local z = if zone == "neck" then "head" else zone
+	if z ~= "arm" and z ~= "leg" and z ~= "head" then return nil end
+	local limbSide = nil
+	if z ~= "head" then
+		local p = part or ""
+		limbSide = if string.sub(p, -2) == "_L" or string.sub(p, -2) == "_l" then "L" elseif string.sub(p, -2) == "_R" or string.sub(p, -2) == "_r" then "R"
+			elseif side == "left" then "L" elseif side == "right" then "R" elseif roll2 * 2 < chance then "L" else "R"
+	end
+	return {zone = z, limbSide = limbSide, cauterized = kind == "laser"}
 end
 
 -- 매 프레임(또는 0.1초마다). 출혈·화상 피해와 쓰러진 사람의 시간 경과를 처리한다.
