@@ -1,0 +1,23 @@
+{
+ "name": "mega_a",
+ "units": "m",
+ "forward": "-Y",
+ "up": "+Z",
+ "triangles": 216,
+ "triangles_by_part": {
+  "_static": 216
+ },
+ "parts": {},
+ "pivots": {},
+ "materials": [
+  "far_windows",
+  "glow_magenta",
+  "glow_red"
+ ],
+ "size_m": [
+  120,
+  110,
+  340
+ ],
+ "origin": "바닥 중심"
+}

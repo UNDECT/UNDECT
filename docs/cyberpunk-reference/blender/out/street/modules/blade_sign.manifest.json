@@ -1,0 +1,29 @@
+{
+ "name": "blade_sign",
+ "units": "m",
+ "forward": "-Y",
+ "up": "+Z",
+ "triangles": 1020,
+ "triangles_by_part": {
+  "blade_sign": 1020
+ },
+ "parts": {
+  "blade_sign": [
+   "sign_bracket",
+   "sign_bracket2",
+   "sign_body",
+   "sign_border",
+   "sign_ch",
+   "sign_ch.001",
+   "sign_ch.002",
+   "sign_ch.003"
+  ]
+ },
+ "pivots": {},
+ "materials": [
+  "black",
+  "glow_magenta",
+  "glow_white",
+  "gunmetal"
+ ]
+}

@@ -1,0 +1,41 @@
+{
+ "name": "stall",
+ "units": "m",
+ "forward": "-Y",
+ "up": "+Z",
+ "triangles": 1448,
+ "triangles_by_part": {
+  "stall": 1448
+ },
+ "parts": {
+  "stall": [
+   "stall_counter",
+   "stall_top",
+   "stall_post",
+   "stall_post.001",
+   "stall_post.002",
+   "stall_post.003",
+   "stall_awning",
+   "stall_light",
+   "stall_bulb",
+   "stall_bulb.001",
+   "stall_bulb.002",
+   "stall_bulb.003",
+   "stall_bulb.004",
+   "stall_bulb.005",
+   "stall_bulb.006",
+   "stall_pot",
+   "stall_text"
+  ]
+ },
+ "pivots": {},
+ "materials": [
+  "cloth",
+  "glow_amber",
+  "glow_white",
+  "gunmetal",
+  "prop_red",
+  "steel",
+  "titan"
+ ]
+}

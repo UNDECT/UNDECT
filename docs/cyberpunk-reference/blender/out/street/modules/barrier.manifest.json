@@ -1,0 +1,26 @@
+{
+ "name": "barrier",
+ "units": "m",
+ "forward": "-Y",
+ "up": "+Z",
+ "triangles": 168,
+ "triangles_by_part": {
+  "barrier": 168
+ },
+ "parts": {
+  "barrier": [
+   "barrier_body",
+   "barrier_stripe",
+   "barrier_stripe.001",
+   "barrier_stripe.002",
+   "barrier_stripe.003",
+   "barrier_lamp"
+  ]
+ },
+ "pivots": {},
+ "materials": [
+  "concrete",
+  "glow_amber",
+  "prop_yellow"
+ ]
+}

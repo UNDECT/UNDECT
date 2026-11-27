@@ -1,0 +1,237 @@
+{
+ "name": "chair",
+ "units": "m",
+ "forward": "-Y",
+ "up": "+Z",
+ "triangles": 10916,
+ "triangles_by_part": {
+  "base": 1460,
+  "status_glow": 432,
+  "seat": 1536,
+  "back": 1792,
+  "headrest": 820,
+  "legrest": 1756,
+  "armrest_R": 804,
+  "armrest_L": 2304,
+  "work_light": 12
+ },
+ "parts": {
+  "base": [
+   "foot",
+   "bolt",
+   "bolt.001",
+   "bolt.002",
+   "bolt.003",
+   "bolt.004",
+   "bolt.005",
+   "bolt.006",
+   "bolt.007",
+   "column_outer",
+   "pedal",
+   "power"
+  ],
+  "status_glow": [
+   "column_ring",
+   "side_glow",
+   "side_glow.001",
+   "back_glow",
+   "back_glow.001",
+   "neural_led",
+   "neural_led.001",
+   "cuff_led",
+   "cuff_led.001"
+  ],
+  "seat": [
+   "column_inner",
+   "seat_frame",
+   "seat_under",
+   "seat_pad",
+   "seat_side",
+   "seat_side.001",
+   "back_hinge",
+   "leg_hinge"
+  ],
+  "back": [
+   "back_frame",
+   "back_spine",
+   "back_pad",
+   "back_pad.001",
+   "back_pad.002",
+   "back_wing",
+   "back_wing.001",
+   "spine_port",
+   "spine_port.001",
+   "spine_port.002",
+   "spine_port.003",
+   "spine_port.004"
+  ],
+  "headrest": [
+   "head_post",
+   "head_pad",
+   "head_shell",
+   "neural_clamp",
+   "neural_pin",
+   "neural_clamp.001",
+   "neural_pin.001"
+  ],
+  "legrest": [
+   "leg_frame",
+   "leg_pad",
+   "leg_pad.001",
+   "foot_plate",
+   "foot_grip",
+   "foot_grip.001",
+   "foot_grip.002",
+   "foot_grip.003",
+   "foot_grip.004",
+   "ankle_cuff",
+   "ankle_cuff.001"
+  ],
+  "armrest_R": [
+   "arm_post",
+   "arm_beam",
+   "arm_pad",
+   "wrist_cuff"
+  ],
+  "armrest_L": [
+   "arm_post.001",
+   "arm_beam.001",
+   "arm_pad.001",
+   "wrist_cuff.001",
+   "cradle_tray",
+   "cradle_clamp",
+   "clamp_base",
+   "cradle_clamp.001",
+   "clamp_base.001",
+   "cradle_clamp.002",
+   "clamp_base.002",
+   "drip_pan"
+  ],
+  "work_light": [
+   "cradle_light"
+  ]
+ },
+ "pivots": {
+  "lift": {
+   "pos": [
+    0,
+    0.05,
+    0.31
+   ],
+   "axis": [
+    0,
+    0,
+    1
+   ],
+   "parent": "base",
+   "child": "seat",
+   "range": [
+    0,
+    0
+   ]
+  },
+  "recline": {
+   "pos": [
+    0.0,
+    0.29,
+    0.54
+   ],
+   "axis": [
+    1,
+    0,
+    0
+   ],
+   "parent": "seat",
+   "child": "back",
+   "range": [
+    -40,
+    30
+   ]
+  },
+  "headrest": {
+   "pos": [
+    0.0,
+    0.8195,
+    1.2177
+   ],
+   "axis": [
+    1,
+    0,
+    0
+   ],
+   "parent": "back",
+   "child": "headrest",
+   "range": [
+    -20,
+    20
+   ]
+  },
+  "legrest": {
+   "pos": [
+    0.0,
+    -0.29,
+    0.53
+   ],
+   "axis": [
+    1,
+    0,
+    0
+   ],
+   "parent": "seat",
+   "child": "legrest",
+   "range": [
+    -60,
+    30
+   ]
+  },
+  "armrest_R": {
+   "pos": [
+    -0.315,
+    0.12,
+    0.5
+   ],
+   "axis": [
+    0,
+    1,
+    0
+   ],
+   "parent": "seat",
+   "child": "armrest_R",
+   "range": [
+    0,
+    80
+   ]
+  },
+  "armrest_L": {
+   "pos": [
+    0.315,
+    0.12,
+    0.5
+   ],
+   "axis": [
+    0,
+    1,
+    0
+   ],
+   "parent": "seat",
+   "child": "armrest_L",
+   "range": [
+    0,
+    80
+   ]
+  }
+ },
+ "materials": [
+  "c_dark",
+  "c_orange",
+  "c_pad",
+  "c_shell",
+  "c_teal",
+  "chrome",
+  "glow_amber",
+  "glow_cyan",
+  "glow_white",
+  "gunmetal",
+  "rubber"
+ ]
+}

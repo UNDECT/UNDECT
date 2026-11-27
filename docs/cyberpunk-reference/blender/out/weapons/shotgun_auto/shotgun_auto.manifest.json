@@ -1,0 +1,198 @@
+{
+ "name": "shotgun_auto",
+ "units": "m",
+ "forward": "-Y",
+ "up": "+Z",
+ "triangles": 6504,
+ "triangles_by_part": {
+  "body": 5396,
+  "mag": 984,
+  "trigger": 44,
+  "bolt": 80
+ },
+ "parts": {
+  "body": [
+   "receiver",
+   "receiver_plate",
+   "handguard",
+   "hg_slot",
+   "hg_slot.001",
+   "hg_slot.002",
+   "hg_slot.003",
+   "hg_slot.004",
+   "hg_slot.005",
+   "hg_slot.006",
+   "hg_slot.007",
+   "hg_slot.008",
+   "hg_slot.009",
+   "hg_slot.010",
+   "hg_slot.011",
+   "hg_under",
+   "barrel",
+   "brake",
+   "brake_port",
+   "brake_port.001",
+   "brake_port.002",
+   "brake_port.003",
+   "brake_port.004",
+   "brake_port.005",
+   "bore",
+   "magwell",
+   "grip",
+   "guard_front",
+   "guard_bottom",
+   "buffer",
+   "stock",
+   "butt_pad",
+   "rail_base",
+   "rail_teeth",
+   "sight_body",
+   "sight_wall",
+   "sight_wall.001",
+   "sight_top",
+   "sight_lens",
+   "foregrip",
+   "eject_port"
+  ],
+  "mag": [
+   "drum",
+   "drum_face",
+   "drum_bolt",
+   "drum_bolt.001",
+   "drum_bolt.002",
+   "drum_bolt.003",
+   "drum_bolt.004",
+   "drum_bolt.005",
+   "drum_bolt.006",
+   "drum_bolt.007",
+   "drum_led",
+   "drum_neck"
+  ],
+  "trigger": [
+   "trigger"
+  ],
+  "bolt": [
+   "bolt",
+   "charging_handle"
+  ]
+ },
+ "pivots": {
+  "muzzle": {
+   "pos": [
+    0,
+    -0.662,
+    0.05
+   ],
+   "axis": [
+    0,
+    -1,
+    0
+   ],
+   "parent": "body",
+   "child": "fx",
+   "range": [
+    -90,
+    90
+   ]
+  },
+  "eject": {
+   "pos": [
+    0.03,
+    -0.09,
+    0.06
+   ],
+   "axis": [
+    1,
+    0,
+    0.4
+   ],
+   "parent": "body",
+   "child": "fx",
+   "range": [
+    -90,
+    90
+   ]
+  },
+  "grip": {
+   "pos": [
+    0,
+    0.07,
+    -0.058
+   ],
+   "axis": [
+    0,
+    0,
+    1
+   ],
+   "parent": "body",
+   "child": "hand_R",
+   "range": [
+    -90,
+    90
+   ]
+  },
+  "support": {
+   "pos": [
+    0,
+    -0.36,
+    -0.05
+   ],
+   "axis": [
+    0,
+    0,
+    1
+   ],
+   "parent": "body",
+   "child": "hand_L",
+   "range": [
+    -90,
+    90
+   ]
+  },
+  "sight": {
+   "pos": [
+    0,
+    -0.06,
+    0.095
+   ],
+   "axis": [
+    0,
+    -1,
+    0
+   ],
+   "parent": "body",
+   "child": "attachment",
+   "range": [
+    -90,
+    90
+   ]
+  },
+  "mag": {
+   "pos": [
+    0,
+    -0.104,
+    -0.03
+   ],
+   "axis": [
+    0,
+    0,
+    -1
+   ],
+   "parent": "body",
+   "child": "mag",
+   "range": [
+    0,
+    0
+   ]
+  }
+ },
+ "materials": [
+  "black",
+  "glow_amber",
+  "gunmetal",
+  "steel",
+  "w_black",
+  "w_grip",
+  "w_orange"
+ ]
+}

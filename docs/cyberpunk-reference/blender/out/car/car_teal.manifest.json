@@ -1,0 +1,683 @@
+{
+ "name": "car_teal",
+ "units": "m",
+ "forward": "-Y",
+ "up": "+Z",
+ "triangles": 38460,
+ "triangles_by_part": {
+  "body": 14502,
+  "door_FL": 1104,
+  "door_FR": 1102,
+  "door_RL": 1034,
+  "door_RR": 1422,
+  "dash_glow": 132,
+  "steering": 892,
+  "wheel_FL": 4568,
+  "wheel_FR": 4568,
+  "wheel_RL": 4568,
+  "wheel_RR": 4568
+ },
+ "parts": {
+  "door_FL": [
+   "door_FL",
+   "door_card",
+   "door_rest",
+   "side_line.002",
+   "door_handle.002"
+  ],
+  "door_FR": [
+   "door_FR",
+   "door_card.001",
+   "door_rest.001",
+   "side_line",
+   "door_handle"
+  ],
+  "door_RL": [
+   "door_RL",
+   "door_card.002",
+   "door_rest.002",
+   "side_line.003",
+   "door_handle.003"
+  ],
+  "door_RR": [
+   "door_RR",
+   "door_card.003",
+   "door_rest.003",
+   "side_line.001",
+   "door_handle.001"
+  ],
+  "body": [
+   "body",
+   "floor",
+   "firewall",
+   "rear_shelf",
+   "rear_wall",
+   "dash",
+   "dash_top",
+   "screen_frame",
+   "console",
+   "console_top",
+   "shifter",
+   "seat_base",
+   "seat_back",
+   "seat_head",
+   "seat_bolster",
+   "seat_bolster.001",
+   "seat_base.001",
+   "seat_back.001",
+   "seat_head.001",
+   "seat_bolster.002",
+   "seat_bolster.003",
+   "seat_base.002",
+   "seat_back.002",
+   "seat_head.002",
+   "seat_bolster.004",
+   "seat_bolster.005",
+   "seat_base.003",
+   "seat_back.003",
+   "seat_head.003",
+   "seat_bolster.006",
+   "seat_bolster.007",
+   "pedal",
+   "pedal.001",
+   "column",
+   "light_bar_f",
+   "headlamp",
+   "headlamp_frame",
+   "headlamp.001",
+   "headlamp_frame.001",
+   "intake",
+   "intake_fin",
+   "intake_fin.001",
+   "intake_fin.002",
+   "intake_fin.003",
+   "intake_fin.004",
+   "splitter",
+   "hood_vent",
+   "hood_slat",
+   "hood_slat.001",
+   "hood_slat.002",
+   "hood_slat.003",
+   "skirt",
+   "mirror_stalk",
+   "mirror_cam",
+   "mirror_lens",
+   "intake_side",
+   "pillar_b",
+   "skirt.001",
+   "mirror_stalk.001",
+   "mirror_cam.001",
+   "mirror_lens.001",
+   "intake_side.001",
+   "pillar_b.001",
+   "light_bar_r",
+   "tail_panel",
+   "diffuser",
+   "diffuser_fin",
+   "diffuser_fin.001",
+   "diffuser_fin.002",
+   "diffuser_fin.003",
+   "diffuser_fin.004",
+   "diffuser_fin.005",
+   "spoiler",
+   "plate",
+   "plate_text",
+   "roof_fin",
+   "roof_sensor",
+   "roof_sensor_eye",
+   "underglow"
+  ],
+  "dash_glow": [
+   "cluster",
+   "screen",
+   "dash_line",
+   "seat_stripe",
+   "seat_stripe.001",
+   "seat_stripe.002",
+   "seat_stripe.003",
+   "door_glow",
+   "door_glow.001",
+   "door_glow.002",
+   "door_glow.003"
+  ],
+  "steering": [
+   "wheel_rim",
+   "wheel_hub",
+   "wheel_led",
+   "wheel_spoke",
+   "wheel_spoke.001",
+   "wheel_spoke.002"
+  ],
+  "wheel_FL": [
+   "tire",
+   "tread",
+   "tread.001",
+   "tread.002",
+   "rim",
+   "aero_cover",
+   "hub_ring",
+   "hub",
+   "cover_slot",
+   "cover_slot.001",
+   "cover_slot.002",
+   "cover_slot.003",
+   "cover_slot.004",
+   "brake"
+  ],
+  "wheel_FR": [
+   "tire.001",
+   "tread.003",
+   "tread.004",
+   "tread.005",
+   "rim.001",
+   "aero_cover.001",
+   "hub_ring.001",
+   "hub.001",
+   "cover_slot.005",
+   "cover_slot.006",
+   "cover_slot.007",
+   "cover_slot.008",
+   "cover_slot.009",
+   "brake.001"
+  ],
+  "wheel_RL": [
+   "tire.002",
+   "tread.006",
+   "tread.007",
+   "tread.008",
+   "rim.002",
+   "aero_cover.002",
+   "hub_ring.002",
+   "hub.002",
+   "cover_slot.010",
+   "cover_slot.011",
+   "cover_slot.012",
+   "cover_slot.013",
+   "cover_slot.014",
+   "brake.002"
+  ],
+  "wheel_RR": [
+   "tire.003",
+   "tread.009",
+   "tread.010",
+   "tread.011",
+   "rim.003",
+   "aero_cover.003",
+   "hub_ring.003",
+   "hub.003",
+   "cover_slot.015",
+   "cover_slot.016",
+   "cover_slot.017",
+   "cover_slot.018",
+   "cover_slot.019",
+   "brake.003"
+  ]
+ },
+ "pivots": {
+  "door_FL": {
+   "pos": [
+    0.955,
+    -0.62,
+    0.6
+   ],
+   "axis": [
+    0,
+    0,
+    1
+   ],
+   "parent": "body",
+   "child": "door_FL",
+   "range": [
+    0,
+    65
+   ]
+  },
+  "enter_FL": {
+   "pos": [
+    1.75,
+    -0.12,
+    0.0
+   ],
+   "axis": [
+    -1,
+    0,
+    0
+   ],
+   "parent": "body",
+   "child": "fx",
+   "range": [
+    -90,
+    90
+   ]
+  },
+  "handle_FL": {
+   "pos": [
+    0.955,
+    0.29,
+    0.76
+   ],
+   "axis": [
+    1,
+    0,
+    0
+   ],
+   "parent": "door_FL",
+   "child": "fx",
+   "range": [
+    -90,
+    90
+   ]
+  },
+  "door_FR": {
+   "pos": [
+    -0.955,
+    -0.62,
+    0.6
+   ],
+   "axis": [
+    0,
+    0,
+    1
+   ],
+   "parent": "body",
+   "child": "door_FR",
+   "range": [
+    0,
+    65
+   ]
+  },
+  "enter_FR": {
+   "pos": [
+    -1.75,
+    -0.12,
+    0.0
+   ],
+   "axis": [
+    1,
+    0,
+    0
+   ],
+   "parent": "body",
+   "child": "fx",
+   "range": [
+    -90,
+    90
+   ]
+  },
+  "handle_FR": {
+   "pos": [
+    -0.955,
+    0.29,
+    0.76
+   ],
+   "axis": [
+    -1,
+    0,
+    0
+   ],
+   "parent": "door_FR",
+   "child": "fx",
+   "range": [
+    -90,
+    90
+   ]
+  },
+  "door_RL": {
+   "pos": [
+    0.955,
+    0.44,
+    0.6
+   ],
+   "axis": [
+    0,
+    0,
+    1
+   ],
+   "parent": "body",
+   "child": "door_RL",
+   "range": [
+    0,
+    65
+   ]
+  },
+  "enter_RL": {
+   "pos": [
+    1.75,
+    0.86,
+    0.0
+   ],
+   "axis": [
+    -1,
+    0,
+    0
+   ],
+   "parent": "body",
+   "child": "fx",
+   "range": [
+    -90,
+    90
+   ]
+  },
+  "handle_RL": {
+   "pos": [
+    0.955,
+    1.19,
+    0.76
+   ],
+   "axis": [
+    1,
+    0,
+    0
+   ],
+   "parent": "door_RL",
+   "child": "fx",
+   "range": [
+    -90,
+    90
+   ]
+  },
+  "door_RR": {
+   "pos": [
+    -0.955,
+    0.44,
+    0.6
+   ],
+   "axis": [
+    0,
+    0,
+    1
+   ],
+   "parent": "body",
+   "child": "door_RR",
+   "range": [
+    0,
+    65
+   ]
+  },
+  "enter_RR": {
+   "pos": [
+    -1.75,
+    0.86,
+    0.0
+   ],
+   "axis": [
+    1,
+    0,
+    0
+   ],
+   "parent": "body",
+   "child": "fx",
+   "range": [
+    -90,
+    90
+   ]
+  },
+  "handle_RR": {
+   "pos": [
+    -0.955,
+    1.19,
+    0.76
+   ],
+   "axis": [
+    -1,
+    0,
+    0
+   ],
+   "parent": "door_RR",
+   "child": "fx",
+   "range": [
+    -90,
+    90
+   ]
+  },
+  "seat_driver": {
+   "pos": [
+    0.4,
+    0.38,
+    0.475
+   ],
+   "axis": [
+    0,
+    -1,
+    0
+   ],
+   "parent": "body",
+   "child": "fx",
+   "range": [
+    -90,
+    90
+   ]
+  },
+  "seat_passenger": {
+   "pos": [
+    -0.4,
+    0.38,
+    0.475
+   ],
+   "axis": [
+    0,
+    -1,
+    0
+   ],
+   "parent": "body",
+   "child": "fx",
+   "range": [
+    -90,
+    90
+   ]
+  },
+  "seat_rear_L": {
+   "pos": [
+    0.4,
+    1.28,
+    0.475
+   ],
+   "axis": [
+    0,
+    -1,
+    0
+   ],
+   "parent": "body",
+   "child": "fx",
+   "range": [
+    -90,
+    90
+   ]
+  },
+  "seat_rear_R": {
+   "pos": [
+    -0.4,
+    1.28,
+    0.475
+   ],
+   "axis": [
+    0,
+    -1,
+    0
+   ],
+   "parent": "body",
+   "child": "fx",
+   "range": [
+    -90,
+    90
+   ]
+  },
+  "steering": {
+   "pos": [
+    0.4,
+    -0.265,
+    0.775
+   ],
+   "axis": [
+    0.0,
+    0.9272,
+    -0.3746
+   ],
+   "parent": "body",
+   "child": "steering",
+   "range": [
+    -450,
+    450
+   ]
+  },
+  "hand_L": {
+   "pos": [
+    0.56,
+    -0.2574,
+    0.8205
+   ],
+   "axis": [
+    0,
+    1,
+    0
+   ],
+   "parent": "steering",
+   "child": "fx",
+   "range": [
+    -90,
+    90
+   ]
+  },
+  "hand_R": {
+   "pos": [
+    0.24,
+    -0.2574,
+    0.8205
+   ],
+   "axis": [
+    0,
+    1,
+    0
+   ],
+   "parent": "steering",
+   "child": "fx",
+   "range": [
+    -90,
+    90
+   ]
+  },
+  "hotwire": {
+   "pos": [
+    0.4,
+    -0.47,
+    0.62
+   ],
+   "axis": [
+    0,
+    1,
+    0
+   ],
+   "parent": "body",
+   "child": "fx",
+   "range": [
+    -90,
+    90
+   ]
+  },
+  "wheel_FL": {
+   "pos": [
+    0.805,
+    -1.45,
+    0.345
+   ],
+   "axis": [
+    1,
+    0,
+    0
+   ],
+   "parent": "body",
+   "child": "wheel_FL",
+   "range": [
+    -360,
+    360
+   ]
+  },
+  "wheel_FR": {
+   "pos": [
+    -0.805,
+    -1.45,
+    0.345
+   ],
+   "axis": [
+    1,
+    0,
+    0
+   ],
+   "parent": "body",
+   "child": "wheel_FR",
+   "range": [
+    -360,
+    360
+   ]
+  },
+  "wheel_RL": {
+   "pos": [
+    0.805,
+    1.42,
+    0.345
+   ],
+   "axis": [
+    1,
+    0,
+    0
+   ],
+   "parent": "body",
+   "child": "wheel_RL",
+   "range": [
+    -360,
+    360
+   ]
+  },
+  "wheel_RR": {
+   "pos": [
+    -0.805,
+    1.42,
+    0.345
+   ],
+   "axis": [
+    1,
+    0,
+    0
+   ],
+   "parent": "body",
+   "child": "wheel_RR",
+   "range": [
+    -360,
+    360
+   ]
+  }
+ },
+ "materials": [
+  "black",
+  "body",
+  "body_dark",
+  "glass.001",
+  "glow_amber",
+  "glow_cyan",
+  "glow_red",
+  "glow_white",
+  "gunmetal",
+  "rubber",
+  "seat",
+  "seat_dark",
+  "steel",
+  "titan",
+  "trim_in"
+ ],
+ "variant": "teal",
+ "wheel_radius": 0.345,
+ "driver_side": "+X (왼쪽)",
+ "seats": [
+  "driver",
+  "passenger",
+  "rear_L",
+  "rear_R"
+ ],
+ "doors": [
+  "FL",
+  "FR",
+  "RL",
+  "RR"
+ ],
+ "door_glass": "문 유리는 문 부품의 glass 재질 면이다. 가져올 때 window_FL처럼 따로 나눠 창 깨기에 쓴다."
+}

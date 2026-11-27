@@ -1,0 +1,178 @@
+{
+ "name": "shotgun_double",
+ "units": "m",
+ "forward": "-Y",
+ "up": "+Z",
+ "triangles": 2912,
+ "triangles_by_part": {
+  "body": 1468,
+  "barrels": 1268,
+  "hammer": 88,
+  "trigger": 88
+ },
+ "parts": {
+  "body": [
+   "action",
+   "action_engrave",
+   "hinge",
+   "top_lever",
+   "grip",
+   "grip_wrap",
+   "grip_cap",
+   "guard_front",
+   "guard_bottom",
+   "shell_loop",
+   "shell",
+   "shell_brass",
+   "shell.001",
+   "shell_brass.001",
+   "shell.002",
+   "shell_brass.002"
+  ],
+  "barrels": [
+   "barrel",
+   "bore",
+   "barrel.001",
+   "bore.001",
+   "rib",
+   "forend",
+   "forend_groove",
+   "forend_groove.001",
+   "forend_groove.002",
+   "forend_groove.003",
+   "forend_groove.004",
+   "tape",
+   "bead"
+  ],
+  "hammer": [
+   "hammer",
+   "hammer.001"
+  ],
+  "trigger": [
+   "trigger",
+   "trigger2"
+  ]
+ },
+ "pivots": {
+  "barrels": {
+   "pos": [
+    0,
+    -0.07,
+    0.012
+   ],
+   "axis": [
+    1,
+    0,
+    0
+   ],
+   "parent": "body",
+   "child": "barrels",
+   "range": [
+    -40,
+    0
+   ]
+  },
+  "muzzle": {
+   "pos": [
+    0,
+    -0.402,
+    0.044
+   ],
+   "axis": [
+    0,
+    -1,
+    0
+   ],
+   "parent": "body",
+   "child": "fx",
+   "range": [
+    -90,
+    90
+   ]
+  },
+  "eject": {
+   "pos": [
+    0,
+    -0.06,
+    0.07
+   ],
+   "axis": [
+    1,
+    0,
+    0.4
+   ],
+   "parent": "body",
+   "child": "fx",
+   "range": [
+    -90,
+    90
+   ]
+  },
+  "grip": {
+   "pos": [
+    0,
+    0.15,
+    -0.06
+   ],
+   "axis": [
+    0,
+    0,
+    1
+   ],
+   "parent": "body",
+   "child": "hand_R",
+   "range": [
+    -90,
+    90
+   ]
+  },
+  "support": {
+   "pos": [
+    0,
+    -0.2,
+    0.0
+   ],
+   "axis": [
+    0,
+    0,
+    1
+   ],
+   "parent": "body",
+   "child": "hand_L",
+   "range": [
+    -90,
+    90
+   ]
+  },
+  "sight": {
+   "pos": [
+    0,
+    -0.2,
+    0.068
+   ],
+   "axis": [
+    0,
+    -1,
+    0
+   ],
+   "parent": "body",
+   "child": "attachment",
+   "range": [
+    -90,
+    90
+   ]
+  }
+ },
+ "materials": [
+  "black",
+  "glow_amber",
+  "gunmetal",
+  "steel",
+  "titan",
+  "w_black",
+  "w_grip",
+  "w_orange",
+  "w_wood",
+  "w_wrap"
+ ]
+}

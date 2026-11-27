@@ -1,0 +1,200 @@
+{
+ "name": "turret",
+ "units": "m",
+ "forward": "-Y",
+ "up": "+Z",
+ "triangles": 7736,
+ "triangles_by_part": {
+  "base": 2132,
+  "status_glow": 504,
+  "yoke": 1432,
+  "head": 2344,
+  "eye": 12,
+  "barrels": 1312
+ },
+ "parts": {
+  "base": [
+   "plate",
+   "bolt",
+   "bolt.001",
+   "bolt.002",
+   "bolt.003",
+   "bolt.004",
+   "bolt.005",
+   "bolt.006",
+   "bolt.007",
+   "pedestal",
+   "rib",
+   "warn",
+   "rib.001",
+   "warn.001",
+   "rib.002",
+   "warn.002",
+   "rib.003",
+   "warn.003",
+   "yaw_ring"
+  ],
+  "status_glow": [
+   "status_ring",
+   "yoke_led",
+   "yoke_led.001"
+  ],
+  "yoke": [
+   "turntable",
+   "yoke_arm",
+   "yoke_cap",
+   "yoke_arm.001",
+   "yoke_cap.001",
+   "yoke_bridge"
+  ],
+  "head": [
+   "head_shell",
+   "face",
+   "eye_frame",
+   "top_plate",
+   "id",
+   "ammo_box",
+   "ammo_window",
+   "trunnion",
+   "ammo_box.001",
+   "ammo_window.001",
+   "trunnion.001",
+   "sensor_mast",
+   "sensor_lens",
+   "antenna",
+   "feed_cable"
+  ],
+  "eye": [
+   "eye"
+  ],
+  "barrels": [
+   "barrel_block",
+   "barrel",
+   "jacket",
+   "jacket_slot",
+   "jacket_slot.001",
+   "jacket_slot.002",
+   "jacket_slot.003",
+   "jacket_slot.004",
+   "brake",
+   "bore",
+   "barrel.001",
+   "jacket.001",
+   "jacket_slot.005",
+   "jacket_slot.006",
+   "jacket_slot.007",
+   "jacket_slot.008",
+   "jacket_slot.009",
+   "brake.001",
+   "bore.001",
+   "laser"
+  ]
+ },
+ "pivots": {
+  "yaw": {
+   "pos": [
+    0,
+    0,
+    0.492
+   ],
+   "axis": [
+    0,
+    0,
+    1
+   ],
+   "parent": "base",
+   "child": "yoke",
+   "range": [
+    -170,
+    170
+   ]
+  },
+  "pitch": {
+   "pos": [
+    0,
+    0,
+    0.82
+   ],
+   "axis": [
+    1,
+    0,
+    0
+   ],
+   "parent": "yoke",
+   "child": "head",
+   "range": [
+    -35,
+    45
+   ]
+  },
+  "recoil": {
+   "pos": [
+    0,
+    -0.34,
+    0.812
+   ],
+   "axis": [
+    0,
+    1,
+    0
+   ],
+   "parent": "head",
+   "child": "barrels",
+   "range": [
+    0,
+    0
+   ]
+  },
+  "muzzle": {
+   "pos": [
+    0,
+    -0.874,
+    0.812
+   ],
+   "axis": [
+    0,
+    -1,
+    0
+   ],
+   "parent": "barrels",
+   "child": "fx",
+   "range": [
+    -90,
+    90
+   ]
+  },
+  "eye": {
+   "pos": [
+    0,
+    -0.31,
+    0.85
+   ],
+   "axis": [
+    0,
+    -1,
+    0
+   ],
+   "parent": "head",
+   "child": "fx",
+   "range": [
+    -90,
+    90
+   ]
+  }
+ },
+ "materials": [
+  "black",
+  "chrome",
+  "glow_amber",
+  "glow_cyan",
+  "glow_red",
+  "gunmetal",
+  "m_accent",
+  "m_armor",
+  "m_frame",
+  "m_light",
+  "rubber",
+  "steel",
+  "titan"
+ ]
+}

@@ -1,0 +1,366 @@
+{
+ "name": "surgery_rig",
+ "units": "m",
+ "forward": "-Y",
+ "up": "+Z",
+ "triangles": 13928,
+ "triangles_by_part": {
+  "mount": 2468,
+  "status_glow": 516,
+  "lamp": 708,
+  "work_light": 936,
+  "arm_A_upper": 1204,
+  "arm_A_fore": 1300,
+  "arm_A_tool": 348,
+  "tool_glow": 852,
+  "arm_B_upper": 1204,
+  "arm_B_fore": 1300,
+  "arm_B_tool": 372,
+  "arm_C_upper": 1204,
+  "arm_C_fore": 1300,
+  "arm_C_tool": 216
+ },
+ "parts": {
+  "mount": [
+   "ceiling_plate",
+   "ring",
+   "ring_strut",
+   "ring_strut.001",
+   "ring_strut.002",
+   "ring_strut.003",
+   "hub",
+   "shoulder_base",
+   "shoulder_base.001",
+   "shoulder_base.002"
+  ],
+  "status_glow": [
+   "ring_glow",
+   "upper_glow",
+   "upper_glow.001",
+   "upper_glow.002"
+  ],
+  "lamp": [
+   "lamp_arm",
+   "lamp_head",
+   "lamp_handle"
+  ],
+  "work_light": [
+   "lamp_ring",
+   "lamp_cell",
+   "lamp_cell.001",
+   "lamp_cell.002",
+   "lamp_cell.003",
+   "lamp_cell.004",
+   "lamp_cell.005"
+  ],
+  "arm_A_upper": [
+   "shoulder_ball",
+   "upper",
+   "upper_inlay",
+   "elbow"
+  ],
+  "arm_A_fore": [
+   "fore",
+   "fore_piston",
+   "wrist",
+   "arm_A_hose"
+  ],
+  "arm_A_tool": [
+   "tool_body",
+   "emitter",
+   "emitter_fin",
+   "emitter_fin.001",
+   "emitter_fin.002"
+  ],
+  "tool_glow": [
+   "emitter_tip",
+   "grip_led",
+   "scan_glow"
+  ],
+  "arm_B_upper": [
+   "shoulder_ball.001",
+   "upper.001",
+   "upper_inlay.001",
+   "elbow.001"
+  ],
+  "arm_B_fore": [
+   "fore.001",
+   "fore_piston.001",
+   "wrist.001",
+   "arm_B_hose"
+  ],
+  "arm_B_tool": [
+   "tool_body.001",
+   "finger",
+   "finger_tip",
+   "finger.001",
+   "finger_tip.001",
+   "finger.002",
+   "finger_tip.002"
+  ],
+  "arm_C_upper": [
+   "shoulder_ball.002",
+   "upper.002",
+   "upper_inlay.002",
+   "elbow.002"
+  ],
+  "arm_C_fore": [
+   "fore.002",
+   "fore_piston.002",
+   "wrist.002",
+   "arm_C_hose"
+  ],
+  "arm_C_tool": [
+   "tool_body.002",
+   "scan_bar"
+  ]
+ },
+ "pivots": {
+  "lamp": {
+   "pos": [
+    0.0,
+    0.28,
+    2.48
+   ],
+   "axis": [
+    0,
+    0,
+    1
+   ],
+   "parent": "mount",
+   "child": "lamp",
+   "range": [
+    -90,
+    90
+   ]
+  },
+  "arm_A_shoulder": {
+   "pos": [
+    -0.38,
+    0.15,
+    2.48
+   ],
+   "axis": [
+    0,
+    0,
+    1
+   ],
+   "parent": "mount",
+   "child": "arm_A_upper",
+   "range": [
+    -180,
+    180
+   ]
+  },
+  "arm_A_elbow": {
+   "pos": [
+    -0.76,
+    -0.1,
+    1.88
+   ],
+   "axis": [
+    0.0231,
+    -0.9279,
+    0.372
+   ],
+   "parent": "arm_A_upper",
+   "child": "arm_A_fore",
+   "range": [
+    -120,
+    120
+   ]
+  },
+  "arm_A_wrist": {
+   "pos": [
+    -0.42,
+    -0.3,
+    1.36
+   ],
+   "axis": [
+    1,
+    0,
+    0
+   ],
+   "parent": "arm_A_fore",
+   "child": "arm_A_tool",
+   "range": [
+    -90,
+    90
+   ]
+  },
+  "arm_A_tip": {
+   "pos": [
+    -0.3,
+    -0.33,
+    1.13
+   ],
+   "axis": [
+    0.4595,
+    -0.1149,
+    -0.8807
+   ],
+   "parent": "arm_A_tool",
+   "child": "fx",
+   "range": [
+    -90,
+    90
+   ]
+  },
+  "arm_B_shoulder": {
+   "pos": [
+    0.3,
+    0.42,
+    2.48
+   ],
+   "axis": [
+    0,
+    0,
+    1
+   ],
+   "parent": "mount",
+   "child": "arm_B_upper",
+   "range": [
+    -180,
+    180
+   ]
+  },
+  "arm_B_elbow": {
+   "pos": [
+    0.82,
+    0.56,
+    1.9
+   ],
+   "axis": [
+    -0.592,
+    0.7229,
+    -0.3562
+   ],
+   "parent": "arm_B_upper",
+   "child": "arm_B_fore",
+   "range": [
+    -120,
+    120
+   ]
+  },
+  "arm_B_wrist": {
+   "pos": [
+    0.62,
+    0.14,
+    1.38
+   ],
+   "axis": [
+    1,
+    0,
+    0
+   ],
+   "parent": "arm_B_fore",
+   "child": "arm_B_tool",
+   "range": [
+    -90,
+    90
+   ]
+  },
+  "arm_B_tip": {
+   "pos": [
+    0.5,
+    0.0,
+    1.17
+   ],
+   "axis": [
+    -0.4294,
+    -0.501,
+    -0.7514
+   ],
+   "parent": "arm_B_tool",
+   "child": "fx",
+   "range": [
+    -90,
+    90
+   ]
+  },
+  "arm_C_shoulder": {
+   "pos": [
+    0.0,
+    0.56,
+    2.48
+   ],
+   "axis": [
+    0,
+    0,
+    1
+   ],
+   "parent": "mount",
+   "child": "arm_C_upper",
+   "range": [
+    -180,
+    180
+   ]
+  },
+  "arm_C_elbow": {
+   "pos": [
+    0.0,
+    1.06,
+    2.05
+   ],
+   "axis": [
+    -1.0,
+    0.0,
+    -0.0
+   ],
+   "parent": "arm_C_upper",
+   "child": "arm_C_fore",
+   "range": [
+    -120,
+    120
+   ]
+  },
+  "arm_C_wrist": {
+   "pos": [
+    0.0,
+    0.98,
+    1.56
+   ],
+   "axis": [
+    1,
+    0,
+    0
+   ],
+   "parent": "arm_C_fore",
+   "child": "arm_C_tool",
+   "range": [
+    -90,
+    90
+   ]
+  },
+  "arm_C_tip": {
+   "pos": [
+    0.0,
+    0.9,
+    1.4
+   ],
+   "axis": [
+    0.0,
+    -0.4472,
+    -0.8944
+   ],
+   "parent": "arm_C_tool",
+   "child": "fx",
+   "range": [
+    -90,
+    90
+   ]
+  }
+ },
+ "materials": [
+  "c_dark",
+  "c_orange",
+  "c_shell",
+  "c_teal",
+  "chrome",
+  "glow_amber",
+  "glow_cyan",
+  "glow_red",
+  "glow_white",
+  "rubber"
+ ]
+}
