@@ -47,6 +47,7 @@ git clone --depth 1 -b ccr-9e6cc8c3-bftdlm https://github.com/UNDECT/UNDECT.git 
 | 문서 | 내용 | 상태 |
 |---|---|---|
 | `send-to-claude-code-blender-assets.md` | 에셋·애니메이션·로직 반영 절차 전체, 작업 순서 | **주 문서** |
+| `send-to-claude-code-battle-royale.md` | 배틀로얄로 바꾸기: 결정 사항, 한 판의 흐름, 성능, 없애는 것과 남기는 것, 작업 순서 | **새 방향(2026-11-27)** |
 | `send-to-claude-code-background.md` | 배경(거리와 건물)을 목표 그림에 맞추기: 건물 8채, 원경 탑, 배치표, 낮·밤 분위기 | **추가 지시** |
 | `runtime/README.md` | Luau 모듈 쓰는 법, 클립 목록, 좌표 약속 | 주 문서가 가리킴 |
 | `blender/README.md` | Blender 스크립트 실행법 | 주 문서가 가리킴 |

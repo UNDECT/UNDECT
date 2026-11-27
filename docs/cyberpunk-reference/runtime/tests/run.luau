@@ -14,6 +14,7 @@ local Carjack = require("../Carjack")
 local Wanted = require("../Wanted")
 local Security = require("../Security")
 local CrowdNet = require("../CrowdNet")
+local Zone = require("../Zone")
 
 local CLIPS = "../blender/out/anim/"
 local passed, failed = 0, 0
@@ -967,6 +968,44 @@ do
 	local near = 0
 	for _, a in multi.agents do if a.lod == 0 then near += 1 end end
 	check("crowd level of detail follows the nearest of several players", near == 20, near)
+end
+
+-- 배틀로얄: 줄어드는 구역
+do
+	local seed = 7
+	local function rnd() seed = (seed * 1103515245 + 12345) % 2147483648; return seed / 2147483648 end
+	local r40 = Zone.radiusFor(40)
+	check("40 players start on about 4 square km", math.abs(r40 - 1128.4) < 1 and Zone.radiusFor(2) == Zone.MIN_RADIUS, r40)
+	local B = {minX = -2004, maxX = 2004, minZ = -2004, maxZ = 2004}
+	local okIn = true
+	for _ = 1, 50 do
+		local x, z = Zone.pickStart(B, r40, rnd)
+		okIn = okIn and x - r40 >= B.minX and x + r40 <= B.maxX and z - r40 >= B.minZ and z + r40 <= B.maxZ
+	end
+	check("start circle stays inside the map", okIn)
+	local bx, bz = Zone.pickStart(B, r40, rnd, function(x, z) return x < 0 end)
+	check("blocked areas are avoided", bx >= 0, bx)
+	local zn = Zone.new({x = 300, z = -200, radius = r40, rand = rnd})
+	check("no damage before the zone starts", zn:damage(5000, 0, 1) == 0)
+	local ev = zn:start()
+	check("first phase announces the next circle", ev[1].type == "phase" and ev[1].nextR < r40)
+	local nested, phases, closed, t, prevR, monotone = true, 1, false, 0, zn.r, true
+	while not closed and t < 2000 do
+		local px, pz, pr = zn.x, zn.z, zn.r
+		for _, e in zn:update(0.5) do
+			if e.type == "phase" then
+				phases += 1
+				nested = nested and math.sqrt((e.nextX - zn.x) ^ 2 + (e.nextZ - zn.z) ^ 2) + e.nextR <= zn.r + 1e-6
+			elseif e.type == "closed" then closed = true end
+		end
+		monotone = monotone and zn.r <= pr + 1e-9
+		t += 0.5
+	end
+	check("every next circle lies inside the current one", nested)
+	check("the zone only shrinks and closes after all phases", monotone and closed and phases == #Zone.PHASES and zn.r < 1, zn.r)
+	check("match length matches the phase table", math.abs(t - Zone.duration()) <= 1 and Zone.duration() > 600 and Zone.duration() < 900, t)
+	local z2 = Zone.new({x = 0, z = 0, radius = 500, rand = rnd}); z2:start()
+	check("outside hurts, inside does not, far outside hurts more", z2:damage(0, 0, 1) == 0 and z2:damage(520, 0, 1) > 0 and z2:damage(900, 0, 1) > z2:damage(520, 0, 1) and z2:inside(0, 499) and not z2:inside(0, 501))
 end
 
 print(string.format("%d passed, %d failed", passed, failed))
